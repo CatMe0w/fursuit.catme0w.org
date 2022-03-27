@@ -8,7 +8,6 @@ specifiers:
   autoprefixer: ^10.4.4
   postcss: ^8.4.12
   rollup: ^2.3.4
-  rollup-plugin-css-only: ^3.1.0
   rollup-plugin-livereload: ^2.0.0
   rollup-plugin-postcss: ^4.0.2
   rollup-plugin-svelte: ^7.0.0
@@ -32,7 +31,6 @@ devDependencies:
   autoprefixer: 10.4.4_postcss@8.4.12
   postcss: 8.4.12
   rollup: 2.70.1
-  rollup-plugin-css-only: 3.1.0_rollup@2.70.1
   rollup-plugin-livereload: 2.0.5
   rollup-plugin-postcss: 4.0.2_postcss@8.4.12
   rollup-plugin-svelte: 7.1.0_rollup@2.70.1+svelte@3.46.4
@@ -148,14 +146,6 @@ packages:
       estree-walker: 1.0.1
       picomatch: 2.3.1
       rollup: 2.70.1
-    dev: true
-
-  /@rollup/pluginutils/4.2.0:
-    resolution: {integrity: sha512-2WUyJNRkyH5p487pGnn4tWAsxhEFKN/pT8CMgHshd5H+IXkOnKvKZwsz5ZWz+YCXkleZRAU5kwbfgF8CPfDRqA==}
-    engines: {node: '>= 8.0.0'}
-    dependencies:
-      estree-walker: 2.0.2
-      picomatch: 2.3.1
     dev: true
 
   /@trysound/sax/0.2.0:
@@ -1527,16 +1517,6 @@ packages:
     hasBin: true
     dependencies:
       glob: 7.2.0
-    dev: true
-
-  /rollup-plugin-css-only/3.1.0_rollup@2.70.1:
-    resolution: {integrity: sha512-TYMOE5uoD76vpj+RTkQLzC9cQtbnJNktHPB507FzRWBVaofg7KhIqq1kGbcVOadARSozWF883Ho9KpSPKH8gqA==}
-    engines: {node: '>=10.12.0'}
-    peerDependencies:
-      rollup: 1 || 2
-    dependencies:
-      '@rollup/pluginutils': 4.2.0
-      rollup: 2.70.1
     dev: true
 
   /rollup-plugin-livereload/2.0.5:
