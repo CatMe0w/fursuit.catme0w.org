@@ -24,6 +24,26 @@
     return opPost;
   };
 
+  const hasImage = (json: any[]) => {
+    let hasImage = false;
+    json.forEach((item) => {
+      if (item.type === "image") {
+        hasImage = true;
+      }
+    });
+    return hasImage;
+  };
+
+  const truncateOpImages = (json: any[]) => {
+    let opImages: string[] = [];
+    json.forEach((item) => {
+      if (item.type === "image") {
+        opImages.push(item.content);
+      }
+    });
+    return opImages.slice(0, 3);
+  };
+
   const getThreadLink = (threadId: string) => {
     const currentUrl = new URL(location.href);
     const params = new URLSearchParams(currentUrl.search);
@@ -34,7 +54,7 @@
     ).toString();
   };
 
-  // todo: pagnation, inner header, photo preview, video preview, is_good tags
+  // todo: pagnation, inner header, video preview, is_good tags, dark mode, responsive
 </script>
 
 <div class="bg-gray-50 mx-1 my-2">
@@ -54,11 +74,26 @@
               <div class="truncate grow">
                 <a
                   href={getThreadLink(thread.thread_id)}
-                  class="text-sky-700">{thread.title}</a
+                  class="text-sky-700 hover:text-sky-900"
                 >
+                  {thread.title}
+                </a>
                 <p class="text-sm mt-2 truncate text-gray-700">
                   {renderOpPost(thread.op_post_content)}
                 </p>
+                {#if hasImage(thread.op_post_content)}
+                  <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">
+                    {#each truncateOpImages(thread.op_post_content) as image}
+                      <a href={getThreadLink(thread.thread_id)}>
+                        <img
+                          class="h-32 rounded"
+                          src={image}
+                          alt={thread.title}
+                        />
+                      </a>
+                    {/each}
+                  </div>
+                {/if}
               </div>
               <div
                 class="justify-self-end basis-28 shrink-0 text-xs pl-3 truncate text-gray-500"
