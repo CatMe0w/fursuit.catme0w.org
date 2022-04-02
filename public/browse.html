@@ -12,15 +12,15 @@
 
 <body>
   <div id="everything" class="bg-gray-50 min-h-screen">
-    <div id="header-bg" class="bg-white">
-      <header class="max-w-5xl mx-auto">
+    <header class="bg-white">
+      <div class="max-w-5xl mx-auto">
         <header id="navbar"
           class="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
           <div class="hidden md:flex justify-start lg:w-0 lg:flex-1"></div>
           <nav class="hidden md:flex space-x-10">
             <a href="./index.html" class="text-base font-medium text-gray-500 hover:text-gray-900">首页</a>
             <a href="./browse.html" class="text-base font-medium text-gray-500 hover:text-gray-900">档案馆</a>
-            <a href="./browse.html" class="text-base font-medium text-gray-500 hover:text-gray-900">时间机器</a>
+            <a href="./browse.html?time=0" class="text-base font-medium text-gray-500 hover:text-gray-900">时间机器</a>
             <a href="./download.html" class="text-base font-medium text-gray-500 hover:text-gray-900">下载</a>
             <a href="#" class="text-base font-medium text-gray-500 hover:text-gray-900">幕后故事</a>
           </nav>
@@ -38,16 +38,16 @@
               </div>
             </header>
           </div>
-          <noscript>
-            <div class="px-6 py-8 mb-6 shadow rounded bg-red-700">
-              <h1 class="text-3xl text-white mb-3">那里不可以</h1>
-              <p class="text-white">需要启用 JavaScript。</p>
-            </div>
-          </noscript>
         </main>
-      </header>
-    </div>
+      </div>
+    </header>
     <main class="border-t-2 border-gray-100">
+      <noscript>
+        <div class="px-6 py-8 mt-6 shadow rounded bg-red-700 max-w-5xl mx-auto">
+          <h1 class="text-3xl text-white mb-3">那里不可以</h1>
+          <p class="text-white">需要启用 JavaScript。</p>
+        </div>
+      </noscript>
       <div class="flex flex-row max-w-5xl mx-auto">
         <div id="omnia-main" class="basis-3/4"></div>
         <div id="omnia-control-panel" class="basis-1/4"></div>
