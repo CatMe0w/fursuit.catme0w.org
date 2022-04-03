@@ -4,8 +4,6 @@
   export let searchKeyword: string | null;
 
   const currentUrl = new URL(location.href);
-  const currentParams = new URLSearchParams(currentUrl.search);
-  const currentTimeParam = currentParams.get("time");
 
   const getThreads = async () => {
     let url = "https://catme0w.org/ex_nihilo_vault/thread/" + page;
@@ -50,7 +48,7 @@
 
   const getThreadUrl = (threadId: string) => {
     const newParams = new URLSearchParams();
-    if (currentTimeParam) newParams.set("time", currentTimeParam);
+    if (time) newParams.set("time", time);
     newParams.set("t", threadId);
     return new URL(
       currentUrl.origin + currentUrl.pathname + "?" + newParams.toString()
@@ -59,7 +57,7 @@
 
   const getUserUrlById = (userId: string) => {
     const newParams = new URLSearchParams();
-    if (currentTimeParam) newParams.set("time", currentTimeParam);
+    if (time) newParams.set("time", time);
     newParams.set("u", "user_id");
     newParams.set("c", userId);
     return new URL(
