@@ -60,11 +60,11 @@
 <div class="bg-gray-50 mx-1 my-2">
   <div class="shadow rounded bg-white">
     {#await getThreads()}
-      <p class="p-6">刷刷刷……</p>
+      <p class="p-5">刷刷刷……</p>
     {:then json}
       <div class="grid grid-cols-1">
         {#each json.threads as thread, i}
-          <div class="p-6 border-b border-gray-100">
+          <div class="p-5 border-b border-gray-100">
             <div class="flex flex-row">
               <div class="mr-4 basis-14 shrink-0">
                 <p class="px-2 py-1.5 bg-gray-100 rounded text-sm text-center">
