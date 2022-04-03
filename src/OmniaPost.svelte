@@ -12,6 +12,7 @@
     if (time) params.set("time_machine_datetime", time);
     let response = await fetch(url + "?" + params.toString());
     let json = await response.json();
+    document.title = json.title;
     return json;
   };
 
