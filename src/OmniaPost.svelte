@@ -30,6 +30,19 @@
       return "";
     }
   };
+
+  const getEmoticonUrl = (emoticonId: string) => {
+    if (emoticonId.startsWith("image_emoticon")) return "https://tb2.bdstatic.com/tb/editor/images/client/image_emoticon" + emoticonId.slice(14) + ".png";
+    if (emoticonId.startsWith("i_f")) return "https://img.baidu.com/hi/face/i_f" + emoticonId.slice(3) + ".gif";
+    if (emoticonId.startsWith("t_00")) return "https://tb2.bdstatic.com/tb/editor/images/tsj/t_00" + emoticonId.slice(4) + ".gif";
+    if (emoticonId.startsWith("w_00")) return "https://tb2.bdstatic.com/tb/editor/images/ldw/w_00" + emoticonId.slice(4) + ".gif";
+    if (emoticonId.startsWith("ali_0")) return "https://tb2.bdstatic.com/tb/editor/images/ali/ali_0" + emoticonId.slice(5) + ".gif";
+    if (emoticonId.startsWith("yz_0")) return "https://tb2.bdstatic.com/tb/editor/images/shadow/yz_0" + emoticonId.slice(4) + ".gif";
+    if (emoticonId.startsWith("bearchildren_")) return "https://tb2.bdstatic.com/tb/editor/images/bearchildren/bearchildren_" + emoticonId.slice(13) + ".gif";
+    if (emoticonId.startsWith("B_00")) return "https://tb2.bdstatic.com/tb/editor/images/bobo/B_00" + emoticonId.slice(4) + ".gif";
+    if (emoticonId.startsWith("b")) return "https://tb2.bdstatic.com/tb/editor/images/qpx_n/b" + emoticonId.slice(1) + ".gif";
+    return "";
+  };
 </script>
 
 <div class="bg-gray-50 mx-1 my-2">
@@ -64,7 +77,7 @@
                   {:else if item.type === "text_bold_red"}
                     <span class="font-bold text-red-600">{item.content}</span>
                   {:else if item.type === "emoticon"}
-                    <img class="inline" src={"https://tb2.bdstatic.com/tb/editor/images/client/" + item.content.id + ".png"} alt={item.content.description} />
+                    <img class="inline" src={getEmoticonUrl(item.content.id)} alt={item.content.description} />
                   {:else if item.type === "username"}
                     <a href={getUserUrlById(item.content.user_id)} class="text-sky-700 hover:text-sky-900">{item.content.text}</a>
                   {:else if item.type === "url"}
@@ -105,11 +118,7 @@
                           {#if item.type === "text"}
                             <span>{item.content}</span>
                           {:else if item.type === "emoticon"}
-                            <img
-                              class="inline w-5 h-5"
-                              src={"https://tb2.bdstatic.com/tb/editor/images/client/" + item.content.id + ".png"}
-                              alt={item.content.description}
-                            />
+                            <img class="inline w-5 h-5" src={getEmoticonUrl(item.content.id)} alt={item.content.description} />
                           {:else if item.type === "username"}
                             <a href={getUserUrlById(item.content.user_id)} class="text-sky-700 hover:text-sky-900">{item.content.text}</a>
                           {:else if item.type === "url"}
