@@ -55,7 +55,7 @@
                       json.users[i].avatar}
                     alt={json.users[i].nickname}
                   />
-                  <p class="text-sky-700 text-sm mt-3 text-center break-all">
+                  <p class="text-sky-700 text-xs mt-3 text-center break-all">
                     {json.users[i].nickname}
                   </p>
                 </a>
@@ -120,7 +120,7 @@
               </div>
             </div>
             <p
-              class="text-xs float-right -mb-1.5 mt-2.5 text-gray-500 whitespace-pre"
+              class="text-xs float-right -mb-1 mt-12 text-gray-500 whitespace-pre"
             >
               {renderTail(post.tail) + post.floor + "楼  " + post.time}
             </p>

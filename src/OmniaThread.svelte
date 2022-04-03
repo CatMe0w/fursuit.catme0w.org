@@ -82,7 +82,7 @@
                   {thread.reply_num}
                 </p>
               </div>
-              <div class="truncate grow">
+              <div class="truncate grow pr-6">
                 <a
                   href={getThreadUrl(thread.thread_id)}
                   class="text-sky-700 hover:text-sky-900"
