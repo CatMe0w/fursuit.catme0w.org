@@ -50,9 +50,7 @@
     const newParams = new URLSearchParams();
     if (time) newParams.set("time", time);
     newParams.set("t", threadId);
-    return new URL(
-      currentUrl.origin + currentUrl.pathname + "?" + newParams.toString()
-    ).toString();
+    return new URL(currentUrl.origin + currentUrl.pathname + "?" + newParams.toString()).toString();
   };
 
   const getUserUrlById = (userId: string) => {
@@ -60,9 +58,7 @@
     if (time) newParams.set("time", time);
     newParams.set("u", "user_id");
     newParams.set("c", userId);
-    return new URL(
-      currentUrl.origin + currentUrl.pathname + "?" + newParams.toString()
-    ).toString();
+    return new URL(currentUrl.origin + currentUrl.pathname + "?" + newParams.toString()).toString();
   };
 
   // todo: pagnation, inner header, video preview, is_good tags, dark mode, responsive
@@ -83,47 +79,30 @@
                 </p>
               </div>
               <div class="truncate grow pr-6">
-                <a
-                  href={getThreadUrl(thread.thread_id)}
-                  class="text-sky-700 hover:text-sky-900"
-                >
+                <a href={getThreadUrl(thread.thread_id)} class="text-sky-700 hover:text-sky-900">
                   {thread.title}
                 </a>
                 <p class="text-sm mt-2 truncate text-gray-700">
                   {renderOpPost(thread.op_post_content)}
                 </p>
                 {#if hasImage(thread.op_post_content)}
-                  <div
-                    class="mt-4 flex flex-row flex-nowrap justify-start gap-4"
-                  >
+                  <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">
                     {#each truncateOpImages(thread.op_post_content) as image}
                       <a href={getThreadUrl(thread.thread_id)}>
-                        <img
-                          class="h-32 rounded"
-                          src={image}
-                          alt={thread.title}
-                        />
+                        <img class="h-32 rounded" src={image} alt={thread.title} />
                       </a>
                     {/each}
                   </div>
                 {/if}
               </div>
-              <div
-                class="justify-self-end basis-28 shrink-0 text-xs pl-3 truncate text-gray-500"
-              >
-                <p
-                  class="mb-1.5 truncate"
-                  title={"帖子作者：" + json.op_users[i].nickname}
-                >
+              <div class="justify-self-end basis-28 shrink-0 text-xs pl-3 truncate text-gray-500">
+                <p class="mb-1.5 truncate" title={"帖子作者：" + json.op_users[i].nickname}>
                   <span class="grayscale">👤 </span>
                   <a href={getUserUrlById(json.op_users[i].user_id)}>
                     {json.op_users[i].nickname}
                   </a>
                 </p>
-                <p
-                  class="mb-1.5 truncate"
-                  title={"最后回复：" + json.last_reply_users[i].nickname}
-                >
+                <p class="mb-1.5 truncate" title={"最后回复：" + json.last_reply_users[i].nickname}>
                   <span class="grayscale">💬 </span>
                   <a href={getUserUrlById(json.last_reply_users[i].user_id)}>
                     {json.last_reply_users[i].nickname}
