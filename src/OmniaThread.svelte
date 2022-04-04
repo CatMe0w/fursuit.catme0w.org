@@ -117,6 +117,11 @@
           </div>
         {/each}
       </div>
+    {:catch err}
+      <div class="px-6 py-8">
+        <h1 class="text-3xl mb-3">坏耶</h1>
+        <p>{err}</p>
+      </div>
     {/await}
   </div>
 </div>
