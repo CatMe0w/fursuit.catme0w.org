@@ -100,19 +100,19 @@
             </p>
             {#if post.comment_num}
               <div class="grid grid-cols-1 gap-6 p-5 mt-5 ml-[7.75rem] rounded bg-gray-50">
-                {#each json.comments[i] as comment}
+                {#each json.comments[i] as comment, j}
                   <div class="text-sm">
                     <div class="flex flex-row gap-2">
                       <a class="basis-9 shrink-0" href={getUserUrlById(comment.user_id)}>
                         <img
                           class="border-2 border-gray-100 rounded-md w-9 h-9 mr-1 inline"
-                          src={"https://himg.bdimg.com/sys/portrait/item/" + json.comment_users[i].avatar}
-                          alt={json.comment_users[i].nickname}
+                          src={"https://himg.bdimg.com/sys/portrait/item/" + json.comment_users[i][j].avatar}
+                          alt={json.comment_users[i][j].nickname}
                         />
                       </a>
                       <div class="grow">
                         <a class="text-sky-700 hover:text-sky-900 text-xs" href={getUserUrlById(comment.user_id)}>
-                          {json.comment_users[i].nickname}:
+                          {json.comment_users[i][j].nickname}:
                         </a>
                         {#each comment.content as item}
                           {#if item.type === "text"}
