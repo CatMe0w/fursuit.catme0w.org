@@ -84,7 +84,7 @@
                     <a href={item.content.url} class="text-sky-700 hover:text-sky-900 break-all">{item.content.text}</a>
                   {:else if item.type === "image"}
                     <a href={item.content}>
-                      <img class="w-auto max-w-xl my-3" src={item.content} alt={item.content} />
+                      <img class="w-auto max-w-xl my-2 inline" src={item.content} alt={item.content} />
                     </a>
                   {:else if item.type === "video"}
                     <!-- XXX -->
