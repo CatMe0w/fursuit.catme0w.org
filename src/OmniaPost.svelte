@@ -14,7 +14,7 @@
     let json = await response.json();
 
     document.title = json.title;
-    document.getElementById('loading-overflow-padding').remove();
+    document.getElementById("loading-overflow-padding").remove();
 
     return json;
   };
@@ -113,10 +113,15 @@
                           class="border-2 border-gray-100 rounded-md w-9 h-9 mr-1 inline"
                           src={"https://himg.bdimg.com/sys/portrait/item/" + json.comment_users[i][j].avatar}
                           alt={json.comment_users[i][j].nickname}
+                          title={"用户名：" + json.comment_users[i][j].username}
                         />
                       </a>
                       <div class="grow">
-                        <a class="text-sky-700 hover:text-sky-900 text-xs" href={getUserUrlById(comment.user_id)}>
+                        <a
+                          class="text-sky-700 hover:text-sky-900 text-xs"
+                          href={getUserUrlById(comment.user_id)}
+                          title={"用户名：" + json.comment_users[i][j].username}
+                        >
                           {json.comment_users[i][j].nickname}:
                         </a>
                         {#each comment.content as item}
