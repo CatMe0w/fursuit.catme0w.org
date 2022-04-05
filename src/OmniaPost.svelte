@@ -9,7 +9,7 @@
     let url = "https://catme0w.org/ex_nihilo_vault/post/" + threadId + "/" + page;
     let params = new URLSearchParams();
     if (time) params.set("time_machine_datetime", time);
-    
+
     let response = await fetch(url + "?" + params.toString());
     let json = await response.json();
 
@@ -36,6 +36,7 @@
   };
 
   const getEmoticonUrl = (emoticonId: string) => {
+    if (emoticonId === "image_emoticon") emoticonId = "image_emoticon1";
     if (emoticonId.startsWith("image_emoticon")) return "https://tb2.bdstatic.com/tb/editor/images/client/image_emoticon" + emoticonId.slice(14) + ".png";
     if (emoticonId.startsWith("i_f")) return "https://img.baidu.com/hi/face/i_f" + emoticonId.slice(3) + ".gif";
     if (emoticonId.startsWith("t_00")) return "https://tb2.bdstatic.com/tb/editor/images/tsj/t_00" + emoticonId.slice(4) + ".gif";
