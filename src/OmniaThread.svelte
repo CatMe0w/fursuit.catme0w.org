@@ -10,8 +10,14 @@
     let params = new URLSearchParams();
     if (time) params.set("time_machine_datetime", time);
     if (searchKeyword) params.set("search_keyword", searchKeyword);
+
     let response = await fetch(url + "?" + params.toString());
     let json = await response.json();
+
+    if (time) document.title = "时间机器";
+    else document.title = "档案馆";
+    document.getElementById('loading-overflow-padding').remove();
+    
     return json;
   };
 
