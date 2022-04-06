@@ -125,8 +125,8 @@
       </div>
     {:catch err}
       <div class="px-6 py-8">
-        <h1 class="text-3xl mb-3">坏耶</h1>
-        <p>{err}</p>
+        <h1 class="text-3xl mb-4">坏耶</h1>
+        <pre class="whitespace-pre-wrap">{err}</pre>
       </div>
     {/await}
   </div>
