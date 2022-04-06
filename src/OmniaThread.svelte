@@ -55,7 +55,7 @@
   const getImageThumbnailUrl = (url: string) => {
     let filename = url.split("/").slice(-1)[0];
     if (filename.length <= 24) return url; // ignore image type emoticons
-    return "https://tiebapic.baidu.com/forum/wh%3D256%2C128%3B/sign=396d3d17a5fe9925cb596152049872e6/" + filename;
+    return "https://imgsrc.baidu.com/forum/wh%3D256%2C128%3B/sign=396d3d17a5fe9925cb596152049872e6/" + filename;
   };
 
   const getThreadUrl = (threadId: string) => {
