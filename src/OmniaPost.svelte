@@ -50,25 +50,25 @@
   };
 </script>
 
-<div class="bg-gray-50 mx-1 my-2">
-  <div class="shadow rounded bg-white">
+<div class="bg-gray-50 lg:mx-1 my-2">
+  <div class="shadow lg:rounded bg-white">
     {#await getPosts()}
       <p class="p-5">刷刷刷……</p>
     {:then json}
       <div class="grid grid-cols-1">
         {#each json.posts as post, i}
           <div class="p-5 border-b border-gray-100">
-            <div class="flex flex-row">
-              <div class="basis-24 shrink-0 mr-7">
+            <div class="lg:flex flex-row">
+              <div class="basis-24 shrink-0 mr-7 mb-3 flex flex-row lg:flex-col gap-3 items-center">
                 <a href={getUserUrlById(json.users[i].user_id)} title={"用户名：" + json.users[i].username}>
                   <img
-                    class="border-4 border-gray-100 rounded-md"
+                    class="border-2 lg:border-4 border-gray-100 rounded-md w-10 h-10 lg:w-24 lg:h-24"
                     src={"https://himg.bdimg.com/sys/portrait/item/" + json.users[i].avatar}
                     alt={json.users[i].nickname}
                   />
-                  <p class="text-sky-700 text-xs mt-3 text-center break-all">
-                    {json.users[i].nickname}
-                  </p>
+                </a>
+                <a href={getUserUrlById(json.users[i].user_id)} class="text-sky-700 text-sm lg:text-xs text-center break-all inline">
+                  {json.users[i].nickname}
                 </a>
               </div>
               <div class="grow mt-1 text-sm whitespace-pre-line" style="line-height: 1.5rem;">
@@ -89,7 +89,7 @@
                     <a href={item.content.url} class="text-sky-700 hover:text-sky-900 break-all">{item.content.text}</a>
                   {:else if item.type === "image"}
                     <a href={item.content}>
-                      <img class="w-auto max-w-xl my-2 inline" src={item.content} alt={item.content} />
+                      <img class="w-auto lg:max-w-xl my-2 inline" src={item.content} alt={item.content} />
                     </a>
                   {:else if item.type === "video"}
                     <!-- XXX -->
@@ -104,7 +104,7 @@
               {renderTail(post.tail) + post.floor + "楼  " + post.time}
             </p>
             {#if post.comment_num}
-              <div class="grid grid-cols-1 gap-6 p-5 mt-5 ml-[7.75rem] rounded bg-gray-50">
+              <div class="grid grid-cols-1 gap-6 p-5 mt-3 lg:ml-[7.75rem] rounded bg-gray-50">
                 {#each json.comments[i] as comment, j}
                   <div class="text-sm">
                     <div class="flex flex-row gap-2">
