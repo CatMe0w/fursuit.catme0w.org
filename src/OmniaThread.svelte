@@ -16,8 +16,8 @@
 
     if (time) document.title = "时间机器";
     else document.title = "档案馆";
-    document.getElementById('loading-overflow-padding').remove();
-    
+    document.getElementById("loading-overflow-padding").remove();
+
     return json;
   };
 
@@ -70,26 +70,26 @@
   // todo: pagnation, inner header, video preview, is_good tags, dark mode, responsive
 </script>
 
-<div class="bg-gray-50 mx-1 my-2">
-  <div class="shadow rounded bg-white">
+<div class="bg-gray-50 lg:mx-1 my-2">
+  <div class="shadow lg:rounded bg-white">
     {#await getThreads()}
       <p class="p-5">刷刷刷……</p>
     {:then json}
       <div class="grid grid-cols-1">
         {#each json.threads as thread, i}
           <div class="p-5 border-b border-gray-100">
-            <div class="flex flex-row">
-              <div class="mr-4 basis-14 shrink-0">
+            <div class="flex flex-row flex-wrap lg:justify-end">
+              <div class="mr-4 basis-14 shrink-0 order-1 lg:order-none">
                 <p class="px-2 py-1.5 bg-gray-100 rounded text-sm text-center">
                   {thread.reply_num}
                 </p>
               </div>
-              <div class="truncate grow pr-6">
+              <div class="truncate basis-full lg:basis-3/4 grow mb-5">
                 <a href={getThreadUrl(thread.thread_id)} class="text-sky-700 hover:text-sky-900">
                   {thread.title}
                 </a>
                 <p class="text-sm mt-2 truncate text-gray-700">
-                  {renderOpPost(thread.op_post_content)}
+                  <a href={getThreadUrl(thread.thread_id)}> {renderOpPost(thread.op_post_content)}</a>
                 </p>
                 {#if hasImage(thread.op_post_content)}
                   <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">
@@ -101,14 +101,17 @@
                   </div>
                 {/if}
               </div>
-              <div class="justify-self-end basis-28 shrink-0 text-xs pl-3 truncate text-gray-500">
-                <p class="mb-1.5 truncate" title={"帖子作者：" + json.op_users[i].nickname}>
+              <div
+                class="text-xs lg:-mb-1.5 truncate text-gray-500 flex flex-row justify-end gap-2 lg:gap-4
+               grow items-center order-2 lg:order-none basis-px lg:basis-auto"
+              >
+                <p class="truncate" title={"帖子作者：" + json.op_users[i].nickname}>
                   <span class="grayscale">👤 </span>
                   <a href={getUserUrlById(json.op_users[i].user_id)}>
                     {json.op_users[i].nickname}
                   </a>
                 </p>
-                <p class="mb-1.5 truncate" title={"最后回复：" + json.last_reply_users[i].nickname}>
+                <p class="truncate" title={"最后回复：" + json.last_reply_users[i].nickname}>
                   <span class="grayscale">💬 </span>
                   <a href={getUserUrlById(json.last_reply_users[i].user_id)}>
                     {json.last_reply_users[i].nickname}
@@ -116,7 +119,7 @@
                 </p>
                 <p title="最后回复时间：{thread.time}">
                   <span class="grayscale">🕒 </span>
-                  {thread.time.slice(5, -3)}
+                  {thread.time.slice(0, -9)}
                 </p>
               </div>
             </div>
