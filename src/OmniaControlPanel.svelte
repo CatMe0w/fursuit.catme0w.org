@@ -11,15 +11,25 @@
 
 <div class="rounded shadow bg-white mx-1 my-2">
   <div class="p-6">
-    <h1 class="text-xl mb-6">时间机器（施工中）</h1>
-    <p>
-      乱数假文，英文又称“Lorem
-      ipsum”，是指一篇常用于排版设计领域的拉丁文文章，主要的目的为测试文章或文字在不同字型、版型下看起来的效果，通常网站还没建设好时会出现这段文字。Lorem
-      ipsum从15世纪开始就被广泛地使用在西方的印刷、设计领域中，在电脑排版盛行之后，这段被传统印刷产业使用几百年的无意义文字又再度流行。由于这段文字以“Lorem
-      ipsum”起头，并且常被用于标题的测试中，所以一般称为Lorem
-      ipsum，简称为Lipsum。
-      网站没有建设完时，也会出现这样的段落，甚至有些是故意的，包括使用网页制作软件，网页模板等，新建时一般都会出现Lorem
-      ipsum段落。
-    </p>
+    <h1 class="text-xl mb-4">时间机器</h1>
+    <div class="text-center">
+      <p class="mt-6 mb-2">上一次前往的时间</p>
+      <p class="font-sevenseg text-2xl text-gray-500">2022-02-04<br />09:18:10</p>
+      <p class="mt-5 mb-2 pt-5 border-t">当前所在时间</p>
+      <p class="font-sevenseg text-2xl text-gray-700">2016-07-08<br />00:42:42</p>
+      <p class="mt-5 mb-2 pt-5 border-t">前往下一个时间</p>
+      <div class="flex flex-col justify-center">
+        <input
+          id="date"
+          type="date"
+          value="2011-03-19"
+          min="2011-03-19"
+          max="2022-02-16"
+          class="font-sevenseg text-gray-600 mb-2 text-xl border-2 border-gray-200 rounded text-center"
+        />
+        <input id="time" type="time" step="1" value="04:42" class="font-sevenseg text-gray-600 text-xl border-2 border-gray-200 rounded text-center" />
+        <button class="mt-2 bg-blue-600 text-white font-bold py-1.5 rounded">发射</button>
+      </div>
+    </div>
   </div>
 </div>

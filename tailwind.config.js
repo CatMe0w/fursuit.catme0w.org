@@ -6,7 +6,11 @@ module.exports = {
     './src/**/*.{html,js,ts,svelte}'
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'sevenseg': ['DSEG7 Classic']
+      }
+    },
   },
   plugins: [],
   experimental: {

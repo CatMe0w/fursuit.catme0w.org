@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
+
+@font-face {
+  font-family: 'DSEG7 Classic';
+  src: local('DSEG7 Classic'), url(./fonts/DSEG7Classic-BoldItalic.woff2) format('woff2');
+}
+
 @tailwind utilities;
