@@ -52,6 +52,12 @@
     return opImages.slice(0, 3);
   };
 
+  const getImageThumbnailUrl = (url: string) => {
+    let filename = url.split("/").slice(-1)[0];
+    if (filename.length <= 24) return url; // ignore image type emoticons
+    return "https://tiebapic.baidu.com/forum/wh%3D256%2C128%3B/sign=396d3d17a5fe9925cb596152049872e6/" + filename;
+  };
+
   const getThreadUrl = (threadId: string) => {
     const newParams = new URLSearchParams();
     if (time) newParams.set("time", time);
@@ -95,7 +101,7 @@
                   <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">
                     {#each truncateOpImages(thread.op_post_content) as image}
                       <a href={getThreadUrl(thread.thread_id)}>
-                        <img class="h-32 rounded" src={image} alt={thread.title} />
+                        <img class="h-32 rounded" src={getImageThumbnailUrl(image)} alt={thread.title} />
                       </a>
                     {/each}
                   </div>
