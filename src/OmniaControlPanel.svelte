@@ -4,14 +4,12 @@
   const currentUrl = new URL(location.href);
 
   let lastTimeDeparted = localStorage.getItem("lastTimeDeparted");
-  if (time) {
-    localStorage.setItem("lastTimeDeparted", time);
-  }
 
   let targetDate: string | null = time.split(" ")[0];
   let targetTime: string | null = time.split(" ")[1];
 
   const handleLaunch = () => {
+    localStorage.setItem("lastTimeDeparted", time);
     let params = new URLSearchParams(currentUrl.search);
     params.set("time", targetDate + " " + targetTime);
     location.href = currentUrl.origin + currentUrl.pathname + "?" + params.toString();
