@@ -10,6 +10,10 @@
 
   const handleLaunch = () => {
     localStorage.setItem("lastTimeDeparted", time);
+
+    // Fix for Apple IE6 (aka Safari): iOS Safari doesn't allow entering seconds in <input> time picker 
+    if (targetTime.length === 5) targetTime += ":00";
+
     let params = new URLSearchParams(currentUrl.search);
     params.set("time", targetDate + " " + targetTime);
     location.href = currentUrl.origin + currentUrl.pathname + "?" + params.toString();
