@@ -9,7 +9,7 @@
   let targetTime: string | null = time.split(" ")[1];
 
   const handleLaunch = () => {
-    localStorage.setItem("lastTimeDeparted", time);
+    if (time !== targetDate + " " + targetTime) localStorage.setItem("lastTimeDeparted", time);
 
     // Fix for Apple IE6 (aka Safari): iOS Safari doesn't allow entering seconds in <input> time picker 
     if (targetTime.length === 5) targetTime += ":00";
