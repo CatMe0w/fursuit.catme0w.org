@@ -67,11 +67,15 @@
                     alt={json.users[i].nickname}
                   />
                 </a>
-                <a href={getUserUrlById(json.users[i].user_id)} class="text-sky-700 text-sm lg:text-xs text-center break-all inline">
+                <a
+                  href={getUserUrlById(json.users[i].user_id)}
+                  title={"用户名：" + json.users[i].username}
+                  class="text-sky-700 text-sm lg:text-xs text-center break-all inline"
+                >
                   {json.users[i].nickname}
                 </a>
               </div>
-              <div class="grow mt-1 text-sm whitespace-pre-line" style="line-height: 1.5rem;">
+              <div class="grow mt-1 whitespace-pre-line lg:text-sm lg:leading-6">
                 {#each post.content as item}
                   {#if item.type === "text"}
                     <span>{item.content}</span>
