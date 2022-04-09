@@ -12,6 +12,7 @@
     if (searchKeyword) params.set("search_keyword", searchKeyword);
 
     let response = await fetch(url + "?" + params.toString());
+    if (!response.ok) throw response.status;
     let json = await response.json();
 
     if (time) document.title = "时间机器";
@@ -134,8 +135,26 @@
       </div>
     {:catch err}
       <div class="px-6 py-8">
-        <h1 class="text-3xl mb-4">坏耶</h1>
-        <pre class="whitespace-pre-wrap">{err}</pre>
+        {#if err === 500}
+          <h1 class="text-3xl mb-4">服务器故障</h1>
+          <p>别担心，这不是你的问题。</p>
+        {:else if err === 429}
+          <h1 class="text-3xl mb-4">太快了</h1>
+          <p>请等几分钟。</p>
+          <p>你知道你其实可以直接下载所有数据，而不需要像这样狂暴爬取吗？</p>
+        {:else if err.message === "Failed to fetch" || err.message === "Load failed"}
+          <h1 class="text-3xl mb-4">服务器离线</h1>
+          <p>别担心，这不是你的问题。</p>
+        {:else if typeof err === "number"}
+          <h1 class="text-3xl mb-4">未知故障</h1>
+          HTTP 错误
+          <pre class="whitespace-pre-wrap">{err}</pre>
+          <p>坏耶</p>
+        {:else}
+          <h1 class="text-3xl mb-4">未知故障</h1>
+          <pre class="whitespace-pre-wrap">{err}</pre>
+          <p>坏耶</p>
+        {/if}
       </div>
     {/await}
   </div>

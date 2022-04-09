@@ -11,7 +11,9 @@
     if (time) params.set("time_machine_datetime", time);
 
     let response = await fetch(url + "?" + params.toString());
+    if (!response.ok) throw response.status;
     let json = await response.json();
+    if (json.admin_logs && !json.posts) throw 410;
 
     document.title = json.title;
     document.getElementById("loading-overflow-padding").remove();
@@ -151,8 +153,37 @@
       </div>
     {:catch err}
       <div class="px-6 py-8">
-        <h1 class="text-3xl mb-4">坏耶</h1>
-        <pre class="whitespace-pre-wrap">{err}</pre>
+        {#if err === 500}
+          <h1 class="text-3xl mb-4">服务器故障</h1>
+          <p>别担心，这不是你的问题。</p>
+        {:else if err === 404 && time}
+          <h1 class="text-3xl mb-4">没有这个帖子</h1>
+          <p>或是在你选定的时间内尚不存在，或已被删除。</p>
+          <p>请尝试切换到档案馆。</p>
+        {:else if err === 404 && !time}
+          <h1 class="text-3xl mb-4">没有这个帖子</h1>
+          <p>如果你确信这个帖子曾存在过，或许可以去Internet Archive碰碰运气，他们也许保存过这个帖子。</p>
+        {:else if err === 410}
+          <h1 class="text-3xl mb-4">找到吧务操作记录，但没有找到帖子</h1>
+          <p>这代表这个帖子被百度删除，或被发帖者自行删除。</p>
+          <p>这类帖子没有办法保存，或许可以去Internet Archive碰碰运气，也许他们保存过这个帖子。</p>
+        {:else if err === 429}
+          <h1 class="text-3xl mb-4">太快了</h1>
+          <p>请等几分钟。</p>
+          <p>你知道你其实可以直接下载所有数据，而不需要像这样狂暴爬取吗？</p>
+        {:else if err.message === "Failed to fetch" || err.message === "Load failed"}
+          <h1 class="text-3xl mb-4">服务器离线</h1>
+          <p>别担心，这不是你的问题。</p>
+        {:else if typeof err === "number"}
+          <h1 class="text-3xl mb-4">未知故障</h1>
+          HTTP 错误
+          <pre class="whitespace-pre-wrap">{err}</pre>
+          <p>坏耶</p>
+        {:else}
+          <h1 class="text-3xl mb-4">未知故障</h1>
+          <pre class="whitespace-pre-wrap">{err}</pre>
+          <p>坏耶</p>
+        {/if}
       </div>
     {/await}
   </div>
