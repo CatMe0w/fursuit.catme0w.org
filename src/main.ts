@@ -3,6 +3,7 @@ import OmniaPost from './OmniaPost.svelte';
 import OmniaThread from './OmniaThread.svelte';
 import OmniaControlPanel from './OmniaControlPanel.svelte';
 import OmniaHeader from './OmniaHeader.svelte';
+import OmniaAdminLogs from './OmniaAdminLogs.svelte';
 import "./main.css";
 
 // Omnia (Browser): The emulated Tieba
@@ -14,6 +15,8 @@ const threadId: number = parseInt(params.get('t'));
 let time: string | null = params.get('time') || null;
 const searchKeyword: string | null = params.get('s') || null;
 let page: number = parseInt(params.get('p'));
+const adminLogsType: string | null = params.get("a") || null;
+const hideTheShowdown: boolean = (params.get("h") !== 'false'); // everything except strictly "false" is true
 
 let lastTimeDeparted = localStorage.getItem('lastTimeDeparted');
 
@@ -33,7 +36,16 @@ if (time === '0') {
 
 if (!page) page = 1;
 
-if (userType) {
+if (adminLogsType) {
+  new OmniaAdminLogs({
+    target: document.getElementById('omnia-main'),
+    props: {
+      page,
+      adminLogsType,
+      hideTheShowdown
+    }
+  });
+} else if (userType) {
   new OmniaUser({
     target: document.getElementById('omnia-main'),
     props: {
@@ -74,9 +86,12 @@ new OmniaHeader({
 });
 placeholder.remove();
 
-new OmniaControlPanel({
-  target: document.getElementById('omnia-control-panel'),
-  props: {
-    time,
-  }
-});
+if (!adminLogsType) {
+  new OmniaControlPanel({
+    target: document.getElementById('omnia-control-panel'),
+    props: {
+      time,
+    }
+  });
+} else document.getElementById('omnia-control-panel').remove();
+
