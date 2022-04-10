@@ -92,7 +92,7 @@
                   {:else if item.type === "username"}
                     <a href={getUserUrlById(item.content.user_id)} class="text-sky-700 hover:text-sky-900">{item.content.text}</a>
                   {:else if item.type === "url"}
-                    <a href={item.content.url} class="text-sky-700 hover:text-sky-900 break-all">{item.content.text}</a>
+                    <a href={item.content.url} rel="noreferrer" class="text-sky-700 hover:text-sky-900 break-all">{item.content.text}</a>
                   {:else if item.type === "image"}
                     <a href={item.content}>
                       <img class="w-auto lg:max-w-xl my-2 inline" src={item.content} alt={item.content} />
@@ -138,7 +138,7 @@
                           {:else if item.type === "username"}
                             <a href={getUserUrlById(item.content.user_id)} class="text-sky-700 hover:text-sky-900">{item.content.text}</a>
                           {:else if item.type === "url"}
-                            <a href={item.content.url} class="text-sky-700 hover:text-sky-900 break-all">{item.content.text}</a>
+                            <a href={item.content.url} rel="noreferrer" class="text-sky-700 hover:text-sky-900 break-all">{item.content.text}</a>
                           {/if}
                         {/each}
                         <p class="text-xs text-right mt-2 -mb-1 text-gray-500">{post.time}</p>
