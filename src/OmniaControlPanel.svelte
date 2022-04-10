@@ -5,13 +5,14 @@
 
   let lastTimeDeparted = localStorage.getItem("lastTimeDeparted");
 
-  let targetDate: string | null = time.split(" ")[0];
-  let targetTime: string | null = time.split(" ")[1];
+  let targetDate: string | null = null;
+  let targetTime: string | null = null;
+  if (time) [targetDate, targetTime] = time.split(" ");
 
   const handleLaunch = () => {
     if (time !== targetDate + " " + targetTime) localStorage.setItem("lastTimeDeparted", time);
 
-    // Fix for Apple IE6 (aka Safari): iOS Safari doesn't allow entering seconds in <input> time picker 
+    // Fix for Apple IE6 (aka Safari): iOS Safari doesn't allow entering seconds in <input> time picker
     if (targetTime.length === 5) targetTime += ":00";
 
     let params = new URLSearchParams(currentUrl.search);
