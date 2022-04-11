@@ -65,6 +65,7 @@
                 <a href={getUserUrlById(json.users[i].user_id)} title={"用户名：" + json.users[i].username}>
                   <img
                     class="border-2 lg:border-4 border-gray-100 rounded-md w-10 h-10 lg:w-24 lg:h-24"
+                    loading="lazy"
                     src={"https://himg.bdimg.com/sys/portrait/item/" + json.users[i].avatar}
                     alt={json.users[i].nickname}
                   />
@@ -88,7 +89,7 @@
                   {:else if item.type === "text_bold_red"}
                     <span class="font-bold text-red-600">{item.content}</span>
                   {:else if item.type === "emoticon"}
-                    <img class="inline" src={getEmoticonUrl(item.content.id)} alt={item.content.description} />
+                    <img class="inline" loading="lazy" src={getEmoticonUrl(item.content.id)} alt={item.content.description} />
                   {:else if item.type === "username"}
                     <a href={getUserUrlById(item.content.user_id)} class="text-sky-700 hover:text-sky-900">{item.content.text}</a>
                   {:else if item.type === "url"}
@@ -117,6 +118,7 @@
                       <a class="basis-9 shrink-0" href={getUserUrlById(comment.user_id)}>
                         <img
                           class="border-2 border-gray-100 rounded-md w-9 h-9 mr-1 inline"
+                          loading="lazy"
                           src={"https://himg.bdimg.com/sys/portrait/item/" + json.comment_users[i][j].avatar}
                           alt={json.comment_users[i][j].nickname}
                           title={"用户名：" + json.comment_users[i][j].username}
@@ -134,7 +136,7 @@
                           {#if item.type === "text"}
                             <span>{item.content}</span>
                           {:else if item.type === "emoticon"}
-                            <img class="inline w-5 h-5" src={getEmoticonUrl(item.content.id)} alt={item.content.description} />
+                            <img class="inline w-5 h-5" loading="lazy" src={getEmoticonUrl(item.content.id)} alt={item.content.description} />
                           {:else if item.type === "username"}
                             <a href={getUserUrlById(item.content.user_id)} class="text-sky-700 hover:text-sky-900">{item.content.text}</a>
                           {:else if item.type === "url"}
