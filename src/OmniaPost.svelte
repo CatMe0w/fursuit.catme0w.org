@@ -39,6 +39,14 @@
     }
   };
 
+  const isControversial = (datetime: string) => {
+    let isControversial = false;
+    let year = parseInt(datetime.substring(0, 4));
+    let month = parseInt(datetime.substring(5, 7));
+    if ((year === 2017 && month >= 7 && month <= 12) || (year === 2018 && month >= 1 && month <= 7)) isControversial = true;
+    return isControversial;
+  };
+
   const getEmoticonUrl = (emoticonId: string) => {
     if (emoticonId === "image_emoticon") emoticonId = "image_emoticon1";
     if (emoticonId.startsWith("image_emoticon")) return "https://tb2.bdstatic.com/tb/editor/images/client/image_emoticon" + emoticonId.slice(14) + ".png";
@@ -57,7 +65,7 @@
     let filename = originalUrl.split("/").slice(-1)[0];
     if (filename.length <= 24) return originalUrl; // ignore image type emoticons
     return "https://imgsrc.baidu.com/forum/w%3D580/sign=1/" + filename;
-  }
+  };
 </script>
 
 <div class="bg-gray-50 lg:mx-1 my-2">
@@ -66,6 +74,13 @@
       <p class="p-5">刷刷刷……</p>
     {:then json}
       <div class="grid grid-cols-1">
+        {#if isControversial(json.posts[0].time)}
+          <div class="px-6 py-8 border-b-2 border-gray-100">
+            <h1 class="text-3xl mb-4">可能存在争议内容</h1>
+            <p>当前查看的帖子发布于爆吧时段。</p>
+            <p>该帖子及帖子内的回复可能包含争议性内容，或者由脚本/自动化程序/机器人等发出，请仔细甄别。</p>
+          </div>
+        {/if}
         <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
           <p class="truncate">{json.title}</p>
           <div class="hidden lg:block">
@@ -178,7 +193,7 @@
         {:else if err === 404 && time}
           <h1 class="text-3xl mb-4">没有这个帖子</h1>
           <p>或是在你选定的时间内尚不存在，或已被删除。</p>
-          <p>请尝试切换到档案馆。</p>
+          <p>可尝试切换到档案馆。</p>
         {:else if err === 404 && !time}
           <h1 class="text-3xl mb-4">没有这个帖子</h1>
           <p>如果你确信这个帖子曾存在过，或许可以去 Internet Archive 碰碰运气，他们也许保存过这个帖子。</p>

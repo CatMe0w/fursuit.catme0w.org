@@ -45,6 +45,16 @@
     return hasImage;
   };
 
+  const hasControversial = (json: any[]) => {
+    let hasControversial = false;
+    json.forEach((item) => {
+      let year = parseInt(item.time.substring(0, 4));
+      let month = parseInt(item.time.substring(5, 7));
+      if ((year === 2017 && month >= 7 && month <= 12) || (year === 2018 && month >= 1 && month <= 7)) hasControversial = true;
+    });
+    return hasControversial;
+  };
+
   const truncateOpImages = (json: any[]) => {
     let opImages: string[] = [];
     json.forEach((item) => {
@@ -85,6 +95,13 @@
       <p class="p-5">刷刷刷……</p>
     {:then json}
       <div class="grid grid-cols-1">
+        {#if hasControversial(json.threads)}
+          <div class="px-6 py-8 border-b border-gray-100">
+            <h1 class="text-3xl mb-4">可能存在争议内容</h1>
+            <p>当前查看的时间内，存在一个或多个帖子发布于爆吧时段。</p>
+            <p>这些帖子及回复可能包含争议性内容，或者由脚本/自动化程序/机器人等发出，请仔细甄别。</p>
+          </div>
+        {/if}
         {#each json.threads as thread, i}
           <div class="p-5 border-b border-gray-100">
             <div class="flex flex-row flex-wrap lg:justify-end">
@@ -143,6 +160,9 @@
         {#if err === 500}
           <h1 class="text-3xl mb-4">服务器故障</h1>
           <p>别担心，这不是你的问题。</p>
+        {:else if err === 404}
+          <h1 class="text-3xl mb-4">没有记录</h1>
+          <p>在所选定的时间内，尚未存在任何帖子。</p>
         {:else if err === 429}
           <h1 class="text-3xl mb-4">太快了</h1>
           <p>请等几分钟。</p>
