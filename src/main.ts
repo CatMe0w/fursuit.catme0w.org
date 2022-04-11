@@ -21,7 +21,7 @@ const hideTheShowdown: boolean = (params.get("h") !== 'false'); // everything ex
 let lastTimeDeparted = localStorage.getItem('lastTimeDeparted');
 
 if (!lastTimeDeparted) {
-  lastTimeDeparted = '2016-07-28 00:42:42';
+  lastTimeDeparted = '2016-07-27 00:00:00';
   localStorage.setItem('lastTimeDeparted', lastTimeDeparted);
 };
 
@@ -36,9 +36,10 @@ if (time === '0') {
 
 if (!page) page = 1;
 
+const mainNode = document.getElementById('omnia-main');
 if (adminLogsType) {
   new OmniaAdminLogs({
-    target: document.getElementById('omnia-main'),
+    target: mainNode,
     props: {
       page,
       adminLogsType,
@@ -47,7 +48,7 @@ if (adminLogsType) {
   });
 } else if (userType) {
   new OmniaUser({
-    target: document.getElementById('omnia-main'),
+    target: mainNode,
     props: {
       page,
       time,
@@ -57,7 +58,7 @@ if (adminLogsType) {
   });
 } else if (threadId) {
   new OmniaPost({
-    target: document.getElementById('omnia-main'),
+    target: mainNode,
     props: {
       page,
       time,
@@ -66,7 +67,7 @@ if (adminLogsType) {
   });
 } else {
   new OmniaThread({
-    target: document.getElementById('omnia-main'),
+    target: mainNode,
     props: {
       page,
       time,
