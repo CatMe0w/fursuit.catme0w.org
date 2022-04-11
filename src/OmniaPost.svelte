@@ -3,6 +3,8 @@
   export let time: string | null;
   export let threadId: number;
 
+  import OmniaPagination from "./OmniaPagination.svelte";
+
   const currentUrl = new URL(location.href);
 
   const getPosts = async () => {
@@ -64,6 +66,12 @@
       <p class="p-5">刷刷刷……</p>
     {:then json}
       <div class="grid grid-cols-1">
+        <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
+          <p class="truncate">{json.title}</p>
+          <div class="hidden lg:block">
+            <OmniaPagination {page} lastPage={json.max_page} />
+          </div>
+        </div>
         {#each json.posts as post, i}
           <div class="p-5 border-b border-gray-100">
             <div class="lg:flex flex-row">
@@ -158,6 +166,9 @@
             {/if}
           </div>
         {/each}
+        <div class="flex p-5 justify-end">
+          <OmniaPagination {page} lastPage={json.max_page} />
+        </div>
       </div>
     {:catch err}
       <div class="px-6 py-8">

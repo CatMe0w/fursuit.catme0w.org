@@ -3,6 +3,8 @@
   export let time: string | null;
   export let searchKeyword: string | null;
 
+  import OmniaPagination from "./OmniaPagination.svelte";
+
   const currentUrl = new URL(location.href);
 
   const getThreads = async () => {
@@ -56,7 +58,7 @@
   const getImageThumbnailUrl = (url: string) => {
     let filename = url.split("/").slice(-1)[0];
     if (filename.length <= 24) return url; // ignore image type emoticons
-    return "https://imgsrc.baidu.com/forum/h%3D2128/sign=1/" + filename;
+    return "https://imgsrc.baidu.com/forum/h%3D128/sign=1/" + filename;
   };
 
   const getThreadUrl = (threadId: string) => {
@@ -102,7 +104,7 @@
                   <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">
                     {#each truncateOpImages(thread.op_post_content) as image}
                       <a href={getThreadUrl(thread.thread_id)}>
-                        <img class="h-32 rounded" loading="lazy" src={getImageThumbnailUrl(image)} alt={thread.title} />
+                        <img class="h-auto rounded" loading="lazy" src={getImageThumbnailUrl(image)} alt={thread.title} />
                       </a>
                     {/each}
                   </div>
@@ -132,6 +134,9 @@
             </div>
           </div>
         {/each}
+        <div class="flex p-5 justify-end">
+          <OmniaPagination {page} lastPage={json.max_page} />
+        </div>
       </div>
     {:catch err}
       <div class="px-6 py-8">
