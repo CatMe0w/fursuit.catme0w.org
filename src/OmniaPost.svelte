@@ -15,7 +15,7 @@
     let response = await fetch(url + "?" + params.toString());
     if (!response.ok) throw response.status;
     let json = await response.json();
-    if (json.admin_logs && !json.posts) throw 410;
+    if (json.admin_logs.length !== 0 && json.posts.length === 0) throw 410;
 
     document.title = json.title;
     document.getElementById("loading-overflow-padding").remove();
