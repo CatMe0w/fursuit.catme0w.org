@@ -21,12 +21,21 @@
     return currentUrl.origin + currentUrl.pathname + "?" + newParams.toString();
   };
 
-  // todo: back button, and...?
+  const switchToAdminLogs = () => {
+    const currentUrl = new URL(location.href);
+    const newParams = new URLSearchParams();
+    newParams.set("a", "post");
+    return currentUrl.origin + currentUrl.pathname + "?" + newParams.toString();
+  };
 </script>
 
 <header class="p-6 mt-12">
   <div class="mb-12">
     <h1 class="text-3xl mb-3"><a href={backToThreads()}>{title}</a></h1>
     <p>{subtitle}</p>
+  </div>
+  <div class="flex flex-row items-baseline gap-2">
+    <a href={document.referrer} class="text-sky-700 hover:text-sky-900 grow">返回上一页</a>
+    <a href={switchToAdminLogs()} class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded">吧务后台日志</a>
   </div>
 </header>
