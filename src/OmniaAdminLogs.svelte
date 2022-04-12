@@ -3,6 +3,8 @@
   export let adminLogsType: string;
   export let hideTheShowdown: boolean;
 
+  import OmniaPagination from "./OmniaPagination.svelte";
+
   const currentUrl = new URL(location.href);
 
   const getAdminLogs = async () => {
@@ -13,6 +15,7 @@
     if (hideTheShowdown) params.set("hide_the_showdown", "true");
 
     let response = await fetch(url + "?" + params.toString());
+    if (!response.ok) throw response.status;
     let json = await response.json();
 
     document.title = "吧务后台日志";
@@ -28,10 +31,22 @@
   };
 
   const getUserUrlByUsername = (username: string) => {
-    const newParams = new URLSearchParams();
-    newParams.set("u", "username");
-    newParams.set("c", username);
-    return new URL(currentUrl.origin + currentUrl.pathname + "?" + newParams.toString()).toString();
+    const params = new URLSearchParams();
+    params.set("u", "username");
+    params.set("c", username);
+    return new URL(currentUrl.origin + currentUrl.pathname + "?" + params.toString()).toString();
+  };
+
+  const getLastPage = () => {
+    if (adminLogsType === "post") return 103;
+    if (adminLogsType === "user") return 448;
+    if (adminLogsType === "bawu") return 1;
+  };
+
+  const getAdminLogsCategoryUrl = (category: string) => {
+    const params = new URLSearchParams();
+    params.set("a", category);
+    return new URL(currentUrl.origin + currentUrl.pathname + "?" + params.toString()).toString();
   };
 </script>
 
@@ -41,10 +56,26 @@
       <p class="p-5">刷刷刷……</p>
     {:then json}
       <div class="grid grid-cols-1">
+        <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
+          <div>
+            <span class={(adminLogsType === "post" ? "border-b-2 border-blue-700 " : "") + "mr-2 px-1 pb-1"}>
+              <a href={getAdminLogsCategoryUrl("post")}>帖子</a>
+            </span>
+            <span class={(adminLogsType === "user" ? "border-b-2 border-blue-700 " : "") + "mr-2 px-1 pb-1"}>
+              <a href={getAdminLogsCategoryUrl("user")}>用户</a>
+            </span>
+            <span class={(adminLogsType === "bawu" ? "border-b-2 border-blue-700 " : "") + "px-1 pb-1"}>
+              <a href={getAdminLogsCategoryUrl("bawu")}>吧务</a>
+            </span>
+          </div>
+          <div class="hidden lg:block">
+            <OmniaPagination {page} lastPage={getLastPage()} />
+          </div>
+        </div>
         {#each json as log}
           <div class="p-5 border-b border-gray-100">
-            <div class="flex flex-row flex-wrap">
-              <div class="truncate basis-full lg:basis-3/4 grow mb-5">
+            {#if adminLogsType === "post"}
+              <div class="truncate mb-5">
                 <a href={getThreadUrl(log.thread_id)} class="text-sky-700 hover:text-sky-900">
                   {log.title}
                 </a>
@@ -63,18 +94,32 @@
               </div>
               <div class="text-xs text-gray-500 leading-6">
                 <p class="flex flex-row flex-wrap items-baseline">
-                  <span class="mr-2 text-gray-700 bg-gray-200 rounded px-1.5">{log.operation}</span>
+                  <span class="mr-2 text-gray-800 bg-gray-100 rounded px-1.5">{log.operation}</span>
                   <span class="mr-3">操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:text-sky-900">{log.operator}</a></span>
-                  <span>操作时间：<span class="text-gray-700">{log.operation_time}</span></span>
+                  <span>操作时间：<span class="text-gray-800">{log.operation_time}</span></span>
                 </p>
                 <p class="flex flex-row flex-wrap">
                   <span class="mr-3">帖子作者：<a href={getUserUrlByUsername(log.username)} class="text-sky-700 hover:text-sky-900">{log.username}</a></span>
-                  <span>发帖时间：<span class="text-gray-700">{log.post_time}</span></span>
+                  <span>发帖时间：<span class="text-gray-800">{log.post_time}</span></span>
                 </p>
               </div>
-            </div>
+            {:else}
+              <div class="text-sm text-gray-500">
+                <p class="flex flex-row flex-wrap items-baseline">
+                  <span class="mr-4 text-gray-800 bg-gray-100 rounded px-1.5 py-1">{log.operation}</span>
+                  <span class="mr-6">用户：<a href={getUserUrlByUsername(log.username)} class="text-sky-700 hover:text-sky-900">{log.username}</a></span>
+                </p>
+                <p class="flex flex-row flex-wrap mt-2">
+                  <span class="mr-6">操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:text-sky-900">{log.operator}</a></span>
+                  <span>操作时间：<span class="text-gray-800">{log.operation_time}</span></span>
+                </p>
+              </div>
+            {/if}
           </div>
         {/each}
+        <div class="flex p-5 justify-end">
+          <OmniaPagination {page} lastPage={getLastPage()} />
+        </div>
       </div>
     {:catch err}
       <div class="px-6 py-8">
