@@ -48,6 +48,12 @@
     params.set("a", category);
     return new URL(currentUrl.origin + currentUrl.pathname + "?" + params.toString()).toString();
   };
+
+  const getImageThumbnailUrl = (url: string) => {
+    let filename = url.split("/").slice(-1)[0];
+    if (filename.length <= 24) return url; // ignore image type emoticons
+    return "https://imgsrc.baidu.com/forum/h%3D128/sign=1/" + filename;
+  };
 </script>
 
 <div class="bg-gray-50 lg:mx-1 my-2">
@@ -86,7 +92,7 @@
                   <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">
                     {#each log.media.split("\n") as image}
                       <a href={getThreadUrl(log.thread_id)}>
-                        <img class="h-32 rounded" loading="lazy" src={image} alt={log.title} />
+                        <img class="h-auto rounded" loading="lazy" src={getImageThumbnailUrl(image)} alt={log.title} />
                       </a>
                     {/each}
                   </div>
