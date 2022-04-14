@@ -19,8 +19,9 @@
     // Fix for Apple IE6 (aka Safari): iOS Safari doesn't allow entering seconds in <input> time picker
     if (targetTime.length === 5) targetTime += ":00";
 
-    let params = new URLSearchParams(currentUrl.search);
+    const params = new URLSearchParams(currentUrl.search);
     params.set("time", targetDate + " " + targetTime);
+    params.delete("page");
     location.href = currentUrl.origin + currentUrl.pathname + "?" + params.toString();
   };
 
@@ -53,9 +54,9 @@
                 step="1"
                 class="font-sevenseg text-gray-600 text-xl w-full border-2 border-gray-200 hover:border-gray-300 rounded text-center"
               />
-              <button on:click={handleLaunch} class="mt-3 bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white font-bold px-8 py-1.5 rounded"
-                >发射</button
-              >
+              <button on:click={handleLaunch} class="mt-3 bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white font-bold px-8 py-1.5 rounded">
+                发射
+              </button>
             </div>
           </div>
         </div>
