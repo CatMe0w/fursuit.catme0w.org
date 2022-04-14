@@ -108,6 +108,9 @@
                 <p class="flex flex-row flex-wrap items-baseline">
                   <span class="mr-4 text-gray-800 bg-gray-100 rounded px-1.5 py-1">{log.operation}</span>
                   <span class="mr-6">用户：<a href={getUserUrlByUsername(log.username)} class="text-sky-700 hover:text-sky-900">{log.username}</a></span>
+                  {#if log.duration}
+                    <span class="mr-6">时长：<span class="text-gray-800">{log.duration}</span></span>
+                  {/if}
                 </p>
                 <p class="flex flex-row flex-wrap mt-2">
                   <span class="mr-6">操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:text-sky-900">{log.operator}</a></span>
