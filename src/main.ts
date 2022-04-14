@@ -30,8 +30,7 @@ if (time === '0') {
   const currentUrl = new URL(location.href);
   const params = new URLSearchParams(currentUrl.search);
   params.set('time', time);
-  const newUrl = new URL(currentUrl.origin + currentUrl.pathname + '?' + params.toString());
-  window.history.pushState({}, null, newUrl);
+  location.href = currentUrl.origin + currentUrl.pathname + '?' + params.toString();
 };
 
 if (!page) page = 1;

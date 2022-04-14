@@ -35,7 +35,7 @@
     <p>{subtitle}</p>
   </div>
   <div class="flex flex-row items-baseline gap-2">
-    <a href={document.referrer} class="text-sky-700 hover:text-sky-900 grow">返回上一页</a>
+    <button on:click={() => history.go(-1)} class="text-sky-700 hover:text-sky-900 grow text-left">返回上一页</button>
     <a href={switchToAdminLogs()} class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded">吧务后台日志</a>
   </div>
 </header>
