@@ -91,6 +91,7 @@ if (!adminLogsType) {
     target: document.getElementById('omnia-control-panel'),
     props: {
       time,
+      threadId
     }
   });
 } else document.getElementById('omnia-control-panel').remove();
