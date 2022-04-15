@@ -31,7 +31,7 @@
 
 <header class="p-6 mt-12">
   <div class="mb-12">
-    <h1 class="text-3xl mb-3 hover:text-sky-700"><a href={backToThreads()}>{title}</a></h1>
+    <h1 class="text-3xl mb-3"><a href={backToThreads()} class="hover:text-sky-700">{title}</a></h1>
     <p>{subtitle}</p>
   </div>
   <div class="flex flex-row items-baseline gap-2">

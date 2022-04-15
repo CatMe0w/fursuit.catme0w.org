@@ -82,7 +82,7 @@
           </div>
         {/if}
         <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
-          <p class="truncate">{json.title}</p>
+          <p>{json.title}</p>
           <div class="hidden lg:block">
             <OmniaPagination {page} lastPage={json.max_page} />
           </div>
