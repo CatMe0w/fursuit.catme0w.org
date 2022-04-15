@@ -64,13 +64,13 @@
       <div class="grid grid-cols-1">
         <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
           <div>
-            <span class={(adminLogsType === "post" ? "border-b-2 border-blue-700 " : "hover:border-b-2 ") + "mr-2 px-1 pb-1"}>
+            <span class={(adminLogsType === "post" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "mr-2 px-1 pb-1"}>
               <a href={getAdminLogsCategoryUrl("post")}>帖子</a>
             </span>
-            <span class={(adminLogsType === "user" ? "border-b-2 border-blue-700 " : "hover:border-b-2 ") + "mr-2 px-1 pb-1"}>
+            <span class={(adminLogsType === "user" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "mr-2 px-1 pb-1"}>
               <a href={getAdminLogsCategoryUrl("user")}>用户</a>
             </span>
-            <span class={(adminLogsType === "bawu" ? "border-b-2 border-blue-700 " : "hover:border-b-2 ") + "px-1 pb-1"}>
+            <span class={(adminLogsType === "bawu" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "px-1 pb-1"}>
               <a href={getAdminLogsCategoryUrl("bawu")}>吧务</a>
             </span>
           </div>
