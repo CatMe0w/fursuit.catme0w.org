@@ -64,13 +64,13 @@
       <div class="grid grid-cols-1">
         <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
           <div>
-            <span class={(adminLogsType === "post" ? "border-b-2 border-blue-700 " : "") + "mr-2 px-1 pb-1"}>
+            <span class={(adminLogsType === "post" ? "border-b-2 border-blue-700 " : "hover:border-b-2 ") + "mr-2 px-1 pb-1"}>
               <a href={getAdminLogsCategoryUrl("post")}>帖子</a>
             </span>
-            <span class={(adminLogsType === "user" ? "border-b-2 border-blue-700 " : "") + "mr-2 px-1 pb-1"}>
+            <span class={(adminLogsType === "user" ? "border-b-2 border-blue-700 " : "hover:border-b-2 ") + "mr-2 px-1 pb-1"}>
               <a href={getAdminLogsCategoryUrl("user")}>用户</a>
             </span>
-            <span class={(adminLogsType === "bawu" ? "border-b-2 border-blue-700 " : "") + "px-1 pb-1"}>
+            <span class={(adminLogsType === "bawu" ? "border-b-2 border-blue-700 " : "hover:border-b-2 ") + "px-1 pb-1"}>
               <a href={getAdminLogsCategoryUrl("bawu")}>吧务</a>
             </span>
           </div>
@@ -82,7 +82,7 @@
           <div class="p-5 border-b border-gray-100">
             {#if adminLogsType === "post"}
               <div class="truncate mb-5">
-                <a href={getThreadUrl(log.thread_id)} class="text-sky-700 hover:text-sky-900">
+                <a href={getThreadUrl(log.thread_id)} class="text-sky-700 hover:underline">
                   {log.title}
                 </a>
                 <p class="text-sm mt-2 truncate text-gray-700">
@@ -101,11 +101,11 @@
               <div class="text-xs text-gray-500 leading-6">
                 <p class="flex flex-row flex-wrap items-baseline">
                   <span class="mr-2 text-gray-800 bg-gray-100 rounded px-1.5">{log.operation}</span>
-                  <span class="mr-3">操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:text-sky-900">{log.operator}</a></span>
+                  <span class="mr-3">操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:underline">{log.operator}</a></span>
                   <span>操作时间：<span class="text-gray-800">{log.operation_time}</span></span>
                 </p>
                 <p class="flex flex-row flex-wrap">
-                  <span class="mr-3">帖子作者：<a href={getUserUrlByUsername(log.username)} class="text-sky-700 hover:text-sky-900">{log.username}</a></span>
+                  <span class="mr-3">帖子作者：<a href={getUserUrlByUsername(log.username)} class="text-sky-700 hover:underline">{log.username}</a></span>
                   <span>发帖时间：<span class="text-gray-800">{log.post_time}</span></span>
                 </p>
               </div>
@@ -113,13 +113,13 @@
               <div class="text-sm text-gray-500">
                 <p class="flex flex-row flex-wrap items-baseline">
                   <span class="mr-4 text-gray-800 bg-gray-100 rounded px-1.5 py-1">{log.operation}</span>
-                  <span class="mr-6">用户：<a href={getUserUrlByUsername(log.username)} class="text-sky-700 hover:text-sky-900">{log.username}</a></span>
+                  <span class="mr-6">用户：<a href={getUserUrlByUsername(log.username)} class="text-sky-700 hover:underline">{log.username}</a></span>
                   {#if log.duration}
                     <span class="mr-6">时长：<span class="text-gray-800">{log.duration}</span></span>
                   {/if}
                 </p>
                 <p class="flex flex-row flex-wrap mt-2">
-                  <span class="mr-6">操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:text-sky-900">{log.operator}</a></span>
+                  <span class="mr-6">操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:underline">{log.operator}</a></span>
                   <span>操作时间：<span class="text-gray-800">{log.operation_time}</span></span>
                 </p>
               </div>

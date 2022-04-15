@@ -102,7 +102,7 @@
                 <a
                   href={getUserUrlById(json.users[i].user_id)}
                   title={"用户名：" + json.users[i].username}
-                  class="text-sky-700 text-sm lg:text-xs text-center break-all inline"
+                  class="text-sky-700 hover:underline text-sm lg:text-xs text-center break-all inline"
                 >
                   {json.users[i].nickname}
                 </a>
@@ -120,16 +120,16 @@
                   {:else if item.type === "emoticon"}
                     <img class="inline" loading="lazy" src={getEmoticonUrl(item.content.id)} alt={item.content.description} />
                   {:else if item.type === "username"}
-                    <a href={getUserUrlById(item.content.user_id)} class="text-sky-700 hover:text-sky-900">{item.content.text}</a>
+                    <a href={getUserUrlById(item.content.user_id)} class="text-sky-700 hover:underline">{item.content.text}</a>
                   {:else if item.type === "url"}
-                    <a href={item.content.url} rel="noreferrer" class="text-sky-700 hover:text-sky-900 break-all">{item.content.text}</a>
+                    <a href={item.content.url} rel="noreferrer" class="text-sky-700 hover:underline break-all">{item.content.text}</a>
                   {:else if item.type === "image"}
                     <a href={item.content}>
                       <img class="w-auto lg:max-w-xl my-2 inline" loading="lazy" src={getScaledImageUrl(item.content)} alt={item.content} />
                     </a>
                   {:else if item.type === "video"}
                     <!-- XXX -->
-                    <a href={item.content} class="text-sky-700 hover:text-sky-900 break-all">{"视频：" + item.content}</a>
+                    <a href={item.content} class="text-sky-700 hover:underline break-all">{"视频：" + item.content}</a>
                     <!-- {:else if item.type === "audio"} -->
                     <!-- TODO -->
                   {/if}
@@ -155,7 +155,7 @@
                       </a>
                       <div class="grow">
                         <a
-                          class="text-sky-700 hover:text-sky-900 text-xs"
+                          class="text-sky-700 hover:underline text-xs"
                           href={getUserUrlById(comment.user_id)}
                           title={"用户名：" + json.comment_users[i][j].username}
                         >
@@ -167,9 +167,9 @@
                           {:else if item.type === "emoticon"}
                             <img class="inline w-5 h-5" loading="lazy" src={getEmoticonUrl(item.content.id)} alt={item.content.description} />
                           {:else if item.type === "username"}
-                            <a href={getUserUrlById(item.content.user_id)} class="text-sky-700 hover:text-sky-900">{item.content.text}</a>
+                            <a href={getUserUrlById(item.content.user_id)} class="text-sky-700 hover:underline">{item.content.text}</a>
                           {:else if item.type === "url"}
-                            <a href={item.content.url} rel="noreferrer" class="text-sky-700 hover:text-sky-900 break-all">{item.content.text}</a>
+                            <a href={item.content.url} rel="noreferrer" class="text-sky-700 hover:underline break-all">{item.content.text}</a>
                           {/if}
                         {/each}
                         <p class="text-xs text-right mt-2 -mb-1 text-gray-500">{post.time}</p>

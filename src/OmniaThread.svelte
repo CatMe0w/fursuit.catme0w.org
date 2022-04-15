@@ -111,7 +111,7 @@
                 </p>
               </div>
               <div class="truncate basis-full lg:basis-3/4 grow mb-5">
-                <a href={getThreadUrl(thread.thread_id)} class="text-sky-700 hover:text-sky-900">
+                <a href={getThreadUrl(thread.thread_id)} class="text-sky-700 hover:underline">
                   {thread.title}
                 </a>
                 <p class="text-sm mt-2 truncate text-gray-700">
@@ -133,13 +133,13 @@
               >
                 <p class="truncate" title={"帖子作者：" + json.op_users[i].nickname}>
                   <span class="grayscale">👤 </span>
-                  <a href={getUserUrlById(json.op_users[i].user_id)}>
+                  <a href={getUserUrlById(json.op_users[i].user_id)} class="hover:underline">
                     {json.op_users[i].nickname}
                   </a>
                 </p>
                 <p class="truncate" title={"最后回复：" + json.last_reply_users[i].nickname}>
                   <span class="grayscale">💬 </span>
-                  <a href={getUserUrlById(json.last_reply_users[i].user_id)}>
+                  <a href={getUserUrlById(json.last_reply_users[i].user_id)} class="hover:underline">
                     {json.last_reply_users[i].nickname}
                   </a>
                 </p>
