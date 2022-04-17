@@ -27,6 +27,13 @@
     {#await getUser()}
       <p class="p-5">刷刷刷……</p>
     {:then json}
+      <div class="flex flex-row border-b border-gray-100 p-5">
+        <img class="w-auto rounded border-4 border-gray-100" alt={json.nickname} src={"https://gss0.bdstatic.com/6LZ1dD3d1sgCo2Kml5_Y_D3/sys/portrait/item/" + json.avatar} />
+        <div class="ml-5 flex flex-col">
+          <p class="text-2xl mb-2 mt-1">{json.nickname}</p>
+          <p class="text-gray-600"><span class="text-gray-500">用户名：</span>{json.username}</p>
+        </div>
+      </div>
       <div class="grid grid-cols-1">
         {#each json.records as record}
           <div class="p-5 border-b border-gray-100">
