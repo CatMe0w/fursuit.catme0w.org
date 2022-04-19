@@ -129,7 +129,10 @@
                     </a>
                   {:else if item.type === "video"}
                     <!-- XXX -->
-                    <a href={item.content} class="text-sky-700 hover:underline break-all">{"视频：" + item.content}</a>
+                    <div class="bg-gray-100 rounded p-5">
+                      <p class="text-xl mb-1">视频链接</p>
+                      <a href={item.content} class="text-sky-700 hover:underline break-all">{item.content}</a>
+                    </div>
                     <!-- {:else if item.type === "audio"} -->
                     <!-- TODO -->
                   {/if}
