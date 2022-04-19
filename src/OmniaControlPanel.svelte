@@ -1,6 +1,7 @@
 <script lang="ts">
   export let time: string | null;
   export let threadId: number | null;
+  export let userType: string | null;
 
   const currentUrl = new URL(location.href);
 
@@ -102,7 +103,7 @@
           >
         </div>
       </div>
-      {#if !threadId}
+      {#if !threadId && !userType}
         <div>
           <h1 class="text-xl mb-5">搜索</h1>
           <div class="flex gap-2">
