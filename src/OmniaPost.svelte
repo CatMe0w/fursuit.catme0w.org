@@ -189,7 +189,7 @@
       <div class="px-6 py-8">
         {#if err === 404 && time}
           <h1 class="text-3xl mb-4">没有这个帖子</h1>
-          <p>或是在你选定的时间内尚不存在，或已被删除。</p>
+          <p>可能在你选定的时间内尚不存在，或已被删除。</p>
           <p>可尝试切换到档案馆。</p>
         {:else if err === 404 && !time}
           <h1 class="text-3xl mb-4">没有这个帖子</h1>
@@ -197,7 +197,7 @@
         {:else if err === 410}
           <h1 class="text-3xl mb-4">找到吧务操作记录，但没有找到帖子</h1>
           <p>这代表这个帖子被百度删除，或被发帖者自行删除。</p>
-          <p>这类帖子没有办法保存，或许可以去 Internet Archive 碰碰运气，也许他们保存过这个帖子。</p>
+          <p>这类帖子无法保存。或许可以去 Internet Archive 碰碰运气，也许他们保存过这个帖子。</p>
         {:else if err === 429}
           <h1 class="text-3xl mb-4">太快了</h1>
           <p>请等几分钟。</p>
