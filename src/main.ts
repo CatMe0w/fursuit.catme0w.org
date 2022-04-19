@@ -92,7 +92,8 @@ if (!adminLogsType) {
     props: {
       time,
       threadId,
-      userType
+      userType,
+      searchKeyword
     }
   });
 } else document.getElementById('omnia-control-panel').remove();

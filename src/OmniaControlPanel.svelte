@@ -2,6 +2,7 @@
   export let time: string | null;
   export let threadId: number | null;
   export let userType: string | null;
+  export let searchKeyword: string | null;
 
   const currentUrl = new URL(location.href);
 
@@ -14,8 +15,6 @@
   let targetDate: string | null = null;
   let targetTime: string | null = null;
   if (time) [targetDate, targetTime] = time.split(" ");
-
-  let searchKeyword: string | null = null;
 
   const handleLaunch = () => {
     if (time !== targetDate + " " + targetTime) localStorage.setItem("lastTimeDeparted", time);
@@ -88,26 +87,35 @@
       <div>
         <h1 class="text-xl mb-5">到别处看看</h1>
         <div class="text-center flex flex-col gap-3">
-          <a href={getSwitchUrl()} class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-1.5 rounded"
-            >切换到{time ? "档案馆" : "时间机器"}</a
-          >
+          <a href={getSwitchUrl()} class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-1.5 rounded">
+            切换到{time ? "档案馆" : "时间机器"}
+          </a>
           <a
             href={threadId ? "https://tieba.baidu.com/p/" + threadId : "https://tieba.baidu.com/f?kw=fursuit"}
             rel="noreferrer"
-            class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded">百度贴吧{threadId ? "（原帖）" : ""}</a
+            class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded"
           >
+            百度贴吧{threadId ? "（原帖）" : ""}
+          </a>
           <a
             href={"https://web.archive.org/web/*/" + (threadId ? "https://tieba.baidu.com/p/" + threadId : "https://tieba.baidu.com/f?kw=fursuit")}
             rel="noreferrer"
-            class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded">Internet Archive</a
+            class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded"
           >
+            Internet Archive
+          </a>
         </div>
       </div>
       {#if !threadId && !userType}
         <div>
           <h1 class="text-xl mb-5">搜索</h1>
           <div class="flex gap-2">
-            <input bind:value={searchKeyword} type="text" class="w-full border-2 border-gray-200 hover:border-gray-300 rounded px-2" />
+            <input
+              bind:value={searchKeyword}
+              type="text"
+              class="w-full border-2 border-gray-200 hover:border-gray-300 rounded px-2"
+              placeholder={searchKeyword}
+            />
             <button on:click={handleSearch} class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 px-4 py-1.5 rounded whitespace-nowrap">🔍</button>
           </div>
         </div>
