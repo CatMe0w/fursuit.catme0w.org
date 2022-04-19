@@ -14,6 +14,8 @@
   let targetTime: string | null = null;
   if (time) [targetDate, targetTime] = time.split(" ");
 
+  let searchKeyword: string | null = null;
+
   const handleLaunch = () => {
     if (time !== targetDate + " " + targetTime) localStorage.setItem("lastTimeDeparted", time);
 
@@ -26,7 +28,14 @@
     location.href = currentUrl.origin + currentUrl.pathname + "?" + params.toString();
   };
 
-  const getSwitchUrl = (threadId: number) => {
+  const handleSearch = () => {
+    const params = new URLSearchParams(currentUrl.search);
+    params.set("s", searchKeyword);
+    if (time) params.set("time", time);
+    location.href = currentUrl.origin + currentUrl.pathname + "?" + params.toString();
+  };
+
+  const getSwitchUrl = () => {
     const params = new URLSearchParams(currentUrl.search);
     if (time) params.delete("time");
     else params.set("time", lastTimeDeparted);
@@ -40,8 +49,6 @@
     params.delete("p");
     location.href = currentUrl.origin + currentUrl.pathname + "?" + params.toString();
   };
-
-  // todo: button to switch between tm and standard, button to view in public archives, search box (tbd)
 </script>
 
 <div class="rounded shadow bg-white mx-2 lg:mx-1 mt-2 mb-0.5">
@@ -80,7 +87,7 @@
       <div>
         <h1 class="text-xl mb-5">到别处看看</h1>
         <div class="text-center flex flex-col gap-3">
-          <a href={getSwitchUrl(threadId)} class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-1.5 rounded"
+          <a href={getSwitchUrl()} class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-1.5 rounded"
             >切换到{time ? "档案馆" : "时间机器"}</a
           >
           <a
@@ -95,10 +102,19 @@
           >
         </div>
       </div>
+      {#if !threadId}
+        <div>
+          <h1 class="text-xl mb-5">搜索</h1>
+          <div class="flex gap-2">
+            <input bind:value={searchKeyword} type="text" class="w-full border-2 border-gray-200 hover:border-gray-300 rounded px-2" />
+            <button on:click={handleSearch} class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 px-4 py-1.5 rounded whitespace-nowrap">🔍</button>
+          </div>
+        </div>
+      {/if}
       {#if time}
         <div>
           <h1 class="text-xl mb-5">重置</h1>
-          <div class="text-center flex flex-col gap-3">
+          <div class="text-center flex flex-col gap-2">
             <button on:click={resetTimeContinuum} class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded">
               重置时空连续体
             </button>
