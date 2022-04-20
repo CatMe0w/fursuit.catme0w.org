@@ -4,6 +4,10 @@
   export let userType: string;
   export let userClue: string;
 
+  import OmniaPagination from "./OmniaPagination.svelte";
+
+  const currentUrl = new URL(location.href);
+
   const getUser = async () => {
     if (userType !== "user_id" && userType !== "username" && userType !== "nickname" && userType !== "avatar") throw 404;
 
@@ -20,28 +24,72 @@
 
     return json;
   };
+
+  const getThreadUrl = (threadId: string) => {
+    const params = new URLSearchParams();
+    params.set("t", threadId);
+    return new URL(currentUrl.origin + currentUrl.pathname + "?" + params.toString()).toString();
+  };
+
+  const renderUserPost = (json: any[]) => {
+    let post = "";
+    json.forEach((item) => {
+      if (item.type === "text") {
+        post += item.content;
+        post += " ";
+      }
+      if (item.type === "username") {
+        post += item.content.text;
+        post += " ";
+      }
+    });
+    return post;
+  };
 </script>
 
-<div class="bg-gray-50 mx-1 my-2">
-  <div class="shadow rounded bg-white">
+<div class="bg-gray-50 lg:mx-1 my-2">
+  <div class="shadow lg:rounded bg-white">
     {#await getUser()}
       <p class="p-5">刷刷刷……</p>
     {:then json}
       <div class="flex flex-row border-b border-gray-100 p-5">
-        <img class="w-auto rounded border-4 border-gray-100" alt={json.nickname} src={"https://gss0.bdstatic.com/6LZ1dD3d1sgCo2Kml5_Y_D3/sys/portrait/item/" + json.avatar} />
-        <div class="ml-5 flex flex-col">
+        <img class="h-[110px] rounded border-4 border-gray-100" alt={json.nickname} src={"https://himg.bdimg.com/sys/portrait/item/" + json.avatar} />
+        <div class="ml-5 flex flex-col grow">
           <p class="text-2xl mb-2 mt-1">{json.nickname}</p>
-          <p class="text-gray-600"><span class="text-gray-500">用户名：</span>{json.username}</p>
+          <p class="text-gray-700"><span class="text-gray-500">用户名：</span>{json.username}</p>
+        </div>
+        <div class="hidden lg:block place-self-end">
+          <OmniaPagination {page} lastPage={json.max_page} />
         </div>
       </div>
       <div class="grid grid-cols-1">
         {#each json.records as record}
           <div class="p-5 border-b border-gray-100">
-            <div class="flex flex-row">
-              <!-- TODO -->
+            <div class="flex flex-row flex-wrap">
+              <div class="truncate w-full">
+                <a href={getThreadUrl(record.thread_id)} class="text-sky-700 hover:underline">{record.title}</a>
+                {#if record.type === "post"}
+                  <p class="text-sm mt-2 text-gray-700 flex flex-col gap-3 items-baseline">
+                    <span class="text-gray-800 bg-gray-100 rounded px-2.5 py-1 block">{record.floor} 楼</span>
+                    <a class="text-gray-900 truncate" href={getThreadUrl(record.thread_id)}>{renderUserPost(record.post_content)}</a>
+                  </p>
+                {:else if record.type === "comment"}
+                  <p class="text-sm mt-2 mb-2 text-gray-700 flex flex-col lg:flex-row gap-3 items-baseline">
+                    <span class="text-gray-800 bg-gray-100 rounded px-2.5 py-1 block">回复 {record.floor} 楼</span>
+                    <a class="rounded bg-slate-100 px-2.5 py-1 truncate shrink" href={getThreadUrl(record.thread_id)}>
+                      {record.floor} 楼：{renderUserPost(record.post_content)}
+                    </a>
+                  </p>
+                  <a class="text-sm text-gray-900 truncate" href={getThreadUrl(record.thread_id)}>{renderUserPost(record.comment_content)}</a>
+                {/if}
+                <p class="text-xs text-gray-500 mt-4">{record.time}</p>
+              </div>
             </div>
           </div>
         {/each}
+        <div class="flex p-5 justify-end">
+          <OmniaPagination {page} lastPage={json.max_page} />
+        </div>
       </div>
     {:catch err}
       <div class="px-6 py-8">
