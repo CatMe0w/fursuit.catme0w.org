@@ -3,6 +3,7 @@
   export let time: string | null;
   export let threadId: number;
 
+  import OmniaComment from "./OmniaComment.svelte";
   import OmniaPagination from "./OmniaPagination.svelte";
 
   const currentUrl = new URL(location.href);
@@ -143,44 +144,13 @@
               {renderTail(post.tail) + post.floor + "楼  " + post.time}
             </p>
             {#if post.comment_num}
-              <div class="grid grid-cols-1 gap-6 p-5 mt-3 lg:ml-[7.75rem] rounded bg-gray-50">
-                {#each json.comments[i] as comment, j}
-                  <div class="text-sm">
-                    <div class="flex flex-row gap-2">
-                      <a class="basis-9 shrink-0" href={getUserUrlById(comment.user_id)}>
-                        <img
-                          class="border-2 border-gray-100 rounded-md w-9 h-9 mr-1 inline"
-                          loading="lazy"
-                          src={"https://himg.bdimg.com/sys/portrait/item/" + json.comment_users[i][j].avatar}
-                          alt={json.comment_users[i][j].nickname}
-                          title={"用户名：" + json.comment_users[i][j].username}
-                        />
-                      </a>
-                      <div class="grow">
-                        <a
-                          class="text-sky-700 hover:underline text-xs"
-                          href={getUserUrlById(comment.user_id)}
-                          title={"用户名：" + json.comment_users[i][j].username}
-                        >
-                          {json.comment_users[i][j].nickname}:
-                        </a>
-                        {#each comment.content as item}
-                          {#if item.type === "text"}
-                            <span>{item.content}</span>
-                          {:else if item.type === "emoticon"}
-                            <img class="inline w-5 h-5" loading="lazy" src={getEmoticonUrl(item.content.id)} alt={item.content.description} />
-                          {:else if item.type === "username"}
-                            <a href={getUserUrlById(item.content.user_id)} class="text-sky-700 hover:underline">{item.content.text}</a>
-                          {:else if item.type === "url"}
-                            <a href={item.content.url} rel="noreferrer" class="text-sky-700 hover:underline break-all">{item.content.text}</a>
-                          {/if}
-                        {/each}
-                        <p class="text-xs text-right mt-2 -mb-1 text-gray-500">{post.time}</p>
-                      </div>
-                    </div>
-                  </div>
-                {/each}
-              </div>
+              <OmniaComment
+                {time}
+                postId={post.post_id}
+                comments={json.comments[i]}
+                commentUsers={json.comment_users[i]}
+                commentMaxPage={json.comment_max_pages[i]}
+              />
             {/if}
           </div>
         {/each}
