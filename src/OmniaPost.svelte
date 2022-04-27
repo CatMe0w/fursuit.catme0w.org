@@ -143,7 +143,7 @@
             <p class="text-xs text-right -mb-1 mt-12 text-gray-500 whitespace-pre">
               {renderTail(post.tail) + post.floor + "楼  " + post.time}
             </p>
-            {#if post.comment_num}
+            {#if json.comment_max_pages[i]}
               <OmniaComment
                 {time}
                 postId={post.post_id}
