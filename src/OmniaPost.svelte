@@ -126,7 +126,7 @@
                     <a href={item.content.url} rel="noreferrer" class="text-sky-700 hover:underline break-all">{item.content.text}</a>
                   {:else if item.type === "image"}
                     <a href={item.content}>
-                      <img class="w-auto lg:max-w-xl my-2 inline" loading="lazy" src={getScaledImageUrl(item.content)} alt={item.content} />
+                      <img class="w-auto lg:max-w-xl my-2 inline" loading="lazy" crossorigin="anonymous" src={getScaledImageUrl(item.content)} alt={item.content} />
                     </a>
                   {:else if item.type === "video"}
                     <!-- XXX -->
