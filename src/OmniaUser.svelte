@@ -4,6 +4,7 @@
   export let userType: string;
   export let userClue: string;
 
+  import { AvatarEndpoint, VaultEndpoint } from "./config";
   import OmniaPagination from "./OmniaPagination.svelte";
 
   const currentUrl = new URL(location.href);
@@ -11,7 +12,7 @@
   const getUser = async () => {
     if (userType !== "user_id" && userType !== "username" && userType !== "nickname" && userType !== "avatar") throw 404;
 
-    let url = "https://catme0w.org/ex_nihilo_vault/user/" + userType + "/" + userClue + "/" + page;
+    let url = VaultEndpoint + "user/" + userType + "/" + userClue + "/" + page;
     let params = new URLSearchParams();
     if (time) params.set("time_machine_datetime", time);
 
@@ -53,7 +54,7 @@
       <p class="p-5">刷刷刷……</p>
     {:then json}
       <div class="flex flex-row border-b border-gray-100 p-5">
-        <img class="h-[110px] rounded border-4 border-gray-100" alt={json.nickname} src={"https://himg.bdimg.com/sys/portrait/item/" + json.avatar} />
+        <img class="h-[110px] rounded border-4 border-gray-100" alt={json.nickname} src={AvatarEndpoint + json.avatar} />
         <div class="ml-5 flex flex-col grow">
           <p class="text-2xl mb-2 mt-1">{json.nickname}</p>
           <p class="text-gray-700"><span class="text-gray-500">用户名：</span>{json.username}</p>

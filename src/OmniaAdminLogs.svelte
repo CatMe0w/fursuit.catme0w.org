@@ -3,6 +3,7 @@
   export let adminLogsType: string;
   export let hideTheShowdown: boolean;
 
+  import { ImageThumbnailEndpoint, VaultEndpoint } from "./config";
   import OmniaPagination from "./OmniaPagination.svelte";
 
   const currentUrl = new URL(location.href);
@@ -10,7 +11,7 @@
   const getAdminLogs = async () => {
     if (adminLogsType !== "post" && adminLogsType !== "user" && adminLogsType !== "bawu") throw 404;
 
-    let url = "https://catme0w.org/ex_nihilo_vault/admin_log/" + adminLogsType + "/" + page;
+    let url = VaultEndpoint + "admin_log/" + adminLogsType + "/" + page;
     const params = new URLSearchParams();
     if (hideTheShowdown) params.set("hide_the_showdown", "true");
 
@@ -52,7 +53,7 @@
   const getImageThumbnailUrl = (url: string) => {
     let filename = url.split("/").slice(-1)[0];
     if (filename.length <= 24) return url; // ignore image type emoticons
-    return "https://imgsrc.baidu.com/forum/h%3D128/sign=1/" + filename;
+    return ImageThumbnailEndpoint + filename;
   };
 </script>
 

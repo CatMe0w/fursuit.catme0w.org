@@ -5,6 +5,8 @@
   export let commentUsers: any[];
   export let commentMaxPage: number;
 
+  import { AvatarEndpoint, EmoticonEndpoint, EmoticonOldEndpoint, VaultEndpoint } from "./config";
+
   let page = 1;
   let isPendingUpdate = false;
 
@@ -20,21 +22,21 @@
 
   const getEmoticonUrl = (emoticonId: string) => {
     if (emoticonId === "image_emoticon") emoticonId = "image_emoticon1";
-    if (emoticonId.startsWith("image_emoticon")) return "https://tb2.bdstatic.com/tb/editor/images/client/image_emoticon" + emoticonId.slice(14) + ".png";
-    if (emoticonId.startsWith("i_f")) return "https://img.baidu.com/hi/face/i_f" + emoticonId.slice(3) + ".gif";
-    if (emoticonId.startsWith("t_00")) return "https://tb2.bdstatic.com/tb/editor/images/tsj/t_00" + emoticonId.slice(4) + ".gif";
-    if (emoticonId.startsWith("w_00")) return "https://tb2.bdstatic.com/tb/editor/images/ldw/w_00" + emoticonId.slice(4) + ".gif";
-    if (emoticonId.startsWith("ali_0")) return "https://tb2.bdstatic.com/tb/editor/images/ali/ali_0" + emoticonId.slice(5) + ".gif";
-    if (emoticonId.startsWith("yz_0")) return "https://tb2.bdstatic.com/tb/editor/images/shadow/yz_0" + emoticonId.slice(4) + ".gif";
-    if (emoticonId.startsWith("bearchildren_")) return "https://tb2.bdstatic.com/tb/editor/images/bearchildren/bearchildren_" + emoticonId.slice(13) + ".gif";
-    if (emoticonId.startsWith("B_00")) return "https://tb2.bdstatic.com/tb/editor/images/bobo/B_00" + emoticonId.slice(4) + ".gif";
-    if (emoticonId.startsWith("b")) return "https://tb2.bdstatic.com/tb/editor/images/qpx_n/b" + emoticonId.slice(1) + ".gif";
+    if (emoticonId.startsWith("image_emoticon")) return EmoticonEndpoint + "client/image_emoticon" + emoticonId.slice(14) + ".png";
+    if (emoticonId.startsWith("i_f")) return EmoticonOldEndpoint + "i_f" + emoticonId.slice(3) + ".gif";
+    if (emoticonId.startsWith("t_00")) return EmoticonEndpoint + "tsj/t_00" + emoticonId.slice(4) + ".gif";
+    if (emoticonId.startsWith("w_00")) return EmoticonEndpoint + "ldw/w_00" + emoticonId.slice(4) + ".gif";
+    if (emoticonId.startsWith("ali_0")) return EmoticonEndpoint + "ali/ali_0" + emoticonId.slice(5) + ".gif";
+    if (emoticonId.startsWith("yz_0")) return EmoticonEndpoint + "shadow/yz_0" + emoticonId.slice(4) + ".gif";
+    if (emoticonId.startsWith("bearchildren_")) return EmoticonEndpoint + "bearchildren/bearchildren_" + emoticonId.slice(13) + ".gif";
+    if (emoticonId.startsWith("B_00")) return EmoticonEndpoint + "bobo/B_00" + emoticonId.slice(4) + ".gif";
+    if (emoticonId.startsWith("b")) return EmoticonEndpoint + "qpx_n/b" + emoticonId.slice(1) + ".gif";
     return "";
   };
 
   const updateComments = async () => {
     isPendingUpdate = true;
-    let url = "https://catme0w.org/ex_nihilo_vault/comment/" + postId + "/" + page;
+    let url = VaultEndpoint + "comment/" + postId + "/" + page;
     let params = new URLSearchParams();
     if (time) params.set("time_machine_datetime", time);
 
@@ -55,7 +57,7 @@
           <img
             class="border-2 border-gray-100 rounded-md w-9 h-9 mr-1 inline"
             loading="lazy"
-            src={"https://himg.bdimg.com/sys/portrait/item/" + commentUsers[i].avatar}
+            src={AvatarEndpoint + commentUsers[i].avatar}
             alt={commentUsers[i].nickname}
             title={"用户名：" + commentUsers[i].username}
           />

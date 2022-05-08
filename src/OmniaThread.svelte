@@ -3,12 +3,13 @@
   export let time: string | null;
   export let searchKeyword: string | null;
 
+  import { ImageThumbnailEndpoint, VaultEndpoint } from "./config";
   import OmniaPagination from "./OmniaPagination.svelte";
 
   const currentUrl = new URL(location.href);
 
   const getThreads = async () => {
-    let url = "https://catme0w.org/ex_nihilo_vault/thread/" + page;
+    let url = VaultEndpoint + "thread/" + page;
     let params = new URLSearchParams();
     if (time) params.set("time_machine_datetime", time);
     if (searchKeyword) params.set("search_keyword", searchKeyword);
@@ -68,7 +69,7 @@
   const getImageThumbnailUrl = (url: string) => {
     let filename = url.split("/").slice(-1)[0];
     if (filename.length <= 24) return url; // ignore image type emoticons
-    return "https://imgsrc.baidu.com/forum/h%3D128/sign=1/" + filename;
+    return ImageThumbnailEndpoint + filename;
   };
 
   const getThreadUrl = (threadId: string) => {
