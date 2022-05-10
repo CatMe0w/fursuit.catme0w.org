@@ -57,7 +57,11 @@
         <img class="h-[110px] rounded border-4 border-gray-100" alt={json.nickname} src={AvatarEndpoint + json.avatar} />
         <div class="ml-5 flex flex-col grow">
           <p class="text-2xl mb-2 mt-1">{json.nickname}</p>
-          <p class="text-gray-700"><span class="text-gray-500">用户名：</span>{json.username ? json.username : ""}</p>
+          {#if json.username}
+            <p class="text-gray-700"><span class="text-gray-500">用户名：</span>{json.username}</p>
+          {:else}
+            <p class="text-gray-500">（没有用户名）</p>
+          {/if}
         </div>
         <div class="hidden lg:block place-self-end">
           <OmniaPagination {page} lastPage={json.max_page} />
