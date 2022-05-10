@@ -1,4 +1,4 @@
-export const VaultEndpoint = "https://catme0w.org/ex_nihilo_vault/";
+export const VaultEndpoint = "https://crostini.catme0w.org/ex_nihilo_vault/";
 
 export const ImageScaledEndpoint = "https://imgsrc.baidu.com/forum/w%3D580/sign=1/";
 export const ImageThumbnailEndpoint = "https://imgsrc.baidu.com/forum/h%3D128/sign=1/";
