@@ -126,15 +126,19 @@
                   {:else if item.type === "url"}
                     <a href={item.content.url} rel="noreferrer" class="text-sky-700 hover:underline break-all">{item.content.text}</a>
                   {:else if item.type === "image"}
-                    <a href={item.content}>
-                      <img
-                        class="w-auto lg:max-w-xl my-2 inline"
-                        loading="lazy"
-                        crossorigin="anonymous"
-                        src={getScaledImageUrl(item.content)}
-                        alt={item.content}
-                      />
-                    </a>
+                    {#if item.content.startsWith("https://imgsrc.baidu.com/")}
+                      <a href={item.content}>
+                        <img
+                          class="w-auto lg:max-w-xl my-2 inline"
+                          loading="lazy"
+                          crossorigin="anonymous"
+                          src={getScaledImageUrl(item.content)}
+                          alt={item.content}
+                        />
+                      </a>
+                    {:else}
+                      <img class="w-auto lg:max-w-xl my-2 inline" loading="lazy" src={getScaledImageUrl(item.content)} alt={item.content} />
+                    {/if}
                   {:else if item.type === "video"}
                     <!-- XXX -->
                     <div class="bg-gray-100 rounded p-5">
