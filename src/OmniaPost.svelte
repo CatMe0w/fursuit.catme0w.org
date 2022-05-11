@@ -5,6 +5,7 @@
 
   import { AvatarEndpoint, EmoticonEndpoint, EmoticonOldEndpoint, ImageScaledEndpoint, VaultEndpoint } from "./config";
   import OmniaComment from "./OmniaComment.svelte";
+  import OmniaInlineAdminLog from "./OmniaInlineAdminLog.svelte";
   import OmniaPagination from "./OmniaPagination.svelte";
 
   const currentUrl = new URL(location.href);
@@ -154,6 +155,15 @@
             <p class="text-xs text-right -mb-1 mt-12 text-gray-500 whitespace-pre">
               {renderTail(post.tail) + post.floor + "楼  " + post.time}
             </p>
+            {#if json.admin_logs}
+              {#each json.admin_logs.reverse() as log}
+                {#if (log.post_id === null && post.floor === 1) || log.post_id === post.post_id}
+                  <div class="lg:ml-[7.75rem]">
+                    <OmniaInlineAdminLog {log} />
+                  </div>
+                {/if}
+              {/each}
+            {/if}
             {#if json.comment_max_pages[i]}
               <OmniaComment
                 {time}
