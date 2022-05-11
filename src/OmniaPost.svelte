@@ -171,6 +171,7 @@
                 comments={json.comments[i]}
                 commentUsers={json.comment_users[i]}
                 commentMaxPage={json.comment_max_pages[i]}
+                adminLogs={json.admin_logs}
               />
             {/if}
           </div>

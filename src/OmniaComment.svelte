@@ -4,8 +4,10 @@
   export let comments: any[];
   export let commentUsers: any[];
   export let commentMaxPage: number;
+  export let adminLogs: any[];
 
   import { AvatarEndpoint, EmoticonEndpoint, EmoticonOldEndpoint, VaultEndpoint } from "./config";
+  import OmniaInlineAdminLog from "./OmniaInlineAdminLog.svelte";
 
   let page = 1;
   let isPendingUpdate = false;
@@ -78,6 +80,13 @@
             {/if}
           {/each}
           <p class="text-xs text-right mt-2 -mb-1 text-gray-500">{comment.time}</p>
+          {#if adminLogs}
+            {#each adminLogs.reverse() as log}
+              {#if log.post_id === comment.comment_id}
+                <OmniaInlineAdminLog {log} />
+              {/if}
+            {/each}
+          {/if}
         </div>
       </div>
     </div>
