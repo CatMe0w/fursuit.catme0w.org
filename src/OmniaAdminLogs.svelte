@@ -99,30 +99,30 @@
                   </div>
                 {/if}
               </div>
-              <div class="text-sm lg:text-xs text-gray-500 leading-8 lg:leading-8">
-                <p class="flex flex-row flex-wrap items-baseline">
-                  <span class="mr-2 text-gray-800 bg-gray-100 rounded px-1.5 leading-6">{log.operation}</span>
-                  <span class="mr-3">操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:underline">{log.operator}</a></span>
-                  <span>操作时间：<span class="text-gray-800">{log.operation_time}</span></span>
-                </p>
-                <p class="flex flex-row flex-wrap">
-                  <span class="mr-3">帖子作者：<a href={getUserUrlByUsername(log.username)} class="text-sky-700 hover:underline">{log.username}</a></span>
-                  <span>发帖时间：<span class="text-gray-800">{log.post_time}</span></span>
-                </p>
+              <div class="text-sm text-gray-500 leading-8 mt-4">
+                {#if log.operation === "删贴"}
+                  <span class="text-gray-800 bg-red-100 rounded px-2 py-1">{log.operation}</span>
+                {:else if log.operation === "恢复删贴"}
+                  <span class="text-gray-800 bg-emerald-100 rounded px-2 py-1">{log.operation}</span>
+                {:else if log.operation === "加精" || log.operation === "取消加精"}
+                  <span class="text-gray-800 bg-yellow-100 rounded px-2 py-1">{log.operation}</span>
+                {:else if log.operation === "置顶" || log.operation === "取消置顶"}
+                  <span class="text-gray-800 bg-blue-100 rounded px-2 py-1">{log.operation}</span>
+                {/if}
+                <p>操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:underline">{log.operator}</a></p>
+                <p>操作时间：<span class="text-gray-800">{log.operation_time}</span></p>
+                <p>帖子作者：<a href={getUserUrlByUsername(log.username)} class="text-sky-700 hover:underline">{log.username}</a></p>
+                <p>发帖时间：<span class="text-gray-800">{log.post_time}</span></p>
               </div>
             {:else}
-              <div class="text-sm text-gray-500">
-                <p class="flex flex-row flex-wrap items-baseline">
-                  <span class="mr-4 text-gray-800 bg-gray-100 rounded px-1.5 py-1">{log.operation}</span>
-                  <span class="mr-6">用户：<a href={getUserUrlByUsername(log.username)} class="text-sky-700 hover:underline">{log.username}</a></span>
-                  {#if log.duration}
-                    <span class="mr-6">时长：<span class="text-gray-800">{log.duration}</span></span>
-                  {/if}
-                </p>
-                <p class="flex flex-row flex-wrap mt-2 leading-8">
-                  <span class="mr-6">操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:underline">{log.operator}</a></span>
-                  <span>操作时间：<span class="text-gray-800">{log.operation_time}</span></span>
-                </p>
+              <div class="text-sm text-gray-500 leading-8">
+                <span class="text-gray-800 bg-gray-100 rounded px-2 py-1">{log.operation}</span>
+                <p>用户：<a href={getUserUrlByUsername(log.username)} class="text-sky-700 hover:underline">{log.username}</a></p>
+                {#if log.duration}
+                  <p>时长：<span class="text-gray-800">{log.duration}</span></p>
+                {/if}
+                <p>操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:underline">{log.operator}</a></p>
+                <p>操作时间：<span class="text-gray-800">{log.operation_time}</span></p>
               </div>
             {/if}
           </div>
