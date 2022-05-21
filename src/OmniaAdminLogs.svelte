@@ -99,9 +99,9 @@
                   </div>
                 {/if}
               </div>
-              <div class="text-xs text-gray-500 leading-6">
+              <div class="text-sm lg:text-xs text-gray-500 leading-8 lg:leading-8">
                 <p class="flex flex-row flex-wrap items-baseline">
-                  <span class="mr-2 text-gray-800 bg-gray-100 rounded px-1.5">{log.operation}</span>
+                  <span class="mr-2 text-gray-800 bg-gray-100 rounded px-1.5 leading-6">{log.operation}</span>
                   <span class="mr-3">操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:underline">{log.operator}</a></span>
                   <span>操作时间：<span class="text-gray-800">{log.operation_time}</span></span>
                 </p>
@@ -119,7 +119,7 @@
                     <span class="mr-6">时长：<span class="text-gray-800">{log.duration}</span></span>
                   {/if}
                 </p>
-                <p class="flex flex-row flex-wrap mt-2">
+                <p class="flex flex-row flex-wrap mt-2 leading-8">
                   <span class="mr-6">操作人：<a href={getUserUrlByUsername(log.operator)} class="text-sky-700 hover:underline">{log.operator}</a></span>
                   <span>操作时间：<span class="text-gray-800">{log.operation_time}</span></span>
                 </p>
