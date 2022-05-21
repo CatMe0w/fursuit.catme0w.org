@@ -138,7 +138,7 @@
                     {json.op_users[i].nickname}
                   </a>
                 </p>
-                <p class="truncate" title={"最后回复：" + json.last_reply_users[i].nickname}>
+                <p class="truncate hidden lg:block" title={"最后回复：" + json.last_reply_users[i].nickname}>
                   <span class="grayscale">💬 </span>
                   <a href={getUserUrlById(json.last_reply_users[i].user_id)} class="hover:underline">
                     {json.last_reply_users[i].nickname}
