@@ -54,7 +54,7 @@
       <p class="p-5">刷刷刷……</p>
     {:then json}
       <div class="flex flex-row border-b border-gray-100 p-5">
-        <img class="h-[110px] rounded border-4 border-gray-100" alt={json.nickname} src={AvatarEndpoint + json.avatar} />
+        <img class="h-[110px] rounded border-4 border-gray-100" alt="" src={AvatarEndpoint + json.avatar} />
         <div class="ml-5 flex flex-col grow">
           <p class="text-2xl mb-2 mt-1">{json.nickname}</p>
           {#if json.username}

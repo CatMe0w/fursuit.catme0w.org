@@ -122,7 +122,7 @@
                   <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">
                     {#each truncateOpImages(thread.op_post_content) as image}
                       <a href={getThreadUrl(thread.thread_id)}>
-                        <img class="h-auto rounded" loading="lazy" crossorigin="anonymous" src={getImageThumbnailUrl(image)} alt={thread.title} />
+                        <img class="h-auto rounded" loading="lazy" crossorigin="anonymous" src={getImageThumbnailUrl(image)} alt="" />
                       </a>
                     {/each}
                   </div>

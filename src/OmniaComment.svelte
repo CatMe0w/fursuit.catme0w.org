@@ -60,7 +60,7 @@
             class="border-2 border-gray-100 rounded-md w-9 h-9 mr-1 inline"
             loading="lazy"
             src={AvatarEndpoint + commentUsers[i].avatar}
-            alt={commentUsers[i].nickname}
+            alt=""
             title={"用户名：" + commentUsers[i].username}
           />
         </a>

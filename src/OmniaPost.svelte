@@ -99,7 +99,7 @@
                     class="border-2 lg:border-4 border-gray-100 rounded-md w-10 h-10 lg:w-24 lg:h-24"
                     loading="lazy"
                     src={AvatarEndpoint + json.users[i].avatar}
-                    alt={json.users[i].nickname}
+                    alt=""
                   />
                 </a>
                 <a
@@ -134,11 +134,11 @@
                           loading="lazy"
                           crossorigin="anonymous"
                           src={getScaledImageUrl(item.content)}
-                          alt={item.content}
+                          alt=""
                         />
                       </a>
                     {:else}
-                      <img class="w-auto lg:max-w-xl my-2 inline" loading="lazy" src={getScaledImageUrl(item.content)} alt={item.content} />
+                      <img class="w-auto lg:max-w-xl my-2 inline" loading="lazy" src={getScaledImageUrl(item.content)} alt="" />
                     {/if}
                   {:else if item.type === "video"}
                     <!-- XXX -->

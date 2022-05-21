@@ -93,7 +93,7 @@
                   <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">
                     {#each log.media.split("\n") as image}
                       <a href={getThreadUrl(log.thread_id)}>
-                        <img class="h-auto rounded" loading="lazy" src={getImageThumbnailUrl(image)} alt={log.title} />
+                        <img class="h-auto rounded" loading="lazy" src={getImageThumbnailUrl(image)} alt="" />
                       </a>
                     {/each}
                   </div>
