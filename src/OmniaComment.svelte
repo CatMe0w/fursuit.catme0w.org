@@ -65,7 +65,7 @@
           />
         </a>
         <div class="grow">
-          <a class="text-sky-700 hover:underline text-sm lg:text-xs" href={getUserUrlById(comment.user_id)} title={"用户名：" + commentUsers[i].username}>
+          <a class="text-sky-700 hover:underline text-xs" href={getUserUrlById(comment.user_id)} title={"用户名：" + commentUsers[i].username}>
             {commentUsers[i].nickname}:
           </a>
           {#each comment.content as item}
@@ -79,7 +79,7 @@
               <a href={item.content.url} rel="noreferrer" class="text-sky-700 hover:underline break-all">{item.content.text}</a>
             {/if}
           {/each}
-          <p class="text-sm lg:text-xs text-right mt-2 -mb-1 text-gray-500">{comment.time}</p>
+          <p class="text-xs text-right mt-2 -mb-1 text-gray-500">{comment.time}</p>
           {#if adminLogs}
             {#each adminLogs.reverse() as log}
               {#if log.post_id === comment.comment_id}
@@ -92,7 +92,7 @@
     </div>
   {/each}
   <div class="flex justify-end text-gray-700">
-    <div class={"flex flex-row gap-1 items-baseline text-sm lg:text-xs"}>
+    <div class={"flex flex-row gap-1 items-baseline text-xs"}>
       {#if page !== 1}
         <button
           on:click={() => {

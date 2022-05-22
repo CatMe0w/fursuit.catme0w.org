@@ -152,7 +152,7 @@
                 {/each}
               </div>
             </div>
-            <p class="text-sm lg:text-xs text-right -mb-1 mt-12 text-gray-500 whitespace-pre">
+            <p class="text-xs text-right -mb-1 mt-12 text-gray-500 whitespace-pre">
               {renderTail(post.tail) + post.floor + "楼  " + post.time}
             </p>
             {#if json.admin_logs}

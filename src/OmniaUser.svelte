@@ -87,7 +87,7 @@
                   </p>
                   <a class="text-sm text-gray-900 truncate" href={getThreadUrl(record.thread_id)}>{renderUserPost(record.comment_content)}</a>
                 {/if}
-                <p class="text-sm lg:text-xs text-gray-500 mt-4">{record.time}</p>
+                <p class="text-xs text-gray-500 mt-4">{record.time}</p>
               </div>
             </div>
           </div>

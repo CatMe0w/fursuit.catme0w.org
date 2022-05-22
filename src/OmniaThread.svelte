@@ -129,7 +129,7 @@
                 {/if}
               </div>
               <div
-                class="text-sm lg:text-xs lg:-mb-1.5 truncate text-gray-600 flex flex-row justify-end gap-2 lg:gap-4
+                class="text-xs lg:-mb-1.5 truncate text-gray-500 flex flex-row justify-end gap-2 lg:gap-4
                grow items-center order-2 lg:order-none basis-px lg:basis-auto"
               >
                 <p class="truncate" title={"帖子作者：" + json.op_users[i].nickname}>

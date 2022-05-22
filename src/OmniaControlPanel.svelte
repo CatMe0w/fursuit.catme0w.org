@@ -127,7 +127,7 @@
             <button on:click={resetTimeContinuum} class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded">
               重置时空连续体
             </button>
-            <p class="text-center text-sm lg:text-xs text-gray-500">还原首次进入时间机器的目标时间</p>
+            <p class="text-center text-xs text-gray-500">还原首次进入时间机器的目标时间</p>
           </div>
         </div>
       {/if}
@@ -136,7 +136,7 @@
       <button on:click={() => (showControlPanel = !showControlPanel)} class="w-full">
         <p class="text-center text-lg text-sky-700">{showControlPanel ? "收起" : "打开"} 控制面板</p>
         {#if time}
-          <p class="text-center text-sm lg:text-xs text-gray-500">调整时间机器</p>
+          <p class="text-center text-xs text-gray-500">调整时间机器</p>
         {/if}
       </button>
     {/if}
