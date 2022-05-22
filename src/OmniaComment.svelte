@@ -65,7 +65,7 @@
           />
         </a>
         <div class="grow">
-          <a class="text-sky-700 hover:underline text-xs" href={getUserUrlById(comment.user_id)} title={"用户名：" + commentUsers[i].username}>
+          <a class="text-sky-700 hover:underline text-sm" href={getUserUrlById(comment.user_id)} title={"用户名：" + commentUsers[i].username}>
             {commentUsers[i].nickname}:
           </a>
           {#each comment.content as item}
