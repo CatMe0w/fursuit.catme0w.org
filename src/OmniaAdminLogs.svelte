@@ -19,7 +19,7 @@
     if (!response.ok) throw response.status;
     let json = await response.json();
 
-    document.title = "吧务后台日志";
+    document.title = "吧务后台日志 - fursuit吧·档案馆与时间机器：为了无法忘却的往事";
     document.getElementById("loading-overflow-padding").remove();
 
     return json;

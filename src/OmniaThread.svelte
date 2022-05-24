@@ -18,8 +18,8 @@
     if (!response.ok) throw response.status;
     let json = await response.json();
 
-    if (time) document.title = "时间机器";
-    else document.title = "档案馆";
+    if (time) document.title = "时间机器 - fursuit吧·档案馆与时间机器：为了无法忘却的往事";
+    else document.title = "档案馆 - fursuit吧·档案馆与时间机器：为了无法忘却的往事";
     document.getElementById("loading-overflow-padding").remove();
 
     return json;

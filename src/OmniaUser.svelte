@@ -20,7 +20,7 @@
     if (!response.ok) throw response.status;
     let json = await response.json();
 
-    document.title = "用户：" + json.nickname;
+    document.title = "用户：" + json.nickname + " - fursuit吧·档案馆与时间机器：为了无法忘却的往事";
     document.getElementById("loading-overflow-padding").remove();
 
     return json;
