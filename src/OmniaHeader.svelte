@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { makeNewUrl, timeParam } from "./util";
+
   export let time: string | null;
 
   let title: string;
@@ -13,19 +15,15 @@
   }
 
   const backToThreads = () => {
-    const currentUrl = new URL(location.href);
-    const currentParams = new URLSearchParams(currentUrl.search);
-    const time = currentParams.get("time");
     const newParams = new URLSearchParams();
-    if (time) newParams.set("time", time);
-    return currentUrl.origin + currentUrl.pathname + "?" + newParams.toString();
+    if (timeParam) newParams.set("time", time);
+    return makeNewUrl(newParams);
   };
 
   const switchToAdminLogs = () => {
-    const currentUrl = new URL(location.href);
     const newParams = new URLSearchParams();
     newParams.set("a", "post");
-    return currentUrl.origin + currentUrl.pathname + "?" + newParams.toString();
+    return makeNewUrl(newParams);
   };
 </script>
 

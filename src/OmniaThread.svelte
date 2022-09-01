@@ -5,8 +5,7 @@
 
   import { ImageThumbnailEndpoint, VaultEndpoint } from "./config";
   import OmniaPagination from "./OmniaPagination.svelte";
-
-  const currentUrl = new URL(location.href);
+  import { makeNewUrl } from "./util";
 
   const getThreads = async () => {
     let url = VaultEndpoint + "thread/" + page;
@@ -76,7 +75,7 @@
     const newParams = new URLSearchParams();
     if (time) newParams.set("time", time);
     newParams.set("t", threadId);
-    return new URL(currentUrl.origin + currentUrl.pathname + "?" + newParams.toString()).toString();
+    return makeNewUrl(newParams);
   };
 
   const getUserUrlById = (userId: string) => {
@@ -84,7 +83,7 @@
     if (time) newParams.set("time", time);
     newParams.set("u", "user_id");
     newParams.set("c", userId);
-    return new URL(currentUrl.origin + currentUrl.pathname + "?" + newParams.toString()).toString();
+    return makeNewUrl(newParams);
   };
 
   // todo: pagnation, inner header, video preview, is_good tags, dark mode, responsive

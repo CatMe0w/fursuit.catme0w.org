@@ -7,8 +7,7 @@
   import OmniaComment from "./OmniaComment.svelte";
   import OmniaInlineAdminLog from "./OmniaInlineAdminLog.svelte";
   import OmniaPagination from "./OmniaPagination.svelte";
-
-  const currentUrl = new URL(location.href);
+  import { makeNewUrl } from "./util";
 
   const getPosts = async () => {
     let url = VaultEndpoint + "post/" + threadId + "/" + page;
@@ -31,7 +30,7 @@
     if (time) newParams.set("time", time);
     newParams.set("u", "user_id");
     newParams.set("c", userId);
-    return new URL(currentUrl.origin + currentUrl.pathname + "?" + newParams.toString()).toString();
+    return makeNewUrl(newParams);
   };
 
   const renderTail = (tail: string | null) => {
@@ -129,13 +128,7 @@
                   {:else if item.type === "image"}
                     {#if item.content.startsWith("https://imgsrc.baidu.com/")}
                       <a href={item.content}>
-                        <img
-                          class="w-auto lg:max-w-xl my-2 inline"
-                          loading="lazy"
-                          crossorigin="anonymous"
-                          src={getScaledImageUrl(item.content)}
-                          alt=""
-                        />
+                        <img class="w-auto lg:max-w-xl my-2 inline" loading="lazy" crossorigin="anonymous" src={getScaledImageUrl(item.content)} alt="" />
                       </a>
                     {:else}
                       <img class="w-auto lg:max-w-xl my-2 inline" loading="lazy" src={getScaledImageUrl(item.content)} alt="" />

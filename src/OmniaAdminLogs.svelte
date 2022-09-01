@@ -5,17 +5,16 @@
 
   import { ImageThumbnailEndpoint, VaultEndpoint } from "./config";
   import OmniaPagination from "./OmniaPagination.svelte";
-
-  const currentUrl = new URL(location.href);
+  import { makeNewUrl } from "./util";
 
   const getAdminLogs = async () => {
     if (adminLogsType !== "post" && adminLogsType !== "user" && adminLogsType !== "bawu") throw 404;
 
     let url = VaultEndpoint + "admin_log/" + adminLogsType + "/" + page;
-    const params = new URLSearchParams();
-    if (hideTheShowdown) params.set("hide_the_showdown", "true");
+    const newParams = new URLSearchParams();
+    if (hideTheShowdown) newParams.set("hide_the_showdown", "true");
 
-    let response = await fetch(url + "?" + params.toString());
+    let response = await fetch(url + "?" + newParams.toString());
     if (!response.ok) throw response.status;
     let json = await response.json();
 
@@ -26,16 +25,16 @@
   };
 
   const getThreadUrl = (threadId: string) => {
-    const params = new URLSearchParams();
-    params.set("t", threadId);
-    return new URL(currentUrl.origin + currentUrl.pathname + "?" + params.toString()).toString();
+    const newParams = new URLSearchParams();
+    newParams.set("t", threadId);
+    return makeNewUrl(newParams);
   };
 
   const getUserUrlByUsername = (username: string) => {
-    const params = new URLSearchParams();
-    params.set("u", "username");
-    params.set("c", username);
-    return new URL(currentUrl.origin + currentUrl.pathname + "?" + params.toString()).toString();
+    const newParams = new URLSearchParams();
+    newParams.set("u", "username");
+    newParams.set("c", username);
+    return makeNewUrl(newParams);
   };
 
   const getLastPage = () => {
@@ -45,9 +44,9 @@
   };
 
   const getAdminLogsCategoryUrl = (category: string) => {
-    const params = new URLSearchParams();
-    params.set("a", category);
-    return new URL(currentUrl.origin + currentUrl.pathname + "?" + params.toString()).toString();
+    const newParams = new URLSearchParams();
+    newParams.set("a", category);
+    return makeNewUrl(newParams);
   };
 
   const getImageThumbnailUrl = (url: string) => {

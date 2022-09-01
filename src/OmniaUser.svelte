@@ -6,8 +6,7 @@
 
   import { AvatarEndpoint, VaultEndpoint } from "./config";
   import OmniaPagination from "./OmniaPagination.svelte";
-
-  const currentUrl = new URL(location.href);
+  import { makeNewUrl } from "./util";
 
   const getUser = async () => {
     if (userType !== "user_id" && userType !== "username" && userType !== "nickname" && userType !== "avatar") throw 404;
@@ -27,9 +26,9 @@
   };
 
   const getThreadUrl = (threadId: string) => {
-    const params = new URLSearchParams();
-    params.set("t", threadId);
-    return new URL(currentUrl.origin + currentUrl.pathname + "?" + params.toString()).toString();
+    const newParams = new URLSearchParams();
+    newParams.set("t", threadId);
+    return makeNewUrl(newParams);
   };
 
   const renderUserPost = (json: any[]) => {

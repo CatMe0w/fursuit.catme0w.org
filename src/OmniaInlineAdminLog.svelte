@@ -1,13 +1,13 @@
 <script lang="ts">
+  import { makeNewUrl } from "./util";
+
   export let log: any;
 
-  const currentUrl = new URL(location.href);
-
   const getUserUrlByUsername = (username: string) => {
-    const params = new URLSearchParams();
-    params.set("u", "username");
-    params.set("c", username);
-    return new URL(currentUrl.origin + currentUrl.pathname + "?" + params.toString()).toString();
+    const newParams = new URLSearchParams();
+    newParams.set("u", "username");
+    newParams.set("c", username);
+    return makeNewUrl(newParams);
   };
 </script>
 

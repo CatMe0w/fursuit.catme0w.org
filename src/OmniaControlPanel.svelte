@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { currentUrl, makeNewUrl } from "./util";
+
   export let time: string | null;
   export let threadId: number | null;
   export let userType: string | null;
   export let searchKeyword: string | null;
-
-  const currentUrl = new URL(location.href);
 
   // https://stackoverflow.com/a/8876069/10144204
   let showControlPanel = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) >= 1024;
@@ -22,32 +22,32 @@
     // Fix for Apple IE6 (aka Safari): iOS Safari doesn't allow entering seconds in <input> time picker
     if (targetTime.length === 5) targetTime += ":00";
 
-    const params = new URLSearchParams(currentUrl.search);
-    params.set("time", targetDate + " " + targetTime);
-    params.delete("p");
-    location.href = currentUrl.origin + currentUrl.pathname + "?" + params.toString();
+    const newParams = new URLSearchParams(currentUrl.search);
+    newParams.set("time", targetDate + " " + targetTime);
+    newParams.delete("p");
+    location.href = makeNewUrl(newParams);
   };
 
   const handleSearch = () => {
-    const params = new URLSearchParams(currentUrl.search);
-    params.set("s", searchKeyword);
-    if (time) params.set("time", time);
-    location.href = currentUrl.origin + currentUrl.pathname + "?" + params.toString();
+    const newParams = new URLSearchParams(currentUrl.search);
+    newParams.set("s", searchKeyword);
+    if (time) newParams.set("time", time);
+    location.href = makeNewUrl(newParams);
   };
 
   const getSwitchUrl = () => {
-    const params = new URLSearchParams(currentUrl.search);
-    if (time) params.delete("time");
-    else params.set("time", lastTimeDeparted);
-    return currentUrl.origin + currentUrl.pathname + "?" + params.toString();
+    const newParams = new URLSearchParams(currentUrl.search);
+    if (time) newParams.delete("time");
+    else newParams.set("time", lastTimeDeparted);
+    return makeNewUrl(newParams);
   };
 
   const resetTimeContinuum = () => {
     localStorage.setItem("lastTimeDeparted", "2016-07-27 00:00:00");
-    const params = new URLSearchParams(currentUrl.search);
-    params.set("time", "2016-07-27 00:00:00");
-    params.delete("p");
-    location.href = currentUrl.origin + currentUrl.pathname + "?" + params.toString();
+    const newParams = new URLSearchParams(currentUrl.search);
+    newParams.set("time", "2016-07-27 00:00:00");
+    newParams.delete("p");
+    location.href = makeNewUrl(newParams);
   };
 </script>
 

@@ -8,18 +8,17 @@
 
   import { AvatarEndpoint, EmoticonEndpoint, EmoticonOldEndpoint, VaultEndpoint } from "./config";
   import OmniaInlineAdminLog from "./OmniaInlineAdminLog.svelte";
+  import { makeNewUrl } from "./util";
 
   let page = 1;
   let isPendingUpdate = false;
-
-  const currentUrl = new URL(location.href);
 
   const getUserUrlById = (userId: string) => {
     const newParams = new URLSearchParams();
     if (time) newParams.set("time", time);
     newParams.set("u", "user_id");
     newParams.set("c", userId);
-    return new URL(currentUrl.origin + currentUrl.pathname + "?" + newParams.toString()).toString();
+    return makeNewUrl(newParams);
   };
 
   const getEmoticonUrl = (emoticonId: string) => {

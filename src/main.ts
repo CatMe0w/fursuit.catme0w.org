@@ -5,18 +5,18 @@ import OmniaControlPanel from './OmniaControlPanel.svelte';
 import OmniaHeader from './OmniaHeader.svelte';
 import OmniaAdminLogs from './OmniaAdminLogs.svelte';
 import "./main.css";
+import { currentParams, makeNewUrl } from './util';
 
 // Omnia (Browser): The emulated Tieba
 
-const params = new URLSearchParams(location.search);
-const userType: string = params.get('u');
-const userClue: string = params.get('c');
-const threadId: number = parseInt(params.get('t'));
-let time: string | null = params.get('time') || null;
-const searchKeyword: string | null = params.get('s') || null;
-let page: number = parseInt(params.get('p'));
-const adminLogsType: string | null = params.get("a") || null;
-const hideTheShowdown: boolean = (params.get("h") !== 'false'); // everything except strictly "false" is true
+const userType: string = currentParams.get('u');
+const userClue: string = currentParams.get('c');
+const threadId: number = parseInt(currentParams.get('t'));
+let time: string | null = currentParams.get('time') || null;
+const searchKeyword: string | null = currentParams.get('s') || null;
+let page: number = parseInt(currentParams.get('p'));
+const adminLogsType: string | null = currentParams.get("a") || null;
+const hideTheShowdown: boolean = (currentParams.get("h") !== 'false'); // everything except strictly "false" is true
 
 let lastTimeDeparted = localStorage.getItem('lastTimeDeparted');
 
@@ -27,10 +27,9 @@ if (!lastTimeDeparted) {
 
 if (time === '0') {
   time = lastTimeDeparted;
-  const currentUrl = new URL(location.href);
-  const params = new URLSearchParams(currentUrl.search);
-  params.set('time', time);
-  location.href = currentUrl.origin + currentUrl.pathname + '?' + params.toString();
+  const newParams = new URLSearchParams();
+  newParams.set('time', time);
+  location.href = makeNewUrl(newParams);
 };
 
 if (!page) page = 1;

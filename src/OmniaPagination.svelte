@@ -1,15 +1,14 @@
 <script lang="ts">
+  import { currentParams, makeNewUrl } from "./util";
+
   export let page: number;
   export let lastPage: number;
-
-  const currentUrl = new URL(location.href);
-  const currentParams = new URLSearchParams(currentUrl.search);
 
   const getPageUrl = (page: number) => {
     if (page < 1) page = 1;
     if (page > lastPage) page = lastPage;
     currentParams.set("p", page.toString());
-    return currentUrl.origin + currentUrl.pathname + "?" + currentParams.toString();
+    return makeNewUrl(currentParams);
   };
 </script>
 
