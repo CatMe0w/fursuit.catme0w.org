@@ -110,12 +110,12 @@
                   {thread.reply_num}
                 </p>
               </div>
-              <div class="truncate basis-full lg:basis-3/4 grow mb-5">
+              <div class="basis-full lg:basis-3/4 grow mb-5">
                 <a href={getThreadUrl(thread.thread_id)} class="text-sky-700 hover:underline">
                   {thread.title}
                 </a>
-                <p class="text-sm mt-2 truncate text-gray-700">
-                  <a href={getThreadUrl(thread.thread_id)}> {renderOpPost(thread.op_post_content)}</a>
+                <p class="text-sm mt-2 text-gray-700 line-clamp-3 leading-6">
+                  <a href={getThreadUrl(thread.thread_id)}>{renderOpPost(thread.op_post_content)}</a>
                 </p>
                 {#if hasImage(thread.op_post_content)}
                   <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">

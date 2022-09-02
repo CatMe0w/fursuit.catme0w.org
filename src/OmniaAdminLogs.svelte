@@ -81,11 +81,11 @@
         {#each json as log}
           <div class="p-5 border-b border-gray-100">
             {#if adminLogsType === "post"}
-              <div class="truncate mb-5">
+              <div class="mb-5">
                 <a href={getThreadUrl(log.thread_id)} class="text-sky-700 hover:underline">
                   {log.title}
                 </a>
-                <p class="text-sm mt-2 truncate text-gray-700">
+                <p class="text-sm mt-2 leading-6 text-gray-700">
                   <a href={getThreadUrl(log.thread_id)}>{log.content_preview}</a>
                 </p>
                 {#if log.media}

@@ -25,7 +25,7 @@ if (!lastTimeDeparted) {
   localStorage.setItem('lastTimeDeparted', lastTimeDeparted);
 };
 
-if (time === '0') {
+if (time === '0') { // time=0 indicates time machine mode and will be immediately replaced with the last time departed
   time = lastTimeDeparted;
   const newParams = new URLSearchParams();
   newParams.set('time', time);

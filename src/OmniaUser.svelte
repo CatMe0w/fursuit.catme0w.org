@@ -70,21 +70,21 @@
         {#each json.records as record}
           <div class="p-5 border-b border-gray-100">
             <div class="flex flex-row flex-wrap">
-              <div class="truncate w-full">
+              <div class="w-full">
                 <a href={getThreadUrl(record.thread_id)} class="text-sky-700 hover:underline">{record.title}</a>
                 {#if record.type === "post"}
                   <p class="text-sm mt-2 text-gray-700 flex flex-col gap-3 items-baseline">
                     <span class="text-gray-800 bg-gray-100 rounded px-2.5 py-1 block">{record.floor} 楼</span>
-                    <a class="text-gray-900 truncate" href={getThreadUrl(record.thread_id)}>{renderUserPost(record.post_content)}</a>
+                    <a class="text-gray-900 line-clamp-3 leading-6" href={getThreadUrl(record.thread_id)}>{renderUserPost(record.post_content)}</a>
                   </p>
                 {:else if record.type === "comment"}
                   <p class="text-sm mt-2 mb-2 text-gray-700 flex flex-col lg:flex-row gap-3 items-baseline">
-                    <span class="text-gray-800 bg-gray-100 rounded px-2.5 py-1 block">回复 {record.floor} 楼</span>
+                    <span class="text-gray-800 bg-gray-100 rounded px-2.5 py-1 block shrink-0">回复 {record.floor} 楼</span>
                     <a class="rounded bg-slate-100 px-2.5 py-1 truncate shrink" href={getThreadUrl(record.thread_id)}>
                       {record.floor} 楼：{renderUserPost(record.post_content)}
                     </a>
                   </p>
-                  <a class="text-sm text-gray-900 truncate" href={getThreadUrl(record.thread_id)}>{renderUserPost(record.comment_content)}</a>
+                  <a class="text-sm text-gray-900 line-clamp-3" href={getThreadUrl(record.thread_id)}>{renderUserPost(record.comment_content)}</a>
                 {/if}
                 <p class="text-xs text-gray-500 mt-4">{record.time}</p>
               </div>
