@@ -4,6 +4,7 @@ specifiers:
   '@rollup/plugin-commonjs': ^17.0.0
   '@rollup/plugin-node-resolve': ^11.0.0
   '@rollup/plugin-typescript': ^8.0.0
+  '@tailwindcss/line-clamp': ^0.4.1
   '@tsconfig/svelte': ^2.0.0
   autoprefixer: ^10.4.4
   postcss: ^8.4.12
@@ -27,6 +28,7 @@ devDependencies:
   '@rollup/plugin-commonjs': 17.1.0_rollup@2.70.1
   '@rollup/plugin-node-resolve': 11.2.1_rollup@2.70.1
   '@rollup/plugin-typescript': 8.3.1_8fb0118e9d69f3600cbb8f144f7d456c
+  '@tailwindcss/line-clamp': 0.4.1_tailwindcss@3.0.23
   '@tsconfig/svelte': 2.0.1
   autoprefixer: 10.4.4_postcss@8.4.12
   postcss: 8.4.12
@@ -146,6 +148,14 @@ packages:
       estree-walker: 1.0.1
       picomatch: 2.3.1
       rollup: 2.70.1
+    dev: true
+
+  /@tailwindcss/line-clamp/0.4.1_tailwindcss@3.0.23:
+    resolution: {integrity: sha512-aeA3Dv4pjxIyIlsxZ9LX7KPI8U7T9oNpV1B2Xax7P57VuJH9Lh+p2H8Ad6+FXP+waR+Gu90Ga3rtkWHKcr3Y/A==}
+    peerDependencies:
+      tailwindcss: '>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1'
+    dependencies:
+      tailwindcss: 3.0.23_autoprefixer@10.4.4
     dev: true
 
   /@trysound/sax/0.2.0:
@@ -671,6 +681,7 @@ packages:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
+    requiresBuild: true
     dev: true
     optional: true
 
