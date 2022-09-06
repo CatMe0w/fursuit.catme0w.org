@@ -4,7 +4,6 @@ import OmniaThread from './OmniaThread.svelte';
 import OmniaControlPanel from './OmniaControlPanel.svelte';
 import OmniaHeader from './OmniaHeader.svelte';
 import OmniaAdminLogs from './OmniaAdminLogs.svelte';
-import "./main.css";
 import { currentParams, makeNewUrl } from './util';
 
 // Omnia (Browser): The emulated Tieba
@@ -97,3 +96,4 @@ if (!adminLogsType) {
   });
 } else document.getElementById('omnia-control-panel').remove();
 
+export default app;
