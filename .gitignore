@@ -2,4 +2,9 @@
 /public/build/
 .pnpm-debug.log
 
+/dist
+/build
+
 .DS_Store
+
+/.svelte-kit
