@@ -10,13 +10,13 @@
       <div class="mt-8 flex flex-row gap-6">
         <a
           class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-700 px-4 py-2 rounded"
-          href="./browse"
+          href="/browse/"
         >
           档案馆
         </a>
         <a
           class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-2 rounded"
-          href="./browse?time=0"
+          href="/browse/?time=0"
         >
           时间机器
         </a>
@@ -73,7 +73,7 @@
       </p>
       <a
         class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-700 px-4 py-2 rounded mr-auto"
-        href="./browse"
+        href="/browse/"
       >
         前往档案馆
       </a>
@@ -86,7 +86,7 @@
       </p>
       <a
         class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-2 rounded mr-auto"
-        href="./browse?time=0"
+        href="/browse/?time=0"
       >
         前往时间机器
       </a>
@@ -159,7 +159,7 @@
     </p>
     <a
       class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-700 px-4 py-2 rounded mr-auto"
-      href="./download"
+      href="/download/"
     >
       下载数据
     </a>

@@ -1,9 +1,10 @@
 import sveltePreprocess from 'svelte-preprocess'
-import adapter from '@sveltejs/adapter-static'
+import adapter from '@sveltejs/adapter-cloudflare'
 
 export default {
   preprocess: sveltePreprocess(),
   kit: {
-    adapter: adapter({ precompress: true }),
-  }
-};
+    adapter: adapter(),
+    trailingSlash: 'always',
+  },
+}

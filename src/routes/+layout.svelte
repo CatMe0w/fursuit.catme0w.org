@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../app.css'
+  import '../app.css'
 </script>
 
 <body>
@@ -9,17 +9,12 @@
   >
     <div class="hidden md:flex justify-start lg:w-0 lg:flex-1" />
     <nav class="hidden md:flex space-x-10">
-      <a href="./" class="text-base font-medium text-gray-500 hover:text-gray-900">首页</a
-      >
-      <a href="./browse" class="text-base font-medium text-gray-500 hover:text-gray-900"
-        >档案馆</a
-      >
-      <a href="./browse?time=0" class="text-base font-medium text-gray-500 hover:text-gray-900"
+      <a href="/" class="text-base font-medium text-gray-500 hover:text-gray-900">首页</a>
+      <a href="/browse/" class="text-base font-medium text-gray-500 hover:text-gray-900">档案馆</a>
+      <a href="/browse/?time=0" class="text-base font-medium text-gray-500 hover:text-gray-900"
         >时间机器</a
       >
-      <a href="./download" class="text-base font-medium text-gray-500 hover:text-gray-900"
-        >下载</a
-      >
+      <a href="/download/" class="text-base font-medium text-gray-500 hover:text-gray-900">下载</a>
       <a
         href="https://eminent-knife-7e7.notion.site/150710e8b10645a3ae199911cf332549"
         class="text-base font-medium text-gray-500 hover:text-gray-900">幕后故事</a
@@ -87,17 +82,12 @@
           </div>
           <div class="mt-6">
             <nav class="grid gap-y-8">
-              <a href="./index" class="text-base font-medium text-gray-700 text-center">首页</a
-              >
-              <a href="./browse" class="text-base font-medium text-gray-700 text-center"
-                >档案馆</a
-              >
-              <a href="./browse?time=0" class="text-base font-medium text-gray-700 text-center"
+              <a href="/" class="text-base font-medium text-gray-700 text-center">首页</a>
+              <a href="/browse/" class="text-base font-medium text-gray-700 text-center">档案馆</a>
+              <a href="/browse/?time=0" class="text-base font-medium text-gray-700 text-center"
                 >时间机器</a
               >
-              <a href="./download" class="text-base font-medium text-gray-700 text-center"
-                >下载</a
-              >
+              <a href="/download/" class="text-base font-medium text-gray-700 text-center">下载</a>
               <a
                 href="https://eminent-knife-7e7.notion.site/150710e8b10645a3ae199911cf332549"
                 class="text-base font-medium text-gray-700 text-center">幕后故事</a
