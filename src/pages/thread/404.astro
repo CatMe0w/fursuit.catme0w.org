@@ -1,0 +1,49 @@
+---
+import ArchiveLayout from "../../layouts/ArchiveLayout.astro";
+import Sidebar from "../../components/Sidebar.astro";
+import SearchBox from "../../components/SearchBox.astro";
+import TimeMachineButton from "../../components/TimeMachineButton.astro";
+import ExternalLinkButton from "../../components/ExternalLinkButton.astro";
+---
+
+<ArchiveLayout title="帖子不存在 - fursuit吧·档案馆与时间机器：为了无法忘却的往事">
+  <div class="bg-gray-50 lg:mx-1 my-2">
+    <div class="shadow lg:rounded bg-white">
+      <div class="p-5 text-center text-gray-600">
+        <p class="text-lg mb-2">帖子不存在</p>
+        <p class="text-sm">该帖子已被百度封禁或作者主动删除，无法复原。</p>
+        <p class="text-sm mt-1">Internet Archive网页存档仍可能保留历史页面。</p>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-container" slot="sidebar">
+    <Sidebar searchOnly>
+      <SearchBox slot="search" placeholder="搜索全吧" />
+    </Sidebar>
+    <Sidebar>
+      <h1 slot="title">到别处看看</h1>
+      <TimeMachineButton currentScope="archive" />
+      <a href="/moderation-logs/post" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded block transition-colors">吧务后台日志</a>
+      <div class="border-2 border-b border-gray-100 my-1"></div>
+      <ExternalLinkButton href="https://tieba.baidu.com/p/">原帖（百度贴吧）</ExternalLinkButton>
+      <ExternalLinkButton href="https://web.archive.org/web/*/https://tieba.baidu.com/p/">原帖（网页存档）</ExternalLinkButton>
+    </Sidebar>
+  </div>
+</ArchiveLayout>
+
+<script>
+  const path = window.location.pathname;
+  const match = path.match(/\/thread\/(\d+)/);
+  if (match) {
+    const threadId = match[1];
+    const links = document.querySelectorAll('#sidebar-container a');
+    links.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href === "https://tieba.baidu.com/p/") {
+        link.setAttribute('href', href + threadId);
+      } else if (href === "https://web.archive.org/web/*/https://tieba.baidu.com/p/") {
+        link.setAttribute('href', href + threadId);
+      }
+    });
+  }
+</script>

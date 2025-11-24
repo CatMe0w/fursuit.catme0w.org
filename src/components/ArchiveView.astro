@@ -1,0 +1,76 @@
+---
+import ArchiveLayout from "../layouts/ArchiveLayout.astro";
+import Pagination from "./Pagination.svelte";
+import Sidebar from "./Sidebar.astro";
+import SearchBox from "./SearchBox.astro";
+import TimeMachineButton from "./TimeMachineButton.astro";
+import ExternalLinkButton from "./ExternalLinkButton.astro";
+import ThreadListItem from "./ThreadListItem.svelte";
+import { getAllThreads, getUserById } from "../lib/data";
+import { paginate } from "../lib/pagination";
+import type { Thread as DataThread, User } from "../lib/data";
+import type { Thread as SvelteThread } from "../lib/types";
+
+interface Props {
+  currentPage: number;
+  title: string;
+}
+
+const { currentPage, title } = Astro.props as Props;
+
+const allThreads = getAllThreads();
+const paginationResult = paginate(allThreads, currentPage);
+
+function mapToSvelteThread(thread: DataThread): SvelteThread {
+  const opUser = thread.op_user_id ? getUserById(thread.op_user_id) || null : null;
+  const lastReplyUser = getUserById(thread.user_id) || null;
+
+  return {
+    id: thread.id,
+    title: thread.title,
+    op_user_id: thread.op_user_id || 0,
+    user_id: thread.user_id,
+    time: thread.time || "",
+    reply_num: thread.reply_num,
+    is_good: thread.is_good,
+    op_post_content: thread.op_post_content || [],
+    op_username: opUser?.username || undefined,
+    op_nickname: opUser?.nickname || undefined,
+    last_reply_username: lastReplyUser?.username || undefined,
+    last_reply_nickname: lastReplyUser?.nickname || undefined,
+  };
+}
+
+const svelteThreads: SvelteThread[] = paginationResult.items.map(mapToSvelteThread);
+---
+
+<ArchiveLayout title={title} description="浏览fursuit吧的所有帖子，包括已删除的内容。">
+  <div id="main-content" class="bg-gray-50 lg:mx-1 my-2">
+    <div class="shadow lg:rounded bg-white">
+      <div id="thread-list" class="grid grid-cols-1">
+        {paginationResult.currentPage !== 1 && (
+          <div class="p-5 border-b border-gray-100 flex justify-end">
+            <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl="/archive" />
+          </div>
+        )}
+        {svelteThreads.map((thread) => <ThreadListItem thread={thread} />)}
+        <div class="flex p-5 justify-end">
+          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl="/archive" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-container" slot="sidebar">
+    <Sidebar searchOnly>
+      <SearchBox slot="search" placeholder="搜索全吧" />
+    </Sidebar>
+    <Sidebar>
+      <h1 slot="title">到别处看看</h1>
+      <TimeMachineButton currentScope="archive" />
+      <a href="/moderation-logs/post" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded block transition-colors">吧务后台日志</a>
+      <div class="border-2 border-b border-gray-100 my-1"></div>
+      <ExternalLinkButton href="https://tieba.baidu.com/f?kw=fursuit">百度贴吧</ExternalLinkButton>
+      <ExternalLinkButton href="https://web.archive.org/web/*/https://tieba.baidu.com/f?kw=fursuit">Internet Archive存档</ExternalLinkButton>
+    </Sidebar>
+  </div>
+</ArchiveLayout>

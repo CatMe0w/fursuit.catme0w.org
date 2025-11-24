@@ -1,0 +1,31 @@
+---
+interface Props {
+  placeholder?: string;
+  action?: string;
+  inputName?: string;
+  value?: string;
+}
+
+const { placeholder = "搜索", action = "/search", inputName = "q", value = "" } = Astro.props;
+
+const [actionPath, queryString] = action.split('?');
+const params = new URLSearchParams(queryString || '');
+const hiddenInputs = Array.from(params.entries());
+---
+
+<form method="get" action={actionPath} class="w-full">
+  {hiddenInputs.map(([name, value]) => (
+    <input type="hidden" name={name} value={value} />
+  ))}
+  <div class="flex flex-row gap-1.5">
+    <input
+      type="search"
+      name={inputName}
+      placeholder={placeholder}
+      value={value}
+      class="flex-1 min-w-0 px-2.5 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+      autocomplete="off"
+    />
+    <button type="submit" class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-1.5 rounded shrink-0 whitespace-nowrap transition-colors cursor-pointer">搜索</button>
+  </div>
+</form>

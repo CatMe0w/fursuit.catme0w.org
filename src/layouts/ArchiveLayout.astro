@@ -1,0 +1,182 @@
+---
+import BaseLayout, { type BackButtonMode } from "./BaseLayout.astro";
+import TimeMachineBackButton from "../components/TimeMachineBackButton.svelte";
+
+interface Props {
+  title: string;
+  description?: string;
+  pageTitle?: string;
+  pageSubtitle?: string;
+  pageTitleLink?: string;
+  backButton?: BackButtonMode;
+}
+
+const {
+  title,
+  description,
+  pageTitle = "档案馆",
+  pageSubtitle = "浏览fursuit吧的所有帖子，包括已删除的内容。",
+  pageTitleLink = "/archive",
+  backButton = "archive", // 默认显示"返回吧首页"
+} = Astro.props;
+
+let finalBackButton: BackButtonMode = backButton;
+
+const currentUrl = Astro.url;
+const pathname = currentUrl.pathname;
+const searchParams = currentUrl.searchParams;
+
+// 档案馆首页，显示"返回项目首页"
+if (pathname === "/archive" && searchParams.toString() === "") {
+  finalBackButton = "home";
+}
+
+// 时间机器页面，为移动端Sidebar按钮使用专属图标
+const isTimeMachine = finalBackButton === "defer";
+---
+
+<BaseLayout title={title} description={description} backButton={finalBackButton}>
+  <slot name="head" slot="head" />
+
+  <div id="everything" class="bg-gray-50 min-h-screen">
+    <header class="bg-white border-b-2 border-gray-100 hidden lg:block">
+      <div class="max-w-5xl mx-auto p-6 mt-12">
+        <div class="mb-12">
+          <h1 class="text-3xl mb-3"><a href={pageTitleLink} class="hover:text-sky-700" id="page-title">{pageTitle}</a></h1>
+          <p id="page-subtitle">{pageSubtitle}</p>
+        </div>
+        <div class="flex flex-row items-baseline gap-2">
+          {
+            finalBackButton === "defer" ? (
+                <span id="back-to-home-link" class="mb-4">&nbsp;</span>
+                <TimeMachineBackButton variant="desktop" client:load />
+            ) : finalBackButton === "archive" ? (
+              <a href="/archive" id="back-to-home-link" class="text-sky-700 hover:underline grow text-left my-2 cursor-pointer">
+                返回吧首页
+              </a>
+            ) : finalBackButton === "home" ? (
+              <a href="/" id="back-to-home-link" class="text-sky-700 hover:underline grow text-left my-2 cursor-pointer">
+                返回项目首页
+              </a>
+            ) : null
+          }
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="flex flex-col lg:flex-row max-w-5xl mx-auto relative">
+        <div class="w-full lg:basis-3/4 lg:order-2">
+          <slot />
+        </div>
+
+        <div
+          id="sidebar-container"
+          class="fixed inset-0 z-50 bg-white/90 backdrop-blur-sm transition-all duration-250 ease-in-out translate-y-12 opacity-0 pointer-events-none lg:static lg:z-auto lg:bg-transparent lg:backdrop-blur-none lg:basis-1/4 lg:max-w-[25%] lg:order-3 lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto"
+        >
+          <div class="h-full overflow-y-auto p-6 lg:h-auto lg:overflow-visible lg:p-0">
+            <slot name="sidebar" />
+            <div class="h-24 lg:hidden"></div>
+          </div>
+
+          <button
+            id="sidebar-close"
+            class="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg lg:hidden z-50 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+          >
+            <span class="sr-only">关闭侧边栏</span>
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <div id="back-to-top-container" class="fixed bottom-4 inset-x-0 z-40 hidden pointer-events-none transition-opacity duration-300 opacity-0">
+      <div class="max-w-5xl mx-auto relative h-0">
+        <button
+          onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+          class="absolute bottom-0 left-[75%] ml-3 bg-blue-600 text-white p-4 rounded-full shadow-lg pointer-events-auto hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer transition-transform"
+          title="回到顶部"
+        >
+          <span class="sr-only">回到顶部</span>
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <button
+      id="sidebar-toggle"
+      class="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg lg:hidden z-40 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+    >
+      <span class="sr-only">打开侧边栏</span>
+      {
+        isTimeMachine ? (
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        ) : (
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        )
+      }
+    </button>
+
+    <footer class="h-24 lg:h-8"></footer>
+  </div>
+
+  <script>
+    const toggleSidebar = () => {
+      const sidebar = document.getElementById("sidebar-container");
+      if (sidebar) {
+        sidebar.classList.toggle("translate-y-12");
+        sidebar.classList.toggle("translate-y-0");
+        sidebar.classList.toggle("opacity-0");
+        sidebar.classList.toggle("opacity-100");
+        sidebar.classList.toggle("pointer-events-none");
+        sidebar.classList.toggle("pointer-events-auto");
+
+        if (sidebar.classList.contains("translate-y-0")) {
+          document.body.style.overflow = "hidden";
+        } else {
+          document.body.style.overflow = "";
+        }
+      }
+    };
+
+    document.getElementById("sidebar-toggle")?.addEventListener("click", toggleSidebar);
+    document.getElementById("sidebar-close")?.addEventListener("click", toggleSidebar);
+
+    const backToTopContainer = document.getElementById("back-to-top-container");
+
+    const updateBackToTopVisibility = () => {
+      if (!backToTopContainer) return;
+
+      const scrollY = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+
+      if (isDesktop && scrollY > viewportHeight) {
+        backToTopContainer.classList.remove("hidden");
+        void backToTopContainer.offsetWidth;
+        backToTopContainer.classList.remove("opacity-0");
+        backToTopContainer.classList.add("opacity-100");
+      } else {
+        backToTopContainer.classList.remove("opacity-100");
+        backToTopContainer.classList.add("opacity-0");
+        setTimeout(() => {
+          if (backToTopContainer.classList.contains("opacity-0")) {
+            backToTopContainer.classList.add("hidden");
+          }
+        }, 100);
+      }
+    };
+
+    window.addEventListener("scroll", updateBackToTopVisibility);
+    window.addEventListener("resize", updateBackToTopVisibility);
+    updateBackToTopVisibility();
+  </script>
+</BaseLayout>

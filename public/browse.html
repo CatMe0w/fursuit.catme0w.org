@@ -1,109 +1,597 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>正在跳转...</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f3f4f6;
+      }
+      .loading {
+        text-align: center;
+        color: #6b7280;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loading">
+      <p>正在跳转...</p>
+    </div>
 
-<head>
-  <title>正在加载 - fursuit吧·档案馆与时间机器：为了无法忘却的往事</title>
-  <meta charset='utf-8'>
-  <meta name='viewport' content='width=device-width,initial-scale=1'>
-  <link rel='stylesheet' href='./build/bundle.css'>
-  <script defer src='./build/bundle.js'></script>
-</head>
+    <script>
+      // 兼容旧参数并重定向到新 URL
 
-<body>
-  <div id="everything" class="bg-gray-50 min-h-screen">
-    <header class="bg-white">
-      <div class="max-w-5xl mx-auto">
-        <header id="navbar"
-          class="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
-          <div class="hidden md:flex justify-start lg:w-0 lg:flex-1"></div>
-          <nav class="hidden md:flex space-x-10">
-            <a href="./index.html" class="text-base font-medium text-gray-500 hover:text-gray-900">首页</a>
-            <a href="./browse.html" class="text-base font-medium text-gray-500 hover:text-gray-900">档案馆</a>
-            <a href="./browse.html?time=0" class="text-base font-medium text-gray-500 hover:text-gray-900">时间机器</a>
-            <a href="./download.html" class="text-base font-medium text-gray-500 hover:text-gray-900">下载</a>
-            <a href="https://eminent-knife-7e7.notion.site/150710e8b10645a3ae199911cf332549"
-              class="text-base font-medium text-gray-500 hover:text-gray-900">幕后故事</a>
-          </nav>
-          <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-            <a href="https://catme0w.org"
-              class="text-base font-medium text-gray-500 hover:text-gray-900">catme0w.org</a>
-          </div>
-          <div class="md:hidden ml-auto mr-2 -my-4">
-            <button type="button" onclick="toggle()"
-              class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-500"
-              aria-expanded="false">
-              <span class="sr-only">Open menu</span>
-              <!-- Heroicon name: outline/menu -->
-              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
-          <div id="mobile-nav" class="absolute top-0 inset-x-0 p-2 transition transform origin-top-right hidden">
-            <div class="rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-              <div class="p-5">
-                <div class="flex">
-                  <div class="ml-auto">
-                    <button type="button" onclick="toggle()" class="bg-white text-gray-500">
-                      <span class="sr-only">Close menu</span>
-                      <!-- Heroicon name: outline/x -->
-                      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                <div class="mt-6">
-                  <nav class="grid gap-y-8">
-                    <a href="./index.html" class="text-base font-medium text-gray-700 text-center">首页</a>
-                    <a href="./browse.html" class="text-base font-medium text-gray-700 text-center">档案馆</a>
-                    <a href="./browse.html?time=0" class="text-base font-medium text-gray-700 text-center">时间机器</a>
-                    <a href="./download.html" class="text-base font-medium text-gray-700 text-center">下载</a>
-                    <a href="https://eminent-knife-7e7.notion.site/150710e8b10645a3ae199911cf332549"
-                      class="text-base font-medium text-gray-700 text-center">幕后故事</a>
-                    <a href="https://catme0w.org"
-                      class="text-base font-medium text-gray-700 text-center pt-4 -mt-4 border-t">catme0w.org</a>
-                  </nav>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
-        <main>
-          <div id="omnia-header-placeholder">
-            <header class="p-6 mt-12">
-              <div class="mb-12">
-                <h1 class="text-3xl mb-3">正在加载</h1>
-                <p>最后一块拼图已经拼好。不准偷窥。</p>
-              </div>
-            </header>
-          </div>
-        </main>
-      </div>
-    </header>
-    <main class="border-t-2 border-gray-100">
-      <div class="flex flex-col lg:flex-row max-w-5xl mx-auto">
-        <div id="omnia-main" class="basis-3/4 order-2"></div>
-        <div id="omnia-control-panel" class="basis-1/4 order-1 lg:order-3"></div>
-      </div>
-      <div id="loading-overflow-padding" class="min-h-screen" />
-    </main>
-    <footer class="h-8"></footer>
-  </div>
-</body>
+      // 转换旧时间格式（"YYYY-MM-DD HH:MM:SS"）为短格式（"YYYYMMDD-HHMMSS"）
+      function toCompactTime(standard) {
+        const match = standard.match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/);
+        if (!match) {
+          return null;
+        }
+        const [, year, month, day, hour, minute, second] = match;
+        return `${year}${month}${day}-${hour}${minute}${second}`;
+      }
 
-<script>
-  const toggle = () => {
-    let mobileNav = document.getElementById("mobile-nav");
-    if (mobileNav.style.display !== "block") {
-      mobileNav.style.display = "block";
-    } else {
-      mobileNav.style.display = "none";
-    }
-  }
-</script>
+      function isValidCompactTime(compact) {
+        return /^\d{8}-\d{6}$/.test(compact);
+      }
 
+      // 重制版不直接支持用户名检索；只有这一批用户名需要映射
+      const usernameIdMap = {
+        "05143460281": 143198443,
+        "0飘过小童鞋": 989159177,
+        "1056349271Z485": 3288729042,
+        "111111abc22222": 899399504,
+        11599728: 105989327,
+        121167574: 91261799,
+        "13937441570zhy": 1068445277,
+        1627249632: 448465492,
+        "21MistletoeGl4": 3288733782,
+        335988317: 107138380,
+        "340224254z3": 3288690071,
+        "45782leo": 3021570836,
+        "55258525801tJe": 3288720896,
+        619030781: 167545937,
+        834240419: 386950759,
+        "9945ad45": 210340069,
+        "9U49": 3288736623,
+        "9组Eric": 819002665,
+        AWP的灵魂: 67527962,
+        AbramsDragon: 142661247,
+        Alan_爱恋858: 3288682434,
+        Alex墨瑟SLD: 767887113,
+        Amon_兔狼: 1186930032,
+        A小咪V: 749315236,
+        BUGMONSTER: 1720203377,
+        Benson259: 572804854,
+        CIA贪狼: 2478563498,
+        C_C小纸箱: 1262400104,
+        Cos爱萌: 781247204,
+        C浦乔Z贝枚: 3249632563,
+        DDRzss: 1370837404,
+        DJVIDSFS: 1945354744,
+        Dodypop: 2040272924,
+        Dread丶影子9w1: 3288610967,
+        Fenrir_Loki: 935558387,
+        FurryZcc: 2109375886,
+        "GDI·突击队员": 235795151,
+        Galaxy暗夜狼王: 2735013445,
+        Gienr_: 1698240975,
+        Glow_炎爪: 1092681533,
+        HomelessFoxy: 2432691673,
+        I刚刚开始玩I: 1364078903,
+        JohnLou199871: 911432811,
+        LZ全家炸了: 1593101821,
+        Linda940313: 3418074509,
+        MIKU酱O1: 532669139,
+        May灬凋零: 763055368,
+        Monster_皇帝: 1143836714,
+        Morning丶小猫: 929624793,
+        Nike白大人: 2252853540,
+        Onion大葱子: 3149637093,
+        PAILhg: 389588008,
+        Pere_grin_E: 787704575,
+        Prodigal灬C: 814589969,
+        QJin天下3A44: 3288611638,
+        RuleBreake: 777063089,
+        ShowAndNiceZb: 3288705109,
+        SnowWolfXV: 995768897,
+        Snowheart_: 970384841,
+        TSG_时空团: 2799296288,
+        The邦尼: 1760792026,
+        Toby2004双鱼: 919265658,
+        Toothygo: 1360761721,
+        Tugger: 33164179,
+        VEAS大威斯: 2895360778,
+        White_无亦: 554571773,
+        Wlex2: 1582516968,
+        XD螺丝刀: 475425885,
+        Yaye丶L3: 3288684870,
+        Yueyarer: 916981277,
+        Z肿低X氖房: 3249550356,
+        __DOLCE__: 619791374,
+        ___米粒果粒: 955775316,
+        _呆萌_: 599127231,
+        _梦幻战龙: 910855581,
+        _蓝洋: 1060930879,
+        a13075252347: 2858051313,
+        a153446699: 2760552185,
+        a5348453hB82: 3288615139,
+        aa1016643441: 787787815,
+        abnerwolf: 1864468362,
+        cartucy: 192397373,
+        cheche005: 218025316,
+        cyansky2010: 200749799,
+        c七日花: 1353301666,
+        dingz_丁丁鼠: 603042840,
+        dreamDragon3: 675706304,
+        dsa6251569: 264749831,
+        dsassssao: 944317623,
+        epie阿派: 1219547434,
+        facwar: 665436367,
+        fawerel: 1587749174,
+        fei2007002: 56130150,
+        fly血月狼族: 800181177,
+        free鄞忆安: 2923696882,
+        fufvjfuPK66: 3288651209,
+        fursuit点名册: 622912409,
+        go回忆丶亦成曲: 1071825160,
+        gyicfghhWP: 3288665096,
+        handsome酷杰: 2656026532,
+        havik小兽: 967836659,
+        hhmxie: 14418690,
+        hycyfg: 1560352631,
+        inuyasha123431: 238371524,
+        ivearylikewolf: 1069624500,
+        jj901000299: 157426140,
+        kk939239467: 147604379,
+        kogenta: 293639624,
+        lavmk: 3246637449,
+        likezentai555: 1329011026,
+        luminary1993: 896741368,
+        mapusaurus: 1082961295,
+        minecraft600: 1593871922,
+        okEXO22: 1085612868,
+        p13604520465: 165257037,
+        slough崽叫沼泽: 1844118950,
+        songku12: 441811083,
+        stitch626zc: 749171548,
+        sunkaicong1: 907296780,
+        tanyuhanqq: 853764866,
+        thc1988308fK: 3288740293,
+        toy108: 14666411,
+        vtti3F: 3288614511,
+        wheat麦尔: 2972640133,
+        wsqsn1993: 819787980,
+        xiaoshanke77: 3208392965,
+        yangzelei888: 140128770,
+        year佟光赫: 2923571601,
+        yoshikawayoi: 815285558,
+        z9410102007: 160899210,
+        zartpro: 1077673993,
+        zhangcaihong57: 870353577,
+        zqlzq777: 57524527,
+        zz845265: 916081266,
+        zzk342481486: 663953251,
+        "¤熊猫¤": 92820816,
+        "————趴": 265983444,
+        "‖暗夜の狼‖": 165250029,
+        "★星幂丶Star☆": 508135372,
+        一人人的过生活: 2853903343,
+        一條雞毛: 248476169,
+        一生求虎子: 602065216,
+        上古神聖巨龍: 161918132,
+        上次的Husky: 630356786,
+        不懂装懂Vu: 3288716484,
+        世界雨季: 1436276978,
+        丢蘑菇的小莫: 1071356562,
+        "丧☆狼": 189318162,
+        丶So丶挥霍HB: 3288633746,
+        丶宁小安kk88: 3288676518,
+        丶花之隐逸者Z7: 3288688825,
+        丿Core灬纳尼Aw: 3288689031,
+        乐天BNW: 1270530995,
+        乐白汪: 2586571721,
+        九尾乐园: 948660119,
+        九尾雪狐__: 153509870,
+        九条鲤鱼150AI: 3288709027,
+        乱世佳人v8Z5: 3288706420,
+        二硕男Fan87: 3288692681,
+        云端无碍1J20: 3288615109,
+        人冥吊丝格瓦拉: 728217889,
+        什么的不重要: 1066204510,
+        什么都看看0一0: 813435503,
+        以何为始Vh: 3288681482,
+        伊格洛斯格朗特: 1278771533,
+        何以人生默5L: 3288658636,
+        你离了婚qJ: 3288706426,
+        佳佳10月10日: 1992025003,
+        傲世丶丨天成: 2740379524,
+        傳說嘟媞徦: 457534125,
+        儒雅的姜雅容: 3159511862,
+        克鲁尔暗龙: 822087309,
+        內褲小超人5O55: 3288668092,
+        八神虎影: 818605651,
+        公秋彤go: 2923634412,
+        兰陵timeTz22: 3288614321,
+        兽丶宝: 556734466,
+        兽人佐助: 1403162239,
+        兽兽aright: 897404177,
+        兽装yiff小助手: 1968838413,
+        兽装中国: 1161174132,
+        冀哥哥呀: 1862900858,
+        冥界之黑龙: 739312746,
+        冰月风逝: 809900188,
+        凌初夏abc: 2923511646,
+        几节课的岁月: 1390414685,
+        刘小奇farke: 2869035971,
+        初琰琬: 3007667560,
+        勿施不欲: 153886857,
+        北方如期: 3253890577,
+        北漂小新星: 1419623255,
+        卍时空: 980599464,
+        单只信差Du9: 3288614281,
+        南宫小泷8J: 3288746499,
+        卜易槐狮子: 3007665036,
+        叁犬: 1965109293,
+        双子白狼王洛基: 2321096387,
+        双生子_唐迹影: 595507562,
+        台馨欣sunny: 3153740905,
+        吴大筠: 2995928487,
+        吾乃防御狼是也: 817447425,
+        吾名洛华: 864522923,
+        吾家虚竹15: 3288728208,
+        呵呵啦啦啦love: 1097111066,
+        呵呵我是叼丝: 1303643872,
+        咎德华earth: 3153673167,
+        咚咚恰恰: 132411636,
+        哆拉铜锣烧: 98911781,
+        哼唧哼唧good: 963107465,
+        啊峥诶iK: 3288717344,
+        善良的柯以柳: 3153772717,
+        善解人衣de东方: 3150250080,
+        喵了个咪的咸鱼: 1483334470,
+        喵小糖er: 3951314839,
+        喷漆先锋: 1773066081,
+        嗷呜0502: 1417003818,
+        回想的那年我们: 2132892869,
+        圣星瞾威: 929918145,
+        夏目爱妻无悔: 3288733875,
+        外星的傻猫酱: 870492517,
+        夜之夜煞: 1092987855,
+        夜瞑酃: 1922569408,
+        夜翼雷克斯: 877149921,
+        夜阑雨听风丶: 722113669,
+        大地隆子闯天涯: 3238825000,
+        大岛獸彦: 720317584,
+        大白龙: 17059925,
+        大白龙一只: 832371751,
+        大行娃娃: 274868309,
+        天了噜天了噜噜: 1134775188,
+        天人指示: 561031375,
+        天橋明月夜h77: 3288687925,
+        天空蓝魔7: 1579758341,
+        天蝎娄含双: 2923668207,
+        失忆FAEWW: 664871952,
+        奇狼子: 106368829,
+        女人床男人睡睡: 899894527,
+        妖狐599: 2980246186,
+        始信鸿双子: 3007697196,
+        孙卡米: 321171787,
+        孵化中的蛋蛋: 2382395762,
+        寂寞的无药可救: 876725241,
+        寻天AE: 926116060,
+        寻找兽装制作: 1635385713,
+        小_方_块: 187812870,
+        小周Alice: 166272852,
+        小枪小闹: 1311715384,
+        小狈小狼: 664376276,
+        小狼n: 18950525,
+        小狼好乖哦: 1581557083,
+        小黑是小黑猫: 2017977400,
+        屠玛丽是我: 3167939744,
+        山后的妖怪: 2976962930,
+        布丁灬君丿: 1320329449,
+        布克电脑: 1486702996,
+        幻想奇妙世界: 953201944,
+        幻想的小兽: 1118739638,
+        幼之凤凰: 698718114,
+        康纳的小斧头: 1140272772,
+        庸愿Uv3: 3288673405,
+        延姝艳: 3007568465,
+        开心只是如此cc: 873425506,
+        弟子规2002: 1040463934,
+        忧伤的小赤子: 2234951947,
+        恒大守门员A88: 3288742138,
+        悸时封杏: 882629103,
+        惘_i: 2050418813,
+        我不知取啥名好: 1449500123,
+        我为什么在墙上: 796780936,
+        我是光源阿5x8: 3288631465,
+        我爱卡卡虎: 888597466,
+        我爱柯南88: 780203001,
+        我爱罗是杀戮: 882101251,
+        我的世界大神哥: 1134754034,
+        我的世界迷nice: 1050639465,
+        我的外号叫小C: 1098033746,
+        我真没有性奴3T: 3288705104,
+        戴礼帽de蛇: 561669772,
+        扌空: 153507806,
+        折耳猫O: 650789206,
+        捂眼也看异世界: 812355789,
+        提泽娜Tizona: 3379546282,
+        摩羯小修斯: 885534629,
+        摩羯小卡猫: 3436325175,
+        撩狼鬼噬: 75182608,
+        撸不死的小辉: 1456410818,
+        擒神xS345: 3288710915,
+        旋风银狼520: 2860076934,
+        无极气动山河: 4121585047,
+        无极限870: 580268091,
+        无聊的__家伙: 649887305,
+        时空小伤口0j: 3288718650,
+        星守望之犬: 1434798362,
+        星宿丁春秋: 126697568,
+        星沫沫仔: 3538528283,
+        星空下的蒙牛: 1510547089,
+        最爱开户行v9: 3288684498,
+        期待萌爱: 878379522,
+        期望的人0_0: 142522562,
+        未来圣翼: 2068686198,
+        李什么1981: 251356823,
+        来来来baby: 693688696,
+        来自明: 2923569808,
+        東方歐派鄉: 1340023576,
+        极天光羽gk1: 3288669778,
+        枫叶林13h: 1148178638,
+        枫雨中的孤狼: 163473744,
+        柏油和马路: 2080753640,
+        桃李无言4: 792842087,
+        桥童欣: 3420903823,
+        梦幻与我: 63653485,
+        榊辷樣啲狼: 394448434,
+        欧洲正宗: 1342532342,
+        死亡之狼9: 899244872,
+        死亡哨兵之殇: 817359936,
+        残狐曼果: 1556003655,
+        殷桃筱丸子: 1036981349,
+        毒牙巨蟒1: 1843959007,
+        比比酷BBK: 127409494,
+        毛小乐: 3876243,
+        永正谊enjoy: 3007568736,
+        汤圆傻叼o668: 3288687457,
+        沃夫伦: 913393096,
+        活宝义新曦: 3007536911,
+        浅墨865: 1074772334,
+        深蓝与上官云儿: 1277684528,
+        混血狼狗: 18086197,
+        渣渣给爷笑一个: 906954362,
+        湖师杜嘟嘟R7: 3288629450,
+        火叶羽: 310183958,
+        火神丷大我丶: 1206687120,
+        灬扫黄大队长丶: 1570057906,
+        炫_SIRIUS: 889040609,
+        热水壶太V500: 3288685116,
+        爱拍爪爪: 1000469374,
+        牙仔Deranged: 867839763,
+        牛奶没给装: 2015771093,
+        犯二的爱情丶: 1317812062,
+        狂狼大肥: 2952590346,
+        狂神KKL: 916166708,
+        狼妖の夜玲: 255731562,
+        狼族屠宰者: 1067101638,
+        狼界盟主: 712845800,
+        狼神杰迪萨克尔: 124768512,
+        王者的故事操: 722476951,
+        男人Yy300748mv: 3288676076,
+        画坊龙乡: 2096948846,
+        疙瘩哥518: 2098140171,
+        疯狂灬的小兽: 1378534945,
+        病毒小人: 71405267,
+        痛苦沉默v: 851465541,
+        登高孤醉梦琉璃: 1558085101,
+        白灵蝎: 999901837,
+        白牙丨狼犽: 1576763152,
+        白羊灬狼: 1337687284,
+        白虎金龙: 572117561,
+        白魇梦妖: 810326208,
+        盗版Eric: 144661575,
+        真冰块: 2302748391,
+        眼镜猫owo: 1461869133,
+        睡醒的小狼: 207905300,
+        "瞬·水君": 178901007,
+        瞬逝迩伤痛: 182768539,
+        石剑1: 117010309,
+        神圣的恶龙: 800117745,
+        祭煌: 668132891,
+        禹涵亮时代: 2923540547,
+        私_阁下: 701259316,
+        粉红の球: 275666115,
+        納米系串: 887026567,
+        素颜Aq12Z: 3288722150,
+        红太狼的红太狼: 278858558,
+        红颜祸水丶貂蝉: 1202519279,
+        纳尼乐: 568951444,
+        织田信熊的野望: 1146913587,
+        给你过分发个: 1248381940,
+        绯闻碍眼400: 3288640433,
+        网络笑答: 157621149,
+        罗呀呃: 1598699981,
+        老山羊house: 748957484,
+        聆听菱汀5L0: 3288700777,
+        胡魏15286: 1603789473,
+        腾代天的海角: 3007571865,
+        舒扒皮2: 772504530,
+        艹zh灬松鼠: 988727222,
+        节操掉地上了3: 1418692839,
+        芬静琳YW: 3288742516,
+        苍冥悠空: 2770297246,
+        苍沛儿time: 2923668696,
+        苍痕葬骨: 2813965834,
+        苏联号战列舰: 1042896492,
+        荣耀之狮一圣星: 865582141,
+        菱角兽设: 802314676,
+        萌萌哒小狼妖: 1410395737,
+        蓝装备123: 1080429306,
+        蔼洛夫家族: 211790713,
+        虎蜀黍丶: 1096337516,
+        虽Xw6: 3288657565,
+        蛋包圆: 129333016,
+        血月零: 323277509,
+        被神抛弃的孩9: 837116081,
+        西伯利亚变异狼: 704455167,
+        观三道: 2773690620,
+        訾慕蕊happy: 3153669020,
+        誰先認真誰先輸: 686576016,
+        讲相声的: 1058664202,
+        请_叫我轩轩: 782380630,
+        请叫我小灵兔: 802198758,
+        诺诺的小草: 378947322,
+        谁破处男的处: 1884418429,
+        豌豆荚吧天真: 983113642,
+        贪狼战绩: 954333598,
+        贫道法号_老衲: 2018628707,
+        购物中心老师: 410338410,
+        贴吧吧主小管家: 167570067,
+        赤井侦: 586794272,
+        赤河天冰: 5762685044,
+        赤潮中的夕阳: 1180020908,
+        赤那之火: 974864369,
+        越夜越美丽丶aY: 3288676498,
+        辣个逗比居然: 1315052566,
+        迪莫迪莫: 920626915,
+        逍遥小猿: 2342672423,
+        逝语葬: 899004464,
+        那件大衣别跑呀: 1555207267,
+        邹小兽兽: 1756195439,
+        郑氏大神: 1107975396,
+        金豆子98: 143656167,
+        钢链飞龙: 66847464,
+        阳光人间走2Fq7: 3288729025,
+        陌路De羽殇jX: 3288730905,
+        陶瓷义齿: 739484535,
+        隔壁老七五: 1430989749,
+        雪中的兔砸: 2342165884,
+        雪风的雷酱: 2757658421,
+        雷好伊: 833218984,
+        雾海箎: 1442804990,
+        非実体狼: 451444400,
+        飞翼家族紫翼: 1812216728,
+        饭堂给他: 2739333221,
+        骨头才是全部: 859277736,
+        鬼喵喵之瞳: 526010168,
+        魁拔20020402: 1330405340,
+        魔卍瞳: 1457604052,
+        魔影黑翼: 812058744,
+        魔狼雷欧姆: 1328153056,
+        鲁智深爱兽装: 912866483,
+        麦仁粥windy: 911821711,
+        麻瓜大本营: 1310351750,
+        黑榜醉雨: 148379127,
+        黑猫夜煞: 857993414,
+        黓羽: 369909098,
+        龍神44: 1638696354,
+        龙笑九天LXJT: 960174941,
+      };
+
+      function redirect() {
+        const params = new URLSearchParams(window.location.search);
+
+        // 提取参数
+        const t = params.get("t"); // thread id
+        const u = params.get("u"); // user type
+        const c = params.get("c"); // user "clue"?
+        const p = params.get("p"); // page
+        const time = params.get("time"); // time machine
+        const a = params.get("a"); // moderation logs (formerly "admin logs")
+        const s = params.get("s"); // search
+
+        let newUrl = "/archive"; // 默认fallback
+
+        try {
+          // 处理时间参数
+          let timeParam = null;
+          // time=0表示时间机器的“默认”目标，重制版中的等价操作为不带time参数
+          if (time && time !== "0") {
+            const decodedTime = decodeURIComponent(time);
+            const compactTime = toCompactTime(decodedTime);
+            if (compactTime && isValidCompactTime(compactTime)) {
+              timeParam = compactTime;
+            }
+          }
+
+          // 1. Moderation logs
+          if (a) {
+            const validTypes = ["post", "user", "bawu"];
+            if (validTypes.includes(a)) {
+              newUrl = p && p !== "1" ? `/moderation-logs/${a}/${p}` : `/moderation-logs/${a}`;
+            }
+          }
+          // 2. Search
+          else if (s) {
+            newUrl = `/search?q=${encodeURIComponent(s)}`;
+            if (timeParam) {
+              newUrl += `&time=${timeParam}`;
+            }
+          }
+          // 3. Thread view
+          else if (t) {
+            if (timeParam) {
+              newUrl = `/time-machine?time=${timeParam}&thread=${t}`;
+              if (p && p !== "1") {
+                newUrl += `&page=${p}`;
+              }
+            } else {
+              newUrl = p && p !== "1" ? `/thread/${t}/${p}` : `/thread/${t}`;
+            }
+          }
+          // 4. User view
+          else if (u && c) {
+            let userId = null;
+
+            if (u === "user_id") {
+              userId = parseInt(c);
+            } else if (u === "username") {
+              // 查询映射表
+              userId = usernameIdMap[c] || null;
+            }
+            // nickname和avatar不支持，userId保持null
+
+            if (userId) {
+              if (timeParam) {
+                newUrl = `/time-machine?time=${timeParam}&user=${userId}`;
+                if (p && p !== "1") {
+                  newUrl += `&page=${p}`;
+                }
+              } else {
+                newUrl = p && p !== "1" ? `/user/${userId}/${p}` : `/user/${userId}`;
+              }
+            }
+          }
+          // 5. Archive / Time machine
+          else if (timeParam) {
+            newUrl = `/time-machine?time=${timeParam}`;
+            if (p && p !== "1") {
+              newUrl += `&page=${p}`;
+            }
+          } else if (p) {
+            newUrl = p !== "1" ? `/archive/${p}` : "/archive";
+          }
+        } catch (error) {
+          console.error("Redirect error:", error);
+          newUrl = "/archive";
+        }
+
+        window.location.replace(newUrl);
+      }
+
+      redirect();
+    </script>
+  </body>
 </html>

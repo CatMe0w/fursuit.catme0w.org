@@ -1,0 +1,91 @@
+---
+import ArchiveLayout from "../layouts/ArchiveLayout.astro";
+import Pagination from "./Pagination.svelte";
+import Sidebar from "./Sidebar.astro";
+import SearchBox from "./SearchBox.astro";
+import ModerationLogItem from "./ModerationLogItem.svelte";
+import { getModerationLogsByCategory } from "../lib/data";
+import { paginate, ITEMS_PER_PAGE } from "../lib/pagination";
+import type { ModerationLog } from "../lib/data";
+import type { SearchResult } from "../lib/types";
+
+interface Props {
+  category: "post" | "user" | "bawu";
+  currentPage: number;
+}
+
+const { category, currentPage } = Astro.props as Props;
+
+const validCategories = ["post", "user", "bawu"] as const;
+if (!validCategories.includes(category)) {
+  throw new Error("Invalid moderation logs category");
+}
+
+const allLogs: ModerationLog[] = getModerationLogsByCategory(category);
+const paginationResult = paginate(allLogs, currentPage, ITEMS_PER_PAGE);
+
+function getBaseUrl(cat: string) {
+  return `/moderation-logs/${cat}`;
+}
+function getCategoryUrl(cat: string) {
+  return `/moderation-logs/${cat}`;
+}
+
+function mapLogToSearchResult(log: ModerationLog, category: string): SearchResult {
+  return {
+    thread_id: log.thread_id,
+    post_id: log.post_id,
+    comment_id: null,
+    result_type: category === "post" ? "moderation_post" : category === "user" ? "moderation_user" : "moderation_bawu",
+    time: log.operation_time,
+    user_id: null,
+    title: log.title,
+    floor: null,
+    content_json: null,
+    operation: log.operation,
+    operator: log.operator,
+    username: log.username,
+    nickname: null,
+    content_preview: log.content_preview,
+    media: log.media,
+    post_time: log.post_time,
+    duration: log.duration,
+    operator_id: log.operator_id,
+    target_user_id: log.target_user_id,
+  };
+}
+
+const pageTitle = `吧务后台日志 - fursuit吧·档案馆与时间机器：为了无法忘却的往事`;
+---
+
+<ArchiveLayout title={pageTitle} description="查看吧务操作记录，包括删贴、封禁等。">
+  <div class="bg-gray-50 lg:mx-1 my-2">
+    <div class="shadow lg:rounded bg-white">
+      <div class="grid grid-cols-1">
+        <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
+          <div>
+            <span class={(category === "post" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "mr-2 px-1 pb-1"}
+              ><a href={getCategoryUrl("post")}>帖子</a></span
+            >
+            <span class={(category === "user" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "mr-2 px-1 pb-1"}
+              ><a href={getCategoryUrl("user")}>用户</a></span
+            >
+            <span class={(category === "bawu" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "px-1 pb-1"}
+              ><a href={getCategoryUrl("bawu")}>吧务</a></span
+            >
+          </div>
+          <div class="hidden lg:block">
+            <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={getBaseUrl(category)} />
+          </div>
+        </div>
+        {paginationResult.items.map((log) => <ModerationLogItem item={mapLogToSearchResult(log, category)} />)}
+        <div class="flex p-5 justify-end">
+          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={getBaseUrl(category)} />
+        </div>
+      </div>
+    </div>
+  </div>
+  <Sidebar slot="sidebar" searchOnly>
+    <SearchBox slot="search" placeholder="搜索操作记录" action="/search?scope=moderation" />
+  </Sidebar>
+</ArchiveLayout>

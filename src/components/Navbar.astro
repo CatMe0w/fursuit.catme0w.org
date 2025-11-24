@@ -1,0 +1,115 @@
+---
+import type { BackButtonMode } from "../layouts/BaseLayout.astro";
+import TimeMachineBackButton from "./TimeMachineBackButton.svelte";
+
+interface Props {
+  backButton?: BackButtonMode;
+}
+
+const { backButton = 'none' } = Astro.props;
+---
+
+<header id="navbar" class="max-w-5xl mx-auto bg-white flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start">
+  <div class="md:hidden ml-2 -my-4 flex items-center gap-3">
+    {
+      backButton === 'defer' ? (
+        <>
+          <span id="navbar-back-icon">&nbsp;</span>
+          <span id="navbar-back-text">&nbsp;</span>
+          <TimeMachineBackButton variant="mobile-icon" client:load />
+          <TimeMachineBackButton variant="mobile-text" client:load />
+        </>
+      ) : backButton === 'archive' ? (
+        <>
+          <a type="button" href="/archive" id="navbar-back-icon" class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 cursor-pointer">
+            <span class="sr-only">返回吧首页</span>
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          </a>
+          <a href="/archive" id="navbar-back-text" class="text-lg text-gray-700">
+            返回吧首页
+          </a>
+        </>
+      ) : backButton === 'home' ? (
+        <>
+          <a type="button" href="/" id="navbar-back-icon" class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 cursor-pointer">
+            <span class="sr-only">返回项目首页</span>
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          </a>
+          <a href="/" id="navbar-back-text" class="text-lg text-gray-700">
+            返回项目首页
+          </a>
+        </>
+      ) : null
+    }
+  </div>
+  <div class="hidden md:flex justify-start lg:w-0 lg:flex-1"></div>
+  <nav class="hidden md:flex space-x-10">
+    <a href="/" class="text-gray-500 hover:text-gray-900"> 首页 </a>
+    <a href="/archive" class="text-gray-500 hover:text-gray-900"> 档案馆 </a>
+    <a href="/time-machine" class="text-gray-500 hover:text-gray-900"> 时间机器 </a>
+    <a href="/download" class="text-gray-500 hover:text-gray-900"> 下载 </a>
+    <a href="https://catme0w.org/zh-cn/behind-the-scenes/creatio-ex-nihilo/" target="_blank" class="text-gray-500 hover:text-gray-900">
+      幕后故事
+    </a>
+  </nav>
+  <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
+    <a href="https://catme0w.org" class="text-gray-500 hover:text-gray-900"> catme0w.org </a>
+  </div>
+  <div class="md:hidden ml-auto mr-2 -my-4">
+    <button type="button" id="mobile-menu-toggle" class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-500 cursor-pointer" aria-expanded="false">
+      <span class="sr-only">打开菜单</span>
+      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+  </div>
+  <div id="mobile-nav" class="absolute top-0 inset-x-0 p-2 z-50 transition-all duration-250 ease-in-out -translate-y-12 opacity-0 pointer-events-none">
+    <div class="rounded-lg shadow-lg bg-white ring-1 ring-black/5 relative">
+      <div class="p-5">
+        <div class="absolute top-2 right-2">
+          <button
+            type="button"
+            id="mobile-menu-close"
+            class="bg-white text-gray-500 p-2 rounded-md inline-flex items-center justify-center hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 cursor-pointer"
+          >
+            <span class="sr-only">关闭菜单</span>
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <nav class="grid gap-y-8">
+          <a href="/" class="text-gray-700 text-center"> 首页 </a>
+          <a href="/archive" class="text-gray-700 text-center"> 档案馆 </a>
+          <a href="/time-machine" class="text-gray-700 text-center"> 时间机器 </a>
+          <a href="/download" class="text-gray-700 text-center"> 下载 </a>
+          <a href="https://catme0w.org/zh-cn/behind-the-scenes/creatio-ex-nihilo/" target="_blank" class="text-gray-700 text-center">
+            幕后故事
+          </a>
+          <a href="https://catme0w.org" class="text-gray-700 text-center pt-4 -mt-4 border-t border-gray-200"> catme0w.org </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  const toggleMobileMenu = () => {
+    const mobileNav = document.getElementById("mobile-nav");
+    if (mobileNav) {
+      mobileNav.classList.toggle("-translate-y-12");
+      mobileNav.classList.toggle("translate-y-0");
+      mobileNav.classList.toggle("opacity-0");
+      mobileNav.classList.toggle("opacity-100");
+      mobileNav.classList.toggle("pointer-events-none");
+      mobileNav.classList.toggle("pointer-events-auto");
+    }
+  };
+
+  document.getElementById("mobile-menu-toggle")?.addEventListener("click", toggleMobileMenu);
+  document.getElementById("mobile-menu-close")?.addEventListener("click", toggleMobileMenu);
+</script>

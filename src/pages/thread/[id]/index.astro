@@ -1,0 +1,21 @@
+---
+import ThreadView from "../../../components/ThreadView.astro";
+import { getThreadById } from "../../../lib/data";
+
+export async function getStaticPaths() {
+  const { getAllThreads } = await import("../../../lib/data");
+  const allThreads = getAllThreads();
+
+  return allThreads.map((thread) => ({
+    params: { id: thread.id.toString() },
+  }));
+}
+
+const { id } = Astro.params;
+const threadId = parseInt(id!);
+
+const thread = getThreadById(threadId);
+if (!thread) return Astro.redirect("/404");
+---
+
+<ThreadView thread={thread} threadId={threadId} currentPage={1} title={`${thread.title} - fursuit吧·档案馆与时间机器：为了无法忘却的往事`} />

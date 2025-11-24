@@ -1,0 +1,69 @@
+---
+import ArchiveLayout from "../layouts/ArchiveLayout.astro";
+import Sidebar from "../components/Sidebar.astro";
+import SearchBox from "../components/SearchBox.astro";
+import TimeMachineApp from "../components/TimeMachineApp.svelte";
+import TimeMachineControls from "../components/TimeMachineControls.svelte";
+import TimeMachineSidebarLinks from "../components/TimeMachineSidebarLinks.svelte";
+
+const title = "时间机器 - fursuit吧·档案馆与时间机器：为了无法忘却的往事";
+const description = "回到过去，见证fursuit吧在任意时刻的真实面貌。";
+const pageTitle = "时间机器";
+const pageSubtitle = description;
+---
+
+<ArchiveLayout title={title} description={description} pageTitle={pageTitle} pageSubtitle={pageSubtitle} pageTitleLink="/time-machine" backButton="defer">
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+
+  <!-- 主板块占位符 -->
+  <div id="tm-placeholder" class="bg-gray-50 lg:mx-1 my-2">
+    <div class="shadow lg:rounded bg-white min-h-[150vh]"></div>
+  </div>
+
+  <TimeMachineApp client:only="svelte" />
+
+  <div id="sidebar-container" slot="sidebar">
+    <Sidebar searchOnly>
+      <SearchBox slot="search" placeholder="搜索当前时刻" />
+    </Sidebar>
+    
+    <Sidebar>
+      <h1 slot="title">到别处看看</h1>
+      <!-- 侧边栏链接占位符 -->
+      <div class="flex flex-col gap-3">
+        <div id="tm-sidebar-links-placeholder" class="flex flex-col gap-3">
+          <div class="bg-blue-700 text-white px-4 py-1.5 rounded block text-center">&nbsp;</div>
+          <div class="bg-gray-100 text-gray-600 px-4 py-1.5 rounded block text-center">&nbsp;</div>
+          <div class="border-2 border-b border-gray-100 my-1"></div>
+          <div class="bg-gray-100 text-gray-600 px-4 py-1.5 rounded block text-center">&nbsp;</div>
+          <div class="bg-gray-100 text-gray-600 px-4 py-1.5 rounded block text-center">&nbsp;</div>
+        </div>
+        <TimeMachineSidebarLinks client:only="svelte" />
+      </div>
+    </Sidebar>
+
+    <Sidebar>
+      <h1 slot="title">时间机器</h1>
+      <!-- 时间机器控件占位符 -->
+      <div id="tm-controls-placeholder" class="text-center">
+        <div>
+          <p class="mt-1 mb-2">上一次前往的时间</p>
+          <div class="relative inline-block mx-auto">
+            <p class="font-sevenseg text-2xl text-gray-200 whitespace-pre-line select-none">8888-88-88<br />88:88:88</p>
+          </div>
+        </div>
+        <p class="mt-5 mb-2 pt-5 border-t border-gray-200">当前所在时间</p>
+        <div class="relative inline-block mx-auto">
+          <p class="font-sevenseg text-2xl text-gray-200 whitespace-pre-line select-none">8888-88-88<br />88:88:88</p>
+        </div>
+        <p class="mt-5 mb-2 pt-5 border-t border-gray-200">前往下一个时间</p>
+        <div class="flex flex-col items-center">
+          <input class="font-sevenseg text-gray-600 mb-2 text-xl w-full border-2 border-gray-200 hover:border-gray-300 rounded text-center" />
+          <input class="font-sevenseg text-gray-600 text-xl w-full border-2 border-gray-200 hover:border-gray-300 rounded text-center" />
+          <div class="mt-3 bg-blue-700 text-white font-bold px-8 py-1.5 rounded">发射</div>
+        </div>
+      </div>
+      <TimeMachineControls client:only="svelte" />
+    </Sidebar>
+  </div>
+</ArchiveLayout>

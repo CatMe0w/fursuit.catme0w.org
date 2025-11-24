@@ -1,0 +1,12 @@
+---
+import ModerationLogsView from "../../../components/ModerationLogsView.astro";
+
+export async function getStaticPaths() {
+  // 预生成三个类别首页
+  return ["post", "user", "bawu"].map((cat) => ({ params: { category: cat } }));
+}
+
+const { category } = Astro.params as { category: "post" | "user" | "bawu" };
+---
+
+<ModerationLogsView category={category} currentPage={1} />

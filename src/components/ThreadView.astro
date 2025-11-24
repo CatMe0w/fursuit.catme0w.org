@@ -1,0 +1,142 @@
+---
+import ArchiveLayout from "../layouts/ArchiveLayout.astro";
+import Pagination from "./Pagination.svelte";
+import ThreadPost from "./ThreadPost.svelte";
+import Sidebar from "./Sidebar.astro";
+import SearchBox from "./SearchBox.astro";
+import ExternalLinkButton from "./ExternalLinkButton.astro";
+import { getPostsByThreadId, getModerationLogsByThreadId, getCommentsByPostIds, getUsersByIds, getVideoMetadata } from "../lib/data";
+import { paginate } from "../lib/pagination";
+import type { Thread, Post, Comment } from "../lib/data";
+import type { ThreadPost as SvelteThreadPost, ThreadComment as SvelteThreadComment, VideoMetadata } from "../lib/types";
+import TimeMachineButton from "./TimeMachineButton.astro";
+import VandalWarning from "./VandalWarning.svelte";
+import { getYoukuId, getQQVideoId } from "../lib/content-utils";
+
+interface Props {
+  thread: Thread;
+  threadId: number;
+  currentPage: number;
+  title: string;
+}
+
+const { thread, threadId, currentPage, title } = Astro.props as Props;
+
+const allPosts = getPostsByThreadId(threadId);
+const moderationLogs = getModerationLogsByThreadId(threadId);
+const paginationResult = paginate(allPosts, currentPage);
+const paginatedPosts = paginationResult.items;
+
+const postIds = paginatedPosts.map((p) => p.id);
+const commentsMap = getCommentsByPostIds(postIds);
+
+const userIds = new Set<number>();
+paginatedPosts.forEach((p) => userIds.add(p.user_id));
+commentsMap.forEach((comments) => {
+  comments.forEach((c) => userIds.add(c.user_id));
+});
+const usersMap = getUsersByIds(Array.from(userIds));
+
+const videoIds = new Set<string>();
+paginatedPosts.forEach((post) => {
+  post.content?.forEach((item: any) => {
+    if (item.type === "video" && typeof item.content === "string") {
+      const youkuId = getYoukuId(item.content);
+      const qqId = getQQVideoId(item.content);
+      const videoId = youkuId || qqId;
+      if (videoId) videoIds.add(videoId);
+    }
+  });
+});
+
+const videoMetadataMap = new Map<string, VideoMetadata>();
+videoIds.forEach((id) => {
+  const metadata = getVideoMetadata(id);
+  if (metadata) {
+    videoMetadataMap.set(id, metadata);
+  }
+});
+
+function mapCommentToSvelte(comment: Comment): SvelteThreadComment {
+  const user = usersMap.get(comment.user_id);
+  return {
+    id: comment.id,
+    user_id: comment.user_id,
+    content: comment.content || [],
+    time: comment.time,
+    username: user?.username || null,
+    nickname: user?.nickname || null,
+    avatar: user?.avatar || null,
+  };
+}
+
+function mapPostToSvelte(post: Post): SvelteThreadPost {
+  const user = usersMap.get(post.user_id);
+  const comments = commentsMap.get(post.id) || [];
+  return {
+    id: post.id,
+    floor: post.floor,
+    user_id: post.user_id,
+    content: post.content || [],
+    time: post.time,
+    comment_num: post.comment_num,
+    signature: post.signature,
+    tail: post.tail,
+    username: user?.username || null,
+    nickname: user?.nickname || null,
+    avatar: user?.avatar || null,
+    comments: comments.map(mapCommentToSvelte),
+  };
+}
+
+const sveltePosts: SvelteThreadPost[] = paginatedPosts.map(mapPostToSvelte);
+---
+
+<ArchiveLayout title={title} description={`查看帖子：${thread.title}`}>
+  <div class="bg-gray-50 lg:mx-1 my-2">
+    <div class="shadow lg:rounded bg-white">
+      <div class="grid grid-cols-1">
+        <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
+          <p class="truncate">{thread.title}</p>
+          <div class="hidden lg:block">
+            <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/thread/${threadId}`} />
+          </div>
+        </div>
+        {sveltePosts[0].floor === 1 && <VandalWarning userId={thread.user_id} />}
+        {sveltePosts.map((post) => <ThreadPost client:visible post={post} moderationLogs={moderationLogs} videoMetadataMap={videoMetadataMap} />)}
+        <div class="flex p-5 justify-end">
+          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/thread/${threadId}`} />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-container" slot="sidebar">
+    <Sidebar searchOnly>
+      <SearchBox slot="search" placeholder="搜索全吧" />
+    </Sidebar>
+    <Sidebar>
+      <h1 slot="title">到别处看看</h1>
+      <TimeMachineButton currentScope="thread" resourceId={threadId} />
+      <a href="/moderation-logs/post" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded block transition-colors">吧务后台日志</a>
+      <div class="border-2 border-b border-gray-100 my-1"></div>
+      <ExternalLinkButton href={`https://tieba.baidu.com/p/${threadId}`}>原帖（百度贴吧）</ExternalLinkButton>
+      <ExternalLinkButton href={`https://web.archive.org/web/*/https://tieba.baidu.com/p/${threadId}`}>原帖（网页存档）</ExternalLinkButton>
+    </Sidebar>
+  </div>
+</ArchiveLayout>
+
+<script>
+  // 滚动到锚点（如果有）
+  function scrollToHash() {
+    const hash = window.location.hash;
+    if (hash) {
+      const id = hash.substring(1);
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView();
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", scrollToHash);
+</script>
