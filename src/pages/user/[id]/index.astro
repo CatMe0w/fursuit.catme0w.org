@@ -1,0 +1,24 @@
+---
+import UserView from "../../../components/UserView.astro";
+import { getUserById } from "../../../lib/data";
+import { getUserDisplayName } from "../../../lib/content-utils";
+
+export async function getStaticPaths() {
+  const { getAllUserIds } = await import("../../../lib/data");
+  const userIds = getAllUserIds();
+
+  return userIds.map((id) => ({
+    params: { id: id.toString() },
+  }));
+}
+
+const { id } = Astro.params;
+const userId = parseInt(id!);
+
+const user = getUserById(userId);
+if (!user) return Astro.redirect("/404");
+
+const displayName = getUserDisplayName(user);
+---
+
+<UserView user={user} userId={userId} currentPage={1} title={`用户：${displayName} - fursuit吧·档案馆与时间机器：为了无法忘却的往事`} />

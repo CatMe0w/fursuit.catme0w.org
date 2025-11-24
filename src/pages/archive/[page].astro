@@ -1,0 +1,15 @@
+---
+import ArchiveView from "../../components/ArchiveView.astro";
+import { getAllThreads } from "../../lib/data";
+import { parsePageParam, generatePaginationPaths } from "../../lib/pagination";
+
+export async function getStaticPaths() {
+  const allThreads = getAllThreads();
+  return generatePaginationPaths(allThreads.length);
+}
+
+const { page } = Astro.params;
+const currentPage = parsePageParam(page);
+---
+
+<ArchiveView currentPage={currentPage} title={`档案馆 - 第${currentPage}页 - fursuit吧·档案馆与时间机器：为了无法忘却的往事`} />

@@ -1,0 +1,27 @@
+---
+import ArchiveLayout from "../../layouts/ArchiveLayout.astro";
+import Sidebar from "../../components/Sidebar.astro";
+import SearchBox from "../../components/SearchBox.astro";
+import TimeMachineButton from "../../components/TimeMachineButton.astro";
+---
+
+<ArchiveLayout title="用户不存在 - fursuit吧·档案馆与时间机器：为了无法忘却的往事">
+  <div class="bg-gray-50 lg:mx-1 my-2">
+    <div class="shadow lg:rounded bg-white">
+      <div class="p-5 text-center text-gray-600">
+        <p class="text-lg mb-2">用户不存在</p>
+        <p class="text-sm">该用户已被百度封禁或自行注销。</p>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-container" slot="sidebar">
+    <Sidebar searchOnly>
+      <SearchBox slot="search" placeholder="搜索全吧" />
+    </Sidebar>
+    <Sidebar>
+      <h1 slot="title">到别处看看</h1>
+      <TimeMachineButton currentScope="archive" />
+      <a href="/moderation-logs/post" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded block transition-colors">吧务后台日志</a>
+    </Sidebar>
+  </div>
+</ArchiveLayout>

@@ -1,0 +1,86 @@
+---
+import ArchiveLayout from "../layouts/ArchiveLayout.astro";
+import Pagination from "./Pagination.svelte";
+import Sidebar from "./Sidebar.astro";
+import SearchBox from "./SearchBox.astro";
+import ExternalLinkButton from "./ExternalLinkButton.astro";
+import UserHeader from "./UserHeader.svelte";
+import UserRecordItem from "./UserRecordItem.svelte";
+import VandalWarning from "./VandalWarning.svelte";
+import { getUserRecords } from "../lib/data";
+import { paginate } from "../lib/pagination";
+import type { User, UserRecord } from "../lib/data";
+import type { SearchResult, UserInfo } from "../lib/types";
+import TimeMachineButton from "./TimeMachineButton.astro";
+import { getUserDisplayName } from "../lib/content-utils";
+
+interface Props {
+  user: User;
+  userId: number;
+  currentPage: number;
+  title: string;
+}
+
+const { user, userId, currentPage, title } = Astro.props as Props;
+
+// 加载用户记录并分页
+const allRecords = getUserRecords(userId);
+const paginationResult = paginate(allRecords, currentPage, 30);
+
+function mapRecordToSearchResult(record: UserRecord): SearchResult {
+  return {
+    thread_id: record.thread_id,
+    post_id: record.post_id,
+    comment_id: record.comment_id || null,
+    result_type: record.type,
+    time: record.time,
+    user_id: null,
+    title: record.title,
+    floor: record.floor,
+    content_json: record.type === 'comment' ? record.comment_content || [] : record.post_content || [],
+    post_content_json: record.type === 'comment' ? record.post_content || [] : undefined,
+    page: record.page
+  };
+}
+
+const svelteRecords: SearchResult[] = paginationResult.items.map(mapRecordToSearchResult);
+
+const userInfo: UserInfo = {
+  id: user.id,
+  username: user.username,
+  nickname: user.nickname,
+  avatar: user.avatar
+};
+---
+
+<ArchiveLayout title={title} description={`查看用户：${getUserDisplayName(user)}`}>
+  <div class="bg-gray-50 lg:mx-1 my-2">
+    <div class="shadow lg:rounded bg-white">
+      <UserHeader client:load user={userInfo} currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/user/${userId}`} />
+      <VandalWarning userId={userId} />
+      <div class="grid grid-cols-1">
+        {
+          svelteRecords.map((record) => (
+            <UserRecordItem item={record} />
+          ))
+        }
+        <div class="flex p-5 justify-end">
+          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/user/${userId}`} />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-container" slot="sidebar">
+    <Sidebar searchOnly>
+      <SearchBox placeholder="搜索该用户" action={`/search?scope=user&user_id=${userId}`} />
+    </Sidebar>
+    <Sidebar>
+      <h1 slot="title">到别处看看</h1>
+      <TimeMachineButton currentScope="user" resourceId={userId} />
+      <a href="/moderation-logs/post" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded block transition-colors">吧务后台日志</a>
+      <div class="border-2 border-b border-gray-100 my-1"></div>
+      <ExternalLinkButton href={`https://tieba.baidu.com/home/main?id=${user.id}`}>用户页（百度贴吧）</ExternalLinkButton>
+      <ExternalLinkButton href={`https://web.archive.org/web/*/https://tieba.baidu.com/home/main?id=${user.id}`}>用户页（网页存档）</ExternalLinkButton>
+    </Sidebar>
+  </div>
+</ArchiveLayout>

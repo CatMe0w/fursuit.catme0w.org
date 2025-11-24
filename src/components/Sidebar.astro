@@ -1,0 +1,20 @@
+---
+interface Props {
+  searchOnly?: boolean;
+}
+
+const { searchOnly = false } = Astro.props;
+const gapClass = searchOnly ? "" : "gap-5";
+---
+
+<div class={`rounded shadow bg-white mx-2 lg:mx-1 mt-2 mb-0.5`}>
+  <div class={`p-6 flex flex-col ${gapClass}`}>
+    <slot name="search" />
+    <div class="text-xl">
+      <slot name="title" />
+    </div>
+    <div class="text-center flex flex-col gap-3">
+      <slot />
+    </div>
+  </div>
+</div>

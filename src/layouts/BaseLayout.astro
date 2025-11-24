@@ -1,0 +1,30 @@
+---
+import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+
+export type BackButtonMode = 'none' | 'archive' | 'home' | 'defer';
+
+interface Props {
+  title: string;
+  description?: string;
+  backButton?: BackButtonMode;
+}
+
+const { title, description, backButton = 'none' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <slot name="head" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <Navbar backButton={backButton} />
+    <slot />
+  </body>
+</html>

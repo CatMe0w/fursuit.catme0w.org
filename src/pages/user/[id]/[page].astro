@@ -1,0 +1,44 @@
+---
+import UserView from "../../../components/UserView.astro";
+import { getUserById, getUserRecords } from "../../../lib/data";
+import { parsePageParam } from "../../../lib/pagination";
+import { getUserDisplayName } from "../../../lib/content-utils";
+
+export async function getStaticPaths() {
+  const { getAllUserIds, getUserRecords } = await import("../../../lib/data");
+  const userIds = getAllUserIds();
+
+  const paths: Array<{ params: { id: string; page: string } }> = [];
+
+  // 为每个用户计算总页数
+  for (const userId of userIds) {
+    const records = getUserRecords(userId);
+    const totalPages = Math.ceil(records.length / 30);
+
+    // 只为有 >1 页的用户生成第2+页路径
+    if (totalPages > 1) {
+      for (let p = 2; p <= totalPages; p++) {
+        paths.push({ params: { id: userId.toString(), page: p.toString() } });
+      }
+    }
+  }
+
+  return paths;
+}
+
+const { id, page } = Astro.params;
+const userId = parseInt(id!);
+const currentPage = parsePageParam(page);
+
+const user = getUserById(userId);
+if (!user) return Astro.redirect("/404");
+
+const displayName = getUserDisplayName(user);
+---
+
+<UserView
+  user={user}
+  userId={userId}
+  currentPage={currentPage}
+  title={`用户：${displayName} - 第${currentPage}页 - fursuit吧·档案馆与时间机器：为了无法忘却的往事`}
+/>

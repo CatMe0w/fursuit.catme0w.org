@@ -1,0 +1,23 @@
+---
+interface Props {
+  currentScope?: "archive" | "thread" | "user";
+  resourceId?: number;
+}
+
+const { currentScope = "archive", resourceId } = Astro.props as Props;
+
+let timeMachineUrl = `/time-machine`;
+const params: string[] = [];
+
+if (currentScope === "thread" && resourceId) {
+  params.push(`thread=${resourceId}`);
+} else if (currentScope === "user" && resourceId) {
+  params.push(`user=${resourceId}`);
+}
+
+if (params.length > 0) {
+  timeMachineUrl += `?${params.join("&")}`;
+}
+---
+
+<a href={timeMachineUrl} class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-1.5 rounded block text-center transition-colors">切换到时间机器</a>
