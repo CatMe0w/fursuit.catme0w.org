@@ -1,11 +1,9 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
-import initSqlJs, { type Database } from 'sql.js';
-import type { VideoMetadata } from './types';
-
-const DB_VERSION = 'v2';
-const DB_URL = `https://fursuit-static.catme0w.org/db/${DB_VERSION}/vault.db`;
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+import initSqlJs, { type Database } from "sql.js";
+import type { VideoMetadata } from "./types";
+import { DB_URL } from "./dbConfig";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -21,12 +19,12 @@ export interface User {
 export interface Thread {
   id: number;
   title: string;
-  user_id: number;  // 对于列表查询：最后回复的用户ID；对于单个查询：楼主的user_id
+  user_id: number; // 对于列表查询：最后回复的用户ID；对于单个查询：楼主的user_id
   reply_num: number;
   is_good: boolean;
-  op_user_id?: number;  // 楼主的用户ID（仅在列表查询中返回）
-  time?: string;        // 最后回复时间（仅在列表查询中返回）
-  op_post_content?: ContentItem[];  // 1楼内容（仅在列表查询中返回）
+  op_user_id?: number; // 楼主的用户ID（仅在列表查询中返回）
+  time?: string; // 最后回复时间（仅在列表查询中返回）
+  op_post_content?: ContentItem[]; // 1楼内容（仅在列表查询中返回）
 }
 
 export interface ContentItem {
@@ -80,7 +78,7 @@ export interface ModerationLog {
 }
 
 export interface UserRecord {
-  type: 'post' | 'comment';
+  type: "post" | "comment";
   thread_id: number;
   title: string;
   post_id: number;
@@ -118,7 +116,7 @@ async function downloadVaultDb(dbPath: string): Promise<void> {
     writeFileSync(dbPath, uint8Array);
     console.log(`[Data] Downloaded vault.db`);
   } catch (error) {
-    console.error('[Data] Failed to download vault.db:', error);
+    console.error("[Data] Failed to download vault.db:", error);
     throw error;
   }
 }
@@ -131,15 +129,15 @@ async function initDatabase(): Promise<Database> {
     return cachedDb;
   }
 
-  console.log('[Data] Initializing sql.js...');
+  console.log("[Data] Initializing sql.js...");
   const startTime = Date.now();
 
   const SQL = await initSqlJs();
-  const dbPath = join(__dirname, '..', '..', 'data', 'vault.db');
-  
+  const dbPath = join(__dirname, "..", "..", "data", "vault.db");
+
   // 如果数据库文件不存在，尝试下载
   if (!existsSync(dbPath)) {
-    console.log('[Data] vault.db not found locally, attempting to download...');
+    console.log("[Data] vault.db not found locally, attempting to download...");
     await downloadVaultDb(dbPath);
   }
 
@@ -175,10 +173,10 @@ export function getAllThreads(): Thread[] {
 
   const db = cachedDb;
   if (!db) {
-    throw new Error('Database not initialized');
+    throw new Error("Database not initialized");
   }
 
-  console.log('[Data] Querying all threads...');
+  console.log("[Data] Querying all threads...");
   const startTime = Date.now();
 
   // 获取每个帖子的最后回复时间（包括帖子和评论）
@@ -206,7 +204,7 @@ export function getAllThreads(): Thread[] {
     ORDER BY la.time DESC`;
 
   const stmt = db.prepare(sql);
-  stmt.bind(['9999-12-31 23:59:59']);
+  stmt.bind(["9999-12-31 23:59:59"]);
 
   const threads: Thread[] = [];
   while (stmt.step()) {
@@ -219,7 +217,7 @@ export function getAllThreads(): Thread[] {
       time: String(row.time),
       reply_num: Number(row.reply_num),
       is_good: Boolean(row.is_good),
-      op_post_content: parseContent(row.content as string | null)
+      op_post_content: parseContent(row.content as string | null),
     });
   }
   stmt.free();
@@ -239,7 +237,7 @@ export function getThreadById(id: number): Thread | undefined {
   const db = cachedDb;
   if (!db) return undefined;
 
-  const stmt = db.prepare('SELECT * FROM pr_thread WHERE id = ?');
+  const stmt = db.prepare("SELECT * FROM pr_thread WHERE id = ?");
   stmt.bind([id]);
 
   let thread: Thread | undefined;
@@ -250,7 +248,7 @@ export function getThreadById(id: number): Thread | undefined {
       title: String(row.title),
       user_id: Number(row.user_id),
       reply_num: Number(row.reply_num),
-      is_good: Boolean(row.is_good)
+      is_good: Boolean(row.is_good),
     };
   }
   stmt.free();
@@ -265,7 +263,7 @@ export function getPostsByThreadId(threadId: number): Post[] {
   const db = cachedDb;
   if (!db) return [];
 
-  const stmt = db.prepare('SELECT * FROM pr_post WHERE thread_id = ? ORDER BY floor');
+  const stmt = db.prepare("SELECT * FROM pr_post WHERE thread_id = ? ORDER BY floor");
   stmt.bind([threadId]);
 
   const posts: Post[] = [];
@@ -280,7 +278,7 @@ export function getPostsByThreadId(threadId: number): Post[] {
       comment_num: Number(row.comment_num),
       signature: row.signature ? String(row.signature) : null,
       tail: row.tail ? String(row.tail) : null,
-      thread_id: Number(row.thread_id)
+      thread_id: Number(row.thread_id),
     });
   }
   stmt.free();
@@ -295,7 +293,7 @@ export function getUserById(id: number): User | undefined {
   const db = cachedDb;
   if (!db) return undefined;
 
-  const stmt = db.prepare('SELECT * FROM pr_user WHERE id = ?');
+  const stmt = db.prepare("SELECT * FROM pr_user WHERE id = ?");
   stmt.bind([id]);
 
   let user: User | undefined;
@@ -305,7 +303,7 @@ export function getUserById(id: number): User | undefined {
       id: Number(row.id),
       username: row.username ? String(row.username) : null,
       nickname: row.nickname ? String(row.nickname) : null,
-      avatar: String(row.avatar)
+      avatar: String(row.avatar),
     };
   }
   stmt.free();
@@ -320,7 +318,7 @@ export function getPostsByUserId(userId: number): Post[] {
   const db = cachedDb;
   if (!db) return [];
 
-  const stmt = db.prepare('SELECT * FROM pr_post WHERE user_id = ? ORDER BY time DESC');
+  const stmt = db.prepare("SELECT * FROM pr_post WHERE user_id = ? ORDER BY time DESC");
   stmt.bind([userId]);
 
   const posts: Post[] = [];
@@ -335,7 +333,7 @@ export function getPostsByUserId(userId: number): Post[] {
       comment_num: Number(row.comment_num),
       signature: row.signature ? String(row.signature) : null,
       tail: row.tail ? String(row.tail) : null,
-      thread_id: Number(row.thread_id)
+      thread_id: Number(row.thread_id),
     });
   }
   stmt.free();
@@ -350,7 +348,7 @@ export function getCommentsByPostId(postId: number): Comment[] {
   const db = cachedDb;
   if (!db) return [];
 
-  const stmt = db.prepare('SELECT * FROM pr_comment WHERE post_id = ? ORDER BY time');
+  const stmt = db.prepare("SELECT * FROM pr_comment WHERE post_id = ? ORDER BY time");
   stmt.bind([postId]);
 
   const comments: Comment[] = [];
@@ -361,7 +359,7 @@ export function getCommentsByPostId(postId: number): Comment[] {
       user_id: Number(row.user_id),
       content: parseContent(row.content as string | null),
       time: String(row.time),
-      post_id: Number(row.post_id)
+      post_id: Number(row.post_id),
     });
   }
   stmt.free();
@@ -372,12 +370,12 @@ export function getCommentsByPostId(postId: number): Comment[] {
 /**
  * 获取指定类别的吧务日志（按时间降序）
  */
-export function getModerationLogsByCategory(category: 'post' | 'user' | 'bawu'): ModerationLog[] {
+export function getModerationLogsByCategory(category: "post" | "user" | "bawu"): ModerationLog[] {
   const db = cachedDb;
   if (!db) return [];
 
   let sql: string;
-  if (category === 'post') {
+  if (category === "post") {
     // 过滤rewinder和rollwinder的时间戳：为导出贴吧完整数据而临时恢复或再次删除，不计入操作记录
     sql = `SELECT u.*, op_user.id AS operator_id, target_user.id AS target_user_id
            FROM un_post u
@@ -386,7 +384,7 @@ export function getModerationLogsByCategory(category: 'post' | 'user' | 'bawu'):
            WHERE operation_time NOT LIKE '2022-02-26 23:%'
            AND operation_time NOT LIKE '2022-02-16 01:%'
            ORDER BY operation_time DESC`;
-  } else if (category === 'user') {
+  } else if (category === "user") {
     sql = `SELECT u.*, op_user.id AS operator_id, target_user.id AS target_user_id
            FROM un_user u
            LEFT JOIN pr_user op_user ON u.operator = op_user.username
@@ -405,7 +403,7 @@ export function getModerationLogsByCategory(category: 'post' | 'user' | 'bawu'):
 
   while (stmt.step()) {
     const row = stmt.getAsObject();
-    if (category === 'post') {
+    if (category === "post") {
       logs.push({
         thread_id: row.thread_id ? Number(row.thread_id) : null,
         post_id: row.post_id ? Number(row.post_id) : null,
@@ -421,9 +419,9 @@ export function getModerationLogsByCategory(category: 'post' | 'user' | 'bawu'):
         media: row.media ? String(row.media) : null,
         post_time: row.post_time ? String(row.post_time) : null,
         operator_id: row.operator_id ? Number(row.operator_id) : null,
-        target_user_id: row.target_user_id ? Number(row.target_user_id) : null
+        target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
       });
-    } else if (category === 'user') {
+    } else if (category === "user") {
       logs.push({
         thread_id: null,
         post_id: null,
@@ -436,7 +434,7 @@ export function getModerationLogsByCategory(category: 'post' | 'user' | 'bawu'):
         reason: null,
         duration: row.duration ? String(row.duration) : null,
         operator_id: row.operator_id ? Number(row.operator_id) : null,
-        target_user_id: row.target_user_id ? Number(row.target_user_id) : null
+        target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
       });
     } else {
       logs.push({
@@ -446,12 +444,12 @@ export function getModerationLogsByCategory(category: 'post' | 'user' | 'bawu'):
         username: String(row.username),
         title: null,
         operation: String(row.operation),
-        operator: row.operator ? String(row.operator) : '',
+        operator: row.operator ? String(row.operator) : "",
         operation_time: String(row.operation_time),
         reason: null,
         duration: null,
         operator_id: row.operator_id ? Number(row.operator_id) : null,
-        target_user_id: row.target_user_id ? Number(row.target_user_id) : null
+        target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
       });
     }
   }
@@ -467,7 +465,7 @@ export function getUserByUsername(username: string): User | undefined {
   const db = cachedDb;
   if (!db) return undefined;
 
-  const stmt = db.prepare('SELECT * FROM pr_user WHERE username = ? LIMIT 1');
+  const stmt = db.prepare("SELECT * FROM pr_user WHERE username = ? LIMIT 1");
   stmt.bind([username]);
 
   let user: User | undefined;
@@ -477,7 +475,7 @@ export function getUserByUsername(username: string): User | undefined {
       id: Number(row.id),
       username: row.username ? String(row.username) : null,
       nickname: row.nickname ? String(row.nickname) : null,
-      avatar: String(row.avatar)
+      avatar: String(row.avatar),
     };
   }
   stmt.free();
@@ -512,7 +510,7 @@ export function getUserRecords(userId: number): UserRecord[] {
                 ORDER BY time DESC`;
 
   const stmt = db.prepare(sql);
-  stmt.bind([userId, '9999-12-31 23:59:59']);
+  stmt.bind([userId, "9999-12-31 23:59:59"]);
 
   const records: UserRecord[] = [];
   while (stmt.step()) {
@@ -521,7 +519,7 @@ export function getUserRecords(userId: number): UserRecord[] {
 
     if (isComment) {
       records.push({
-        type: 'comment',
+        type: "comment",
         thread_id: Number(row.thread_id),
         title: String(row.title),
         post_id: Number(row.post_id),
@@ -530,18 +528,18 @@ export function getUserRecords(userId: number): UserRecord[] {
         comment_id: Number(row.comment_id),
         comment_content: parseContent(row.comment_content as string | null),
         time: String(row.time),
-        page: Number(row.page)
+        page: Number(row.page),
       });
     } else {
       records.push({
-        type: 'post',
+        type: "post",
         thread_id: Number(row.thread_id),
         title: String(row.title),
         post_id: Number(row.post_id),
         floor: Number(row.floor),
         post_content: parseContent(row.post_content as string | null),
         time: String(row.time),
-        page: Number(row.page)
+        page: Number(row.page),
       });
     }
   }
@@ -587,7 +585,7 @@ export function getModerationLogsByThreadId(threadId: number): ModerationLog[] {
       media: row.media ? String(row.media) : null,
       post_time: row.post_time ? String(row.post_time) : null,
       operator_id: row.operator_id ? Number(row.operator_id) : null,
-      target_user_id: row.target_user_id ? Number(row.target_user_id) : null
+      target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
     });
   }
   stmt.free();
@@ -602,7 +600,7 @@ export function getCommentsByPostIds(postIds: number[]): Map<number, Comment[]> 
   const db = cachedDb;
   if (!db || postIds.length === 0) return new Map();
 
-  const placeholders = postIds.map(() => '?').join(',');
+  const placeholders = postIds.map(() => "?").join(",");
   const stmt = db.prepare(`SELECT * FROM pr_comment WHERE post_id IN (${placeholders}) ORDER BY time`);
   stmt.bind(postIds);
 
@@ -618,7 +616,7 @@ export function getCommentsByPostIds(postIds: number[]): Map<number, Comment[]> 
       user_id: Number(row.user_id),
       content: parseContent(row.content as string | null),
       time: String(row.time),
-      post_id: postId
+      post_id: postId,
     });
   }
   stmt.free();
@@ -634,7 +632,7 @@ export function getUsersByIds(userIds: number[]): Map<number, User> {
   if (!db || userIds.length === 0) return new Map();
 
   const uniqueIds = [...new Set(userIds)];
-  const placeholders = uniqueIds.map(() => '?').join(',');
+  const placeholders = uniqueIds.map(() => "?").join(",");
   const stmt = db.prepare(`SELECT * FROM pr_user WHERE id IN (${placeholders})`);
   stmt.bind(uniqueIds);
 
@@ -645,7 +643,7 @@ export function getUsersByIds(userIds: number[]): Map<number, User> {
       id: Number(row.id),
       username: row.username ? String(row.username) : null,
       nickname: row.nickname ? String(row.nickname) : null,
-      avatar: String(row.avatar)
+      avatar: String(row.avatar),
     });
   }
   stmt.free();
@@ -660,7 +658,7 @@ export function getVideoMetadata(id: string): VideoMetadata | null {
   const db = cachedDb;
   if (!db) return null;
 
-  const stmt = db.prepare('SELECT metadata FROM video_metadata WHERE id = ?');
+  const stmt = db.prepare("SELECT metadata FROM video_metadata WHERE id = ?");
   stmt.bind([id]);
 
   if (stmt.step()) {
@@ -677,7 +675,7 @@ export function getVideoMetadata(id: string): VideoMetadata | null {
         uploader_url: metadata.uploader_url,
       };
     } catch (e) {
-      console.error('Failed to parse video metadata', e);
+      console.error("Failed to parse video metadata", e);
       return null;
     }
   }
@@ -693,7 +691,7 @@ export function getAllUserIds(): number[] {
   const db = cachedDb;
   if (!db) return [];
 
-  console.log('[Data] Querying all user IDs...');
+  console.log("[Data] Querying all user IDs...");
   const startTime = Date.now();
 
   const sql = `

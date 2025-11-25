@@ -144,7 +144,6 @@
   }
 
   async function loadData() {
-    await clientDb.ensureReady();
     const offset = (page - 1) * ITEMS_PER_PAGE;
 
     if (scope === "archive") {
