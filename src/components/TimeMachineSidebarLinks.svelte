@@ -7,7 +7,7 @@
   let tiebaUrl = $state("https://tieba.baidu.com/f?kw=fursuit");
   let tiebaText = $state("百度贴吧");
   let internetArchiveUrl = $state("https://web.archive.org/web/*/https://tieba.baidu.com/f?kw=fursuit");
-  let internetArchiveText = $state("Internet Archive存档");
+  let internetArchiveText = $state("Internet Archive");
 
   $effect(() => {
     const placeholder = document.getElementById('tm-sidebar-links-placeholder');
@@ -98,7 +98,7 @@
     } else {
       tiebaText = "百度贴吧";
       tiebaUrl = "https://tieba.baidu.com/f?kw=fursuit";
-      internetArchiveText = "Internet Archive存档";
+      internetArchiveText = "Internet Archive";
       internetArchiveUrl = "https://web.archive.org/web/*/https://tieba.baidu.com/f?kw=fursuit";
     }
   }
@@ -107,5 +107,15 @@
 <a href={archiveUrl} class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-1.5 transition-colors rounded block text-center">切换到档案馆</a>
 <a href="/moderation-logs/post" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 transition-colors rounded block">吧务后台日志</a>
 <div class="border-2 border-b border-gray-100 my-1"></div>
-<a href={tiebaUrl} target="_blank" rel="noreferrer nofollow noopener" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-1.5 transition-colors rounded block text-center">{tiebaText}</a>
-<a href={internetArchiveUrl} target="_blank" rel="noreferrer nofollow noopener" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-1.5 transition-colors rounded block text-center">{internetArchiveText}</a>
+<a href={tiebaUrl} target="_blank" rel="noreferrer nofollow noopener" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 transition-colors rounded flex items-center justify-center gap-2">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4 shrink-0 text-gray-400">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+  </svg>
+  {tiebaText}
+</a>
+<a href={internetArchiveUrl} target="_blank" rel="noreferrer nofollow noopener" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 transition-colors rounded flex items-center justify-center gap-2">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4 shrink-0 text-gray-400">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+  </svg>
+  {internetArchiveText}
+</a>

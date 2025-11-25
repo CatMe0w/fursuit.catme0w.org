@@ -9,8 +9,8 @@ interface Props {
 const { backButton = 'none' } = Astro.props;
 ---
 
-<header id="navbar" class="max-w-5xl mx-auto bg-white flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start">
-  <div class="md:hidden ml-2 -my-4 flex items-center gap-3">
+<header id="navbar" class="max-w-5xl mx-auto bg-white flex justify-between items-center border-b-2 border-gray-100 md:px-6 py-6 md:justify-start">
+  <div class="md:hidden ml-2 -my-4 flex items-center gap-1">
     {
       backButton === 'defer' ? (
         <>
@@ -23,8 +23,8 @@ const { backButton = 'none' } = Astro.props;
         <>
           <a type="button" href="/archive" id="navbar-back-icon" class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 cursor-pointer">
             <span class="sr-only">返回吧首页</span>
-            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
           </a>
           <a href="/archive" id="navbar-back-text" class="text-lg text-gray-700">
@@ -35,8 +35,8 @@ const { backButton = 'none' } = Astro.props;
         <>
           <a type="button" href="/" id="navbar-back-icon" class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 cursor-pointer">
             <span class="sr-only">返回项目首页</span>
-            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
           </a>
           <a href="/" id="navbar-back-text" class="text-lg text-gray-700">
@@ -48,21 +48,21 @@ const { backButton = 'none' } = Astro.props;
   </div>
   <div class="hidden md:flex justify-start lg:w-0 lg:flex-1"></div>
   <nav class="hidden md:flex space-x-10">
-    <a href="/" class="text-gray-500 hover:text-gray-900"> 首页 </a>
-    <a href="/archive" class="text-gray-500 hover:text-gray-900"> 档案馆 </a>
-    <a href="/time-machine" class="text-gray-500 hover:text-gray-900"> 时间机器 </a>
-    <a href="/download" class="text-gray-500 hover:text-gray-900"> 下载 </a>
+    <a href="/" class="text-gray-500 hover:text-gray-900">首页</a>
+    <a href="/archive" class="text-gray-500 hover:text-gray-900">档案馆</a>
+    <a href="/time-machine" class="text-gray-500 hover:text-gray-900">时间机器</a>
+    <a href="/download" class="text-gray-500 hover:text-gray-900">下载</a>
     <a href="https://catme0w.org/zh-cn/behind-the-scenes/creatio-ex-nihilo/" target="_blank" class="text-gray-500 hover:text-gray-900">
       幕后故事
     </a>
   </nav>
   <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-    <a href="https://catme0w.org" class="text-gray-500 hover:text-gray-900"> catme0w.org </a>
+    <a href="https://catme0w.org" class="text-gray-500 hover:text-gray-900">catme0w.org</a>
   </div>
   <div class="md:hidden ml-auto mr-2 -my-4">
     <button type="button" id="mobile-menu-toggle" class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-500 cursor-pointer" aria-expanded="false">
       <span class="sr-only">打开菜单</span>
-      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
       </svg>
     </button>
@@ -77,20 +77,18 @@ const { backButton = 'none' } = Astro.props;
             class="bg-white text-gray-500 p-2 rounded-md inline-flex items-center justify-center hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 cursor-pointer"
           >
             <span class="sr-only">关闭菜单</span>
-            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
           </button>
         </div>
         <nav class="grid gap-y-8 text-xl">
-          <a href="/" class="text-gray-700 text-center"> 首页 </a>
-          <a href="/archive" class="text-gray-700 text-center"> 档案馆 </a>
-          <a href="/time-machine" class="text-gray-700 text-center"> 时间机器 </a>
-          <a href="/download" class="text-gray-700 text-center"> 下载 </a>
-          <a href="https://catme0w.org/zh-cn/behind-the-scenes/creatio-ex-nihilo/" target="_blank" class="text-gray-700 text-center">
-            幕后故事
-          </a>
-          <a href="https://catme0w.org" class="text-gray-700 text-center pt-4 -mt-4 border-t border-gray-200 text-base"> catme0w.org </a>
+          <a href="/" class="text-gray-700 text-center">首页</a>
+          <a href="/archive" class="text-gray-700 text-center">档案馆 /a>
+          <a href="/time-machine" class="text-gray-700 text-center">时间机器</a>
+          <a href="/download" class="text-gray-700 text-center">下载</a>
+          <a href="https://catme0w.org/zh-cn/behind-the-scenes/creatio-ex-nihilo/" target="_blank" class="text-gray-700 text-center">幕后故事</a>
+          <a href="https://catme0w.org" class="text-gray-700 text-center pt-4 -mt-4 border-t border-gray-200 text-base">catme0w.org</a>
         </nav>
       </div>
     </div>

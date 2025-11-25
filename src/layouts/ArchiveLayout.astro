@@ -84,7 +84,7 @@ const isTimeMachine = finalBackButton === "defer";
             class="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg lg:hidden z-50 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
           >
             <span class="sr-only">关闭侧边栏</span>
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
           </button>
@@ -100,7 +100,7 @@ const isTimeMachine = finalBackButton === "defer";
           title="回到顶部"
         >
           <span class="sr-only">回到顶部</span>
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
           </svg>
         </button>
@@ -114,18 +114,26 @@ const isTimeMachine = finalBackButton === "defer";
       <span class="sr-only">打开侧边栏</span>
       {
         isTimeMachine ? (
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
           </svg>
         ) : (
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
           </svg>
         )
       }
     </button>
 
-    <footer class="h-24 lg:h-8"></footer>
+    <footer>
+      <div class="pb-8 lg:pb-12 mt-6 lg:mt-10 flex flex-col items-center gap-2">
+        <a href="https://github.com/CatMe0w/fursuit.catme0w.org" target="_blank" title="GitHub Stars">
+          <img class="mx-auto" src="https://img.shields.io/github/stars/CatMe0w/fursuit.catme0w.org.svg?style=social&label=Star&maxAge=2592000" alt="GitHub Stars" />
+        </a>
+        <p class="text-gray-500 text-sm text-center">with 💖 from <a href="https://catme0w.org" target="_blank" class="underline">catme0w</a></p>
+        <p class="text-gray-500 text-sm text-center lg:hidden"><button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="cursor-pointer underline">回到顶部</button></p>
+      </div>
+    </footer>
   </div>
 
   <script>
