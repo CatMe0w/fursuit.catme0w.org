@@ -23,7 +23,7 @@ const {
 let finalBackButton: BackButtonMode = backButton;
 
 const currentUrl = Astro.url;
-const pathname = currentUrl.pathname;
+const pathname = currentUrl.pathname.replace(/\/$/, "").replace(/.html$/, "");
 const searchParams = currentUrl.searchParams;
 
 // 档案馆首页，显示"返回项目首页"
