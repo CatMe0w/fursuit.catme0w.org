@@ -11,7 +11,7 @@
 
   $effect(() => {
     const params = new URLSearchParams(window.location.search);
-    const pathname = window.location.pathname;
+    const pathname = window.location.pathname.replace(/\/$/, "").replace(/\.html$/, "");
 
     // 将page=1视为默认值（相当于没有page参数）
     if (params.get('page') === '1') {
