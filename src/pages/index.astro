@@ -14,17 +14,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <p class="mb-3">我们恢复了4294个在fursuit吧被删除的帖子，复原了自2011年起每一天的景象。</p>
         <p>现在，我们终于可以向您呈现，国内的兽装文化从源头开始，一路走来的旅程。</p>
         <div class="mt-8 flex flex-row gap-6">
-          <a class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-700 px-4 py-2 rounded transition-colors" href="/archive"> 档案馆 </a>
-          <a class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-2 rounded transition-colors" href="/time-machine"> 时间机器 </a>
+          <a class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-700 px-4 py-2 rounded transition-colors" href="/archive">档案馆</a>
+          <a class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-2 rounded transition-colors" href="/time-machine">时间机器</a>
         </div>
       </div>
       <div class="lg:m-6">
         <div class="rounded-lg shadow-2xl mt-20 inline-block">
-          <img
-            class="rounded-lg"
-            src="https://fursuit-static.catme0w.org/images/full/7c8f0b950a7b0208f16661fe64d9f2d3562cc88f.jpg"
-            alt="2015 神州萌兽祭"
-          />
+          <img class="rounded-lg" src="https://fursuit-static.catme0w.org/images/full/7c8f0b950a7b0208f16661fe64d9f2d3562cc88f.jpg" alt="2015 神州萌兽祭" />
         </div>
         <p class="text-sm lg:text-xs text-gray-500 mt-4 ml-1">2015神州萌兽祭</p>
       </div>
@@ -34,8 +30,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <p class="text-lg text-gray-600 text-center">继续往下看，了解我们做了什么。</p>
     </div>
 
-    <div class="flex flex-col md:flex-row gap-6">
-      <div class="flex flex-col gap-3 basis-auto mt-16 lg:mt-24">
+    <div class="flex flex-col md:flex-row gap-6 mt-16 lg:mt-24">
+      <div class="flex flex-col gap-3 basis-auto">
         <p class="text-xl mb-3">如果想要寻找国内兽装的起点，<br />那么，fursuit贴吧一定是你最终的目的地。</p>
         <p>
           fursuit
@@ -56,16 +52,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <p class="mt-8">直到2022年2月，我们来了。</p>
         <p>我们尽最大限度的努力，从fursuit吧提取了完整的数据。所有存在过的帖子，每一条吧务操作日志，我们已将它们尽数复原。</p>
         <p>这就是“档案馆”，你可以在其中浏览自建吧当天开始，到2022年2月为止的，每一个曾经存在过的帖子。</p>
-        <a class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-700 px-4 py-2 rounded mr-auto transition-colors" href="/archive"> 前往档案馆 </a>
+        <a class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-700 px-4 py-2 rounded mr-auto transition-colors" href="/archive">前往档案馆</a>
         <p class="mt-8">真实的亚历山大图书馆已成为传说，无人知晓它实际的样貌。但我们掌握逆转时间的力量，并决定将这份力量无偿分享给你。</p>
         <p>请看“时间机器”，在这个程序中，你将能够通过倒转时间，亲自看到过去fursuit吧的情景——每分每秒，都可以。</p>
-        <a class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-2 rounded mr-auto transition-colors" href="/time-machine"> 前往时间机器 </a>
+        <a class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-2 rounded mr-auto transition-colors" href="/time-machine">前往时间机器</a>
         <p>我们的第一套全装，第一次兽展，或者第二次，第三次……有太多可以说的了。</p>
         <p>祝愿你在历史中玩得开心。</p>
       </div>
       <div>
-        <div class="lg:m-6">
-          <div class="rounded-lg shadow-2xl mt-8 lg:mt-20 max-w-xl">
+        <div class="lg:mx-6 lg:mb-6">
+          <div class="rounded-lg shadow-2xl max-w-xl">
             <img
               class="rounded-lg"
               src="https://fursuit-static.catme0w.org/images/full/4386cff9d72a605923becf7b2034349b023bbaa9.jpg"
@@ -114,7 +110,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <p>
         只要是网站，都可能走向在将来某天倒闭的结局。这是互联网最大的软肋……扯远了，我想告诉你的是，你可以帮助我们传火，把这里的东西传下去，或者你自己收藏一份，再刻到石头上什么的。
       </p>
-      <a class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-700 px-4 py-2 rounded mr-auto transition-colors" href="/download"> 下载数据 </a>
+      <a class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-700 px-4 py-2 rounded mr-auto transition-colors" href="/download">下载数据</a>
     </div>
 
     <div class="mt-16 p-6 rounded-lg bg-gray-50">
@@ -136,7 +132,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <div class="mb-2 mt-10">
       <a href="https://github.com/CatMe0w/fursuit.catme0w.org" target="_blank" title="GitHub Stars">
-        <img class="mx-auto" src="https://img.shields.io/github/stars/CatMe0w/fursuit.catme0w.org.svg?style=social&label=Star&maxAge=2592000" alt="GitHub Stars" />
+        <img
+          class="mx-auto"
+          src="https://img.shields.io/github/stars/CatMe0w/fursuit.catme0w.org.svg?style=social&label=Star&maxAge=2592000"
+          alt="GitHub Stars"
+        />
       </a>
     </div>
 

@@ -77,9 +77,9 @@
       <div class="text-center flex flex-col gap-3">
         {#if scope !== 'moderation'}
           {#if time}
-            <a href={getUrl({ time: null })} class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded block text-center">切换到档案馆</a>
+            <a href={getUrl({ time: null })} class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-1.5 rounded block text-center">切换到档案馆</a>
           {:else}
-            <a href={getUrl({ time: defaultTime })} class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded block text-center">切换到时间机器</a>
+            <a href={getUrl({ time: defaultTime })} class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-1.5 rounded block text-center">切换到时间机器</a>
           {/if}
         {/if}
 

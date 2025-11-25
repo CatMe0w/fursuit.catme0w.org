@@ -110,16 +110,14 @@
       clientDb.destroy();
 
       // 滚动到锚点（如果有）
+      // 同ThreadView
       const hash = window.location.hash;
       if (hash) {
         const id = hash.substring(1);
         const element = document.getElementById(id);
         if (element) {
-          // 1. 立即滚动
           element.scrollIntoView();
 
-          // 2. 使用ResizeObserver监视元素位置，防止图片加载导致布局变化时锚点位置偏移
-          // 静态页面不需要这个，DOMContentLoaded已足够
           const container = document.querySelector(".shadow");
           if (container) {
             const observer = new ResizeObserver(() => {
@@ -127,7 +125,6 @@
             });
             observer.observe(container);
 
-            // 用户交互或超时时停止观察
             const stop = () => {
               observer.disconnect();
               window.removeEventListener("wheel", stop);
