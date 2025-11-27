@@ -122,6 +122,7 @@ export interface ThreadDetailResponse {
   totalCount: number;
   threadTitle: string;
   moderation_logs: ModerationLog[];
+  video_metadata: Record<string, VideoMetadata>;
 }
 
 // Worker Message Types

@@ -1,6 +1,7 @@
 import { getDb } from '../db';
-import { parseContent } from '../utils';
-import type { Thread, ThreadDetailResponse, ModerationLog } from '../../lib/types';
+import { parseContent, getYoukuId, getQQVideoId } from '../utils';
+import type { Thread, ThreadDetailResponse, ModerationLog, VideoMetadata } from '../../lib/types';
+import { getVideoMetadata } from './video';
 
 /**
  * 获取指定时间点的帖子列表（带分页）
@@ -287,5 +288,26 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
     }
   }
 
-  return { posts, totalCount, threadTitle, moderation_logs: moderationLogs };
+  // 收集所有视频ID并获取元数据
+  const videoIds = new Set<string>();
+  for (const post of posts) {
+    for (const item of post.content) {
+      if (item.type === 'video' && typeof item.content === 'string') {
+        const youkuId = getYoukuId(item.content);
+        const qqId = getQQVideoId(item.content);
+        const videoId = youkuId || qqId;
+        if (videoId) videoIds.add(videoId);
+      }
+    }
+  }
+
+  const videoMetadataRecord: Record<string, VideoMetadata> = {};
+  for (const id of videoIds) {
+    const metadata = getVideoMetadata(id);
+    if (metadata) {
+      videoMetadataRecord[id] = metadata;
+    }
+  }
+
+  return { posts, totalCount, threadTitle, moderation_logs: moderationLogs, video_metadata: videoMetadataRecord };
 }

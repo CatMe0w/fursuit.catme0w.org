@@ -5,13 +5,12 @@ import ThreadPost from "./ThreadPost.svelte";
 import Sidebar from "./Sidebar.astro";
 import SearchBox from "./SearchBox.astro";
 import ExternalLinkButton from "./ExternalLinkButton.astro";
-import { getPostsByThreadId, getModerationLogsByThreadId, getCommentsByPostIds, getUsersByIds, getVideoMetadata } from "../lib/data";
+import { getPostsByThreadId, getModerationLogsByThreadId, getCommentsByPostIds, getUsersByIds, collectVideoMetadataFromPosts } from "../lib/data";
 import { paginate } from "../lib/pagination";
 import type { Thread, Post, Comment } from "../lib/data";
 import type { ThreadPost as SvelteThreadPost, ThreadComment as SvelteThreadComment, VideoMetadata } from "../lib/types";
 import TimeMachineButton from "./TimeMachineButton.astro";
 import VandalWarning from "./VandalWarning.svelte";
-import { getYoukuId, getQQVideoId } from "../lib/content-utils";
 
 interface Props {
   thread: Thread;
@@ -37,25 +36,7 @@ commentsMap.forEach((comments) => {
 });
 const usersMap = getUsersByIds(Array.from(userIds));
 
-const videoIds = new Set<string>();
-paginatedPosts.forEach((post) => {
-  post.content?.forEach((item: any) => {
-    if (item.type === "video" && typeof item.content === "string") {
-      const youkuId = getYoukuId(item.content);
-      const qqId = getQQVideoId(item.content);
-      const videoId = youkuId || qqId;
-      if (videoId) videoIds.add(videoId);
-    }
-  });
-});
-
-const videoMetadataMap = new Map<string, VideoMetadata>();
-videoIds.forEach((id) => {
-  const metadata = getVideoMetadata(id);
-  if (metadata) {
-    videoMetadataMap.set(id, metadata);
-  }
-});
+const videoMetadataRecord = collectVideoMetadataFromPosts(paginatedPosts);
 
 function mapCommentToSvelte(comment: Comment): SvelteThreadComment {
   const user = usersMap.get(comment.user_id);
@@ -103,7 +84,7 @@ const sveltePosts: SvelteThreadPost[] = paginatedPosts.map(mapPostToSvelte);
           </div>
         </div>
         {sveltePosts[0].floor === 1 && <VandalWarning userId={thread.user_id} />}
-        {sveltePosts.map((post) => <ThreadPost client:visible post={post} moderationLogs={moderationLogs} videoMetadataMap={videoMetadataMap} />)}
+        {sveltePosts.map((post) => <ThreadPost client:visible post={post} moderationLogs={moderationLogs} videoMetadata={videoMetadataRecord} />)}
         <div class="flex p-5 justify-end">
           <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/thread/${threadId}`} />
         </div>
