@@ -46,7 +46,7 @@
         </p>
       {/if}
       {#if opPostImages.length > 0}
-        <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">
+        <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4 overflow-x-auto">
           {#each opPostImages as image}
             <a href={getThreadUrl(thread.id)}>
               <img class="h-auto rounded" loading="lazy" src={getImageThumbnailUrl(image)} alt="" />

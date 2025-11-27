@@ -93,7 +93,7 @@
       {/if}
 
       {#if contentImages.length > 0}
-        <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">
+        <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4 overflow-x-auto">
           {#each contentImages as image}
             <a href={threadUrl}>
               <img class="h-auto rounded" src={getImageThumbnailUrl(image)} alt="" />
