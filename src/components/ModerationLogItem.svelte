@@ -53,7 +53,7 @@
     <div class="text-sm text-gray-500 leading-8 mt-4">
       {#if item.username}
         <p>
-          帖子作者：<ModerationLogUserLink userId={item.target_user_id} username={item.username} time={item.time} />
+          帖子作者：<ModerationLogUserLink userId={item.target_user_id} username={item.username} time={item.post_time!} />
         </p>
       {/if}
       {#if item.post_time}
