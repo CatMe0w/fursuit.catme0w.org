@@ -10,10 +10,10 @@
     post: ThreadPost;
     time?: string;
     moderationLogs?: ModerationLog[];
-    videoMetadataMap?: Map<string, VideoMetadata>;
+    videoMetadata?: Record<string, VideoMetadata>;
   }
 
-  let { post, time = undefined, moderationLogs = [], videoMetadataMap = new Map() }: Props = $props();
+  let { post, time = undefined, moderationLogs = [], videoMetadata = {} }: Props = $props();
 
   let highlightClass = $state("");
 
@@ -56,7 +56,7 @@
         {displayName}
       </a>
     </div>
-    <ContentRenderer content={post.content} {time} {videoMetadataMap} />
+    <ContentRenderer content={post.content} {time} {videoMetadata} />
   </div>
   <div class="mt-12">
     {#if isVandal(post.user_id)}

@@ -4,7 +4,6 @@ import { initDatabase } from './db';
 import { getThreadsAtTime, getThreadPostsAtTime } from './queries/thread';
 import { searchEntries, searchThreads } from './queries/search';
 import { getUserById, getUserPostsAtTime } from './queries/user';
-import { getVideoMetadata } from './queries/video';
 import type { WorkerMessage, WorkerResponse, SearchOptions } from '../lib/types';
 
 // SharedWorker类型定义
@@ -23,7 +22,7 @@ self.onconnect = (e: MessageEvent) => {
 
   port.onmessage = async (event: MessageEvent<WorkerMessage>) => {
     const { type, payload, requestId } = event.data;
-    
+
     try {
       switch (type) {
         case 'init':
@@ -31,13 +30,7 @@ self.onconnect = (e: MessageEvent) => {
           await initDatabase((msg) => broadcastMessage(msg));
           if (requestId) port.postMessage({ type: 'ready', requestId } as WorkerResponse);
           break;
-          
-        case 'getVideoMetadata':
-          await initDatabase((msg) => broadcastMessage(msg));
-          const videoMetadata = getVideoMetadata(payload.id);
-          port.postMessage({ type: 'result', data: videoMetadata, requestId } as WorkerResponse);
-          break;
-          
+
         case 'getThreadsAtTime':
           await initDatabase((msg) => broadcastMessage(msg));
           const { datetime, keyword, limit, offset } = payload;

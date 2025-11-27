@@ -1,4 +1,4 @@
-import type { Thread, SearchOptions, SearchResult, SearchResponse, UserInfo, ThreadDetailResponse, WorkerResponse, VideoMetadata } from "./types";
+import type { Thread, SearchOptions, SearchResult, SearchResponse, UserInfo, ThreadDetailResponse, WorkerResponse } from "./types";
 import { DB_VERSION } from "./dbConfig";
 
 type ProgressCallback = (loaded: number, total: number, stage: string) => void;
@@ -297,13 +297,6 @@ class ClientDatabase {
    */
   async getThreadPostsAtTime(threadId: number, datetime: string, limit?: number, offset?: number): Promise<ThreadDetailResponse> {
     return this.request("getThreadPostsAtTime", { threadId, datetime, limit, offset });
-  }
-
-  /**
-   * 获取视频元数据
-   */
-  async getVideoMetadata(id: string): Promise<VideoMetadata | null> {
-    return this.request("getVideoMetadata", { id });
   }
 
   /**

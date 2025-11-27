@@ -685,6 +685,56 @@ export function getVideoMetadata(id: string): VideoMetadata | null {
 }
 
 /**
+ * 从优酷URL中提取视频ID
+ */
+function getYoukuId(url: string): string | null {
+  const match1 = url.match(/id_(X[a-zA-Z0-9]+)/);
+  if (match1) return match1[1];
+
+  const match2 = url.match(/sid\/(X[a-zA-Z0-9]+)/);
+  if (match2) return match2[1];
+
+  return null;
+}
+
+/**
+ * 从QQ视频URL中提取视频ID
+ */
+function getQQVideoId(url: string): string | null {
+  const match = url.match(/\/([a-zA-Z0-9]+)\.html/);
+  if (match) return match[1];
+  return null;
+}
+
+/**
+ * 从帖子列表中收集所有视频的元数据
+ */
+export function collectVideoMetadataFromPosts(posts: Post[]): Record<string, VideoMetadata> {
+  const videoIds = new Set<string>();
+
+  posts.forEach((post) => {
+    post.content?.forEach((item: any) => {
+      if (item.type === "video" && typeof item.content === "string") {
+        const youkuId = getYoukuId(item.content);
+        const qqId = getQQVideoId(item.content);
+        const videoId = youkuId || qqId;
+        if (videoId) videoIds.add(videoId);
+      }
+    });
+  });
+
+  const videoMetadataRecord: Record<string, VideoMetadata> = {};
+  videoIds.forEach((id) => {
+    const metadata = getVideoMetadata(id);
+    if (metadata) {
+      videoMetadataRecord[id] = metadata;
+    }
+  });
+
+  return videoMetadataRecord;
+}
+
+/**
  * 获取所有有过发言（帖子或评论）的用户ID
  */
 export function getAllUserIds(): number[] {

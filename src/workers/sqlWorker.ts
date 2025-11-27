@@ -4,26 +4,19 @@ import { initDatabase } from './db';
 import { getThreadsAtTime, getThreadPostsAtTime } from './queries/thread';
 import { searchEntries, searchThreads } from './queries/search';
 import { getUserById, getUserPostsAtTime } from './queries/user';
-import { getVideoMetadata } from './queries/video';
 import type { WorkerMessage, WorkerResponse, SearchOptions } from '../lib/types';
 
 // 监听主线程消息
 self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
   const { type, payload, requestId } = e.data;
-  
+
   try {
     switch (type) {
       case 'init':
         await initDatabase(postMessage);
         if (requestId) postMessage({ type: 'ready', requestId } as WorkerResponse);
         break;
-        
-      case 'getVideoMetadata':
-        await initDatabase(postMessage);
-        const videoMetadata = getVideoMetadata(payload.id);
-        postMessage({ type: 'result', data: videoMetadata, requestId } as WorkerResponse);
-        break;
-        
+
       case 'getThreadsAtTime':
         await initDatabase(postMessage);
         const { datetime, keyword, limit, offset } = payload;

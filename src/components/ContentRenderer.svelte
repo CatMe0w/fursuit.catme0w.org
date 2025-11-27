@@ -5,10 +5,10 @@
   interface Props {
     content?: ContentItem[];
     time?: string;
-    videoMetadataMap?: Map<string, VideoMetadata>;
+    videoMetadata?: Record<string, VideoMetadata>;
   }
 
-  let { content = [], time = undefined, videoMetadataMap = new Map() }: Props = $props();
+  let { content = [], time = undefined, videoMetadata = {} }: Props = $props();
 
   function getUserUrl(uid: number) {
     if (time) return `/time-machine?time=${time}&user=${uid}`;
@@ -22,8 +22,8 @@
 
     if (!videoId) return null;
 
-    if (videoMetadataMap.has(videoId)) {
-      const metadata = videoMetadataMap.get(videoId);
+    if (videoMetadata[videoId]) {
+      const metadata = videoMetadata[videoId];
       return { ...metadata, videoId };
     }
 

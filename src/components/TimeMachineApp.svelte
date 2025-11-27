@@ -9,7 +9,7 @@
   import UserRecordItem from "./UserRecordItem.svelte";
   import VandalWarning from "./VandalWarning.svelte";
   import type { Thread, ThreadPost as ThreadPostType, SearchResult, UserInfo, ModerationLog, VideoMetadata } from "../lib/types";
-  import { isVandal, getYoukuId, getQQVideoId } from "../lib/content-utils";
+  import { isVandal } from "../lib/content-utils";
 
   // 状态
   let loading = $state(true);
@@ -29,7 +29,7 @@
   let threadTitle = $state("");
   let totalCount = $state(0);
   let showSkeleton = $state(false);
-  let videoMetadataMap = $state(new Map<string, VideoMetadata>());
+  let videoMetadata = $state<Record<string, VideoMetadata>>({});
 
   const ITEMS_PER_PAGE = 30;
 
@@ -163,34 +163,7 @@
       totalCount = result.totalCount;
       threadTitle = result.threadTitle;
       moderationLogs = result.moderation_logs;
-
-      // 视频元数据需要复杂查询
-      const videoIds = new Set<string>();
-      threadPosts.forEach((post) => {
-        post.content?.forEach((item: any) => {
-          if (item.type === "video" && typeof item.content === "string") {
-            const youkuId = getYoukuId(item.content);
-            const qqId = getQQVideoId(item.content);
-            const videoId = youkuId || qqId;
-            if (videoId) videoIds.add(videoId);
-          }
-        });
-      });
-
-      const newVideoMetadataMap = new Map<string, VideoMetadata>();
-      await Promise.all(
-        Array.from(videoIds).map(async (id) => {
-          try {
-            const metadata = await clientDb.getVideoMetadata(id);
-            if (metadata) {
-              newVideoMetadataMap.set(id, metadata);
-            }
-          } catch (e) {
-            console.error(`Failed to load video metadata for ${id}:`, e);
-          }
-        })
-      );
-      videoMetadataMap = newVideoMetadataMap;
+      videoMetadata = result.video_metadata;
     }
 
     updateTitle();
@@ -276,7 +249,7 @@
                 <VandalWarning userId={threadPosts[0].user_id} />
               {/if}
               {#each threadPosts as post (post.id)}
-                <ThreadPost {post} {time} {moderationLogs} {videoMetadataMap} />
+                <ThreadPost {post} {time} {moderationLogs} {videoMetadata} />
               {/each}
               <div class="p-5 flex justify-end">
                 <Pagination currentPage={page} totalPages={Math.ceil(totalCount / ITEMS_PER_PAGE)} baseUrl={getBaseUrl()} />
