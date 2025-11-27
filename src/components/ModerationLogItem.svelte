@@ -41,7 +41,7 @@
         <p class="text-sm mt-2 leading-6 text-gray-700 line-clamp-3"><a href={getThreadUrl(item.thread_id)}>{item.content_preview}</a></p>
       {/if}
       {#if item.media}
-        <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4">
+        <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4 overflow-x-auto">
           {#each item.media.split("\n").filter(Boolean) as image}
             <a href={getThreadUrl(item.thread_id)}>
               <img class="h-auto rounded" loading="lazy" src={getImageThumbnailUrl(image)} alt="" />
