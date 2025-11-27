@@ -34,7 +34,7 @@ function searchModeration(db: Database, words: string[], limit: number, offset: 
 
   const sqlPost = `
     SELECT u.thread_id, u.post_id, u.username, u.title, u.operation, u.operator, u.operation_time, u.content_preview, u.media, u.post_time,
-           op_user.id AS operator_id, target_user.id AS target_user_id, 'moderation_post' AS result_type, NULL AS duration
+           op_user.id AS operator_id, target_user.id AS target_user_id, 'moderation_post' AS result_type, NULL AS duration, u.rowid
     FROM un_post u
     LEFT JOIN pr_user op_user ON u.operator = op_user.username
     LEFT JOIN pr_user target_user ON u.username = target_user.username
@@ -45,7 +45,7 @@ function searchModeration(db: Database, words: string[], limit: number, offset: 
 
   const sqlUser = `
     SELECT NULL AS thread_id, NULL AS post_id, u.username, NULL AS title, u.operation, u.operator, u.operation_time, NULL AS content_preview, NULL AS media, NULL AS post_time,
-           op_user.id AS operator_id, target_user.id AS target_user_id, 'moderation_user' AS result_type, u.duration
+           op_user.id AS operator_id, target_user.id AS target_user_id, 'moderation_user' AS result_type, u.duration, u.rowid
     FROM un_user u
     LEFT JOIN pr_user op_user ON u.operator = op_user.username
     LEFT JOIN pr_user target_user ON u.username = target_user.username
@@ -56,7 +56,7 @@ function searchModeration(db: Database, words: string[], limit: number, offset: 
 
   const sqlBawu = `
     SELECT NULL AS thread_id, NULL AS post_id, u.username, NULL AS title, u.operation, u.operator, u.operation_time, NULL AS content_preview, NULL AS media, NULL AS post_time,
-           op_user.id AS operator_id, target_user.id AS target_user_id, 'moderation_bawu' AS result_type, NULL AS duration
+           op_user.id AS operator_id, target_user.id AS target_user_id, 'moderation_bawu' AS result_type, NULL AS duration, u.rowid
     FROM un_bawu u
     LEFT JOIN pr_user op_user ON u.operator = op_user.username
     LEFT JOIN pr_user target_user ON u.username = target_user.username
@@ -77,7 +77,7 @@ function searchModeration(db: Database, words: string[], limit: number, offset: 
   countStmt.free();
 
   // 5. 获取分页数据
-  const querySql = `SELECT * FROM (${unionSql}) ORDER BY operation_time DESC LIMIT ? OFFSET ?`;
+  const querySql = `SELECT * FROM (${unionSql}) ORDER BY operation_time DESC, rowid ASC LIMIT ? OFFSET ?`;
   const stmt = db.prepare(querySql);
   stmt.bind([...allParams, limit, offset]);
 

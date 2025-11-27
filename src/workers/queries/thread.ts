@@ -164,11 +164,11 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
     FROM un_post u
     LEFT JOIN pr_user op_user ON u.operator = op_user.username
     LEFT JOIN pr_user target_user ON u.username = target_user.username
-    WHERE u.thread_id = ?1 
-      AND u.operation_time < ?2 
-      AND u.operation_time NOT LIKE '2022-02-26 23:%' 
+    WHERE u.thread_id = ?1
+      AND u.operation_time < ?2
+      AND u.operation_time NOT LIKE '2022-02-26 23:%'
       AND u.operation_time NOT LIKE '2022-02-16 01:%'
-    ORDER BY u.operation_time ASC`;
+    ORDER BY u.operation_time ASC, u.rowid DESC`;
   
   const moderationLogsStmt = db.prepare(moderationLogsSql);
   moderationLogsStmt.bind([threadId, datetime]);
