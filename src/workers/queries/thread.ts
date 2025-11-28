@@ -1,6 +1,6 @@
 import { getDb } from '../db';
-import { parseContent, getYoukuId, getQQVideoId } from '../utils';
-import type { Thread, ThreadDetailResponse, ModerationLog, VideoMetadata } from '../../lib/types';
+import { parseContent, injectVideoMetadataIntoContent } from '../utils';
+import type { Thread, ThreadDetailResponse, ModerationLog } from '../../lib/types';
 import { getVideoMetadata } from './video';
 
 /**
@@ -101,6 +101,11 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
   const threads: Thread[] = [];
   while (stmt.step()) {
     const row = stmt.getAsObject();
+    const opPostContent = parseContent(row.content as string | null);
+
+    // 注入视频元数据到op_post_content
+    injectVideoMetadataIntoContent(opPostContent, getVideoMetadata);
+
     threads.push({
       id: Number(row.thread_id),
       title: String(row.title),
@@ -109,7 +114,7 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
       time: String(row.time),
       reply_num: Number(row.reply_num),
       is_good: Boolean(row.is_good),
-      op_post_content: parseContent(row.content as string | null),
+      op_post_content: opPostContent,
       op_username: row.op_username ? String(row.op_username) : undefined,
       op_nickname: row.op_nickname ? String(row.op_nickname) : undefined,
       last_reply_username: row.last_reply_username ? String(row.last_reply_username) : undefined,
@@ -288,26 +293,10 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
     }
   }
 
-  // 收集所有视频ID并获取元数据
-  const videoIds = new Set<string>();
+  // 注入视频元数据到content
   for (const post of posts) {
-    for (const item of post.content) {
-      if (item.type === 'video' && typeof item.content === 'string') {
-        const youkuId = getYoukuId(item.content);
-        const qqId = getQQVideoId(item.content);
-        const videoId = youkuId || qqId;
-        if (videoId) videoIds.add(videoId);
-      }
-    }
+    injectVideoMetadataIntoContent(post.content, getVideoMetadata);
   }
 
-  const videoMetadataRecord: Record<string, VideoMetadata> = {};
-  for (const id of videoIds) {
-    const metadata = getVideoMetadata(id);
-    if (metadata) {
-      videoMetadataRecord[id] = metadata;
-    }
-  }
-
-  return { posts, totalCount, threadTitle, moderation_logs: moderationLogs, video_metadata: videoMetadataRecord };
+  return { posts, totalCount, threadTitle, moderation_logs: moderationLogs };
 }

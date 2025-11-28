@@ -33,3 +33,29 @@ export function getQQVideoId(url: string): string | null {
   if (match) return match[1];
   return null;
 }
+
+/**
+ * 注入视频元数据到 content 数组中
+ * 将视频的 content 字段转换为 url 字段，并注入 metadata
+ */
+export function injectVideoMetadataIntoContent(content: any[], getVideoMetadata: (id: string) => any | null): void {
+  for (const item of content) {
+    if (item.type === 'video' && typeof item.content === 'string') {
+      const url = item.content;
+      const youkuId = getYoukuId(url);
+      const qqId = getQQVideoId(url);
+      const videoId = youkuId || qqId;
+
+      // 将 content 改为 url
+      delete item.content;
+      item.url = url;
+
+      if (videoId) {
+        const metadata = getVideoMetadata(videoId);
+        if (metadata) {
+          item.metadata = { ...metadata, id: videoId };
+        }
+      }
+    }
+  }
+}

@@ -1,33 +1,17 @@
 <script lang="ts">
-  import type { ContentItem, VideoMetadata } from "../lib/types";
-  import { getEmoticonUrl, getImageUrl, getAudioUrl, getYoukuId, getQQVideoId } from "../lib/content-utils";
+  import type { ContentItem } from "../lib/types";
+  import { getEmoticonUrl, getImageUrl, getAudioUrl } from "../lib/content-utils";
 
   interface Props {
     content?: ContentItem[];
     time?: string;
-    videoMetadata?: Record<string, VideoMetadata>;
   }
 
-  let { content = [], time = undefined, videoMetadata = {} }: Props = $props();
+  let { content = [], time = undefined }: Props = $props();
 
   function getUserUrl(uid: number) {
     if (time) return `/time-machine?time=${time}&user=${uid}`;
     return `/user/${uid}`;
-  }
-
-  function getVideoData(url: string) {
-    const youkuId = getYoukuId(url);
-    const qqId = getQQVideoId(url);
-    const videoId = youkuId || qqId;
-
-    if (!videoId) return null;
-
-    if (videoMetadata[videoId]) {
-      const metadata = videoMetadata[videoId];
-      return { ...metadata, videoId };
-    }
-
-    return null;
   }
 </script>
 
@@ -63,39 +47,40 @@
         <img class="w-auto lg:max-w-xl my-2 inline" src={imageUrl} alt="" />
       {/if}
     {:else if item.type === "video"}
-      {@const videoData = getVideoData(item.content)}
-      {#if videoData}
-          <!-- svelte-ignore a11y_media_has_caption -->
-          <video controls poster={`https://fursuit-static.catme0w.org/videos/cover/${videoData.videoId}.jpg`} class="w-full max-w-2xl bg-black">
-            <source src={`https://fursuit-static.catme0w.org/videos/full/${videoData.videoId}.mp4`} type="video/mp4" />
-          </video>
-          {#if videoData.title}
-            <div class="bg-gray-100 rounded-b p-5">
-              <p class="text-lg text-gray-700">{videoData.title}</p>
-              {#if videoData.uploader}
-                <p class="text-xs text-gray-600">
-                  {#if videoData.uploader_url}
-                    上传者：<a href={videoData.uploader_url} target="_blank" rel="noreferrer nofollow noopener" class="text-sky-700 hover:underline break-all"
-                      >{videoData.uploader}</a
-                    >
-                  {:else}
-                    上传者：{videoData.uploader}
-                  {/if}
-                </p>
-              {/if}
+      {#if item.metadata}
+        <!-- 有效视频 -->
+        <!-- svelte-ignore a11y_media_has_caption -->
+        <video controls poster={`https://fursuit-static.catme0w.org/videos/cover/${item.metadata.id}.jpg`} class="w-full max-w-2xl bg-black">
+          <source src={`https://fursuit-static.catme0w.org/videos/full/${item.metadata.id}.mp4`} type="video/mp4" />
+        </video>
+        {#if item.metadata.title}
+          <div class="bg-gray-100 rounded-b p-5">
+            <p class="text-lg text-gray-700">{item.metadata.title}</p>
+            {#if item.metadata.uploader}
               <p class="text-xs text-gray-600">
-                视频链接：<a href={item.content} target="_blank" rel="noreferrer nofollow noopener" class="text-sky-700 hover:underline break-all">
-                  {item.content}
-                </a>
+                上传者：{#if item.metadata.uploader_url}
+                  <a href={item.metadata.uploader_url} target="_blank" rel="noreferrer nofollow noopener" class="text-sky-700 hover:underline break-all"
+                    >{item.metadata.uploader}</a
+                  >
+                {:else}
+                  {item.metadata.uploader}
+                {/if}
               </p>
-            </div>
-          {/if}
+            {/if}
+            <p class="text-xs text-gray-600">
+              视频链接：<a href={item.url} target="_blank" rel="noreferrer nofollow noopener" class="text-sky-700 hover:underline break-all">
+                {item.url}
+              </a>
+            </p>
+          </div>
+        {/if}
       {:else}
+        <!-- 失效视频 -->
         <div class="bg-gray-100 rounded p-5">
           <p class="text-xl mb-1">失效视频</p>
           <p>
-            视频链接：<a href={item.content} target="_blank" rel="noreferrer nofollow noopener" class="text-sky-700 hover:underline break-all">
-              {item.content}
+            视频链接：<a href={item.url} target="_blank" rel="noreferrer nofollow noopener" class="text-sky-700 hover:underline break-all">
+              {item.url}
             </a>
           </p>
         </div>

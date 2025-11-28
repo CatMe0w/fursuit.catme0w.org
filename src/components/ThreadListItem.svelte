@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Thread } from "../lib/types";
-  import { extractTextContent, extractImages, getImageThumbnailUrl, getUserDisplayName } from "../lib/content-utils";
+  import { extractTextContent, extractMedia, getThumbnailUrl, getUserDisplayName } from "../lib/content-utils";
 
   interface Props {
     thread: Thread;
@@ -20,7 +20,7 @@
   }
 
   let opPostContentText = $derived(extractTextContent(thread.op_post_content));
-  let opPostImages = $derived(extractImages(thread.op_post_content));
+  let opPostMedia = $derived(extractMedia(thread.op_post_content));
 
   let opDisplayName = $derived(getUserDisplayName(thread.op_username, thread.op_nickname));
   let lastReplyDisplayName = $derived(getUserDisplayName(thread.last_reply_username, thread.last_reply_nickname));
@@ -45,12 +45,15 @@
           <a href={getThreadUrl(thread.id)}>{opPostContentText}</a>
         </p>
       {/if}
-      {#if opPostImages.length > 0}
+      {#if opPostMedia.length > 0}
         <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4 overflow-x-auto">
-          {#each opPostImages as image}
-            <a href={getThreadUrl(thread.id)}>
-              <img class="h-auto rounded" loading="lazy" src={getImageThumbnailUrl(image)} alt="" />
-            </a>
+          {#each opPostMedia as media}
+            {@const thumbnailUrl = getThumbnailUrl(media)}
+            {#if thumbnailUrl}
+              <a href={getThreadUrl(thread.id)}>
+                <img class="max-h-32 w-auto rounded" loading="lazy" src={thumbnailUrl} alt="" />
+              </a>
+            {/if}
           {/each}
         </div>
       {/if}

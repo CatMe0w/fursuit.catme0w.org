@@ -90,7 +90,9 @@ export interface ThreadComment {
 
 export type ContentItem =
   | { type: 'text' | 'text_bold' | 'text_red' | 'text_bold_red'; content: string }
-  | { type: 'image' | 'video' | 'audio'; content: string }
+  | { type: 'image'; content: string }
+  | { type: 'video'; url: string; metadata?: VideoMetadata }
+  | { type: 'audio'; content: string }
   | { type: 'emoticon'; content: { id: string; description: string } }
   | { type: 'url'; content: { url: string; text: string } }
   | { type: 'username'; content: { text: string; user_id: number } };
@@ -122,7 +124,6 @@ export interface ThreadDetailResponse {
   totalCount: number;
   threadTitle: string;
   moderation_logs: ModerationLog[];
-  video_metadata: Record<string, VideoMetadata>;
 }
 
 // Worker Message Types

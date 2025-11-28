@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SearchResult } from "../lib/types";
-  import { extractTextContent, extractImages, getImageThumbnailUrl } from "../lib/content-utils";
+  import { extractTextContent, extractMedia, getThumbnailUrl } from "../lib/content-utils";
 
   interface Props {
     item: SearchResult;
@@ -45,7 +45,7 @@
 
   // 提取内容
   let contentText = $derived(extractTextContent(item.content_json || []));
-  let contentImages = $derived(extractImages(item.content_json || []));
+  let contentMedia = $derived(extractMedia(item.content_json || []));
   let postPreviewText = $derived(item.post_content_json ? extractTextContent(item.post_content_json) : "");
 </script>
 
@@ -92,12 +92,15 @@
         </p>
       {/if}
 
-      {#if contentImages.length > 0}
+      {#if contentMedia.length > 0}
         <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4 overflow-x-auto">
-          {#each contentImages as image}
-            <a href={threadUrl}>
-              <img class="h-auto rounded" src={getImageThumbnailUrl(image)} alt="" />
-            </a>
+          {#each contentMedia as media}
+            {@const thumbnailUrl = getThumbnailUrl(media)}
+            {#if thumbnailUrl}
+              <a href={threadUrl}>
+                <img class="max-h-32 w-auto rounded" src={thumbnailUrl} alt="" />
+              </a>
+            {/if}
           {/each}
         </div>
       {/if}
