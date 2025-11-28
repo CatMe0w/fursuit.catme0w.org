@@ -1,6 +1,7 @@
 import { getDb } from '../db';
-import { parseContent } from '../utils';
+import { parseContent, injectVideoMetadataIntoContent } from '../utils';
 import type { SearchResponse, SearchResult, UserInfo } from '../../lib/types';
+import { getVideoMetadata } from './video';
 
 /**
  * 获取用户信息
@@ -107,6 +108,11 @@ export function getUserPostsAtTime(userId: number, datetime: string, limit?: num
     const row = stmt.getAsObject();
     const hasComment = row.comment_id !== null;
 
+    const contentJson = parseContent(hasComment ? (row.comment_content as string | null) : (row.post_content as string | null));
+
+    // 注入视频元数据
+    injectVideoMetadataIntoContent(contentJson, getVideoMetadata);
+
     const result: SearchResult = {
       thread_id: Number(row.thread_id),
       post_id: Number(row.post_id),
@@ -116,13 +122,18 @@ export function getUserPostsAtTime(userId: number, datetime: string, limit?: num
       user_id: userId,
       title: String(row.title),
       floor: Number(row.floor),
-      content_json: parseContent(hasComment ? (row.comment_content as string | null) : (row.post_content as string | null)),
+      content_json: contentJson,
       page: Number(row.page)
     };
 
     // 对于comment类型，额外保存被回复的楼层帖子内容用于预览
     if (hasComment) {
-      (result as any).post_content_json = parseContent(row.post_content as string | null);
+      const postContentJson = parseContent(row.post_content as string | null);
+
+      // 注入视频元数据
+      injectVideoMetadataIntoContent(postContentJson, getVideoMetadata);
+
+      (result as any).post_content_json = postContentJson;
     }
 
     items.push(result);

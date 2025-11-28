@@ -32,17 +32,25 @@ export function extractTextContent(content: ContentItem[]): string {
 }
 
 /**
- * 提取图片（最多3张）
+ * 提取媒体（图片+视频）
+ * @param content 内容项数组
+ * @param limit 限制数量，默认为3，传入0或负数表示不限制
  */
-export function extractImages(content: ContentItem[]): string[] {
+export function extractMedia(content: ContentItem[], limit = 3): string[] {
   if (!content || !Array.isArray(content)) return [];
-  const images: string[] = [];
-  content.forEach((item) => {
-    if (item.type === "image" && item.content && typeof item.content === "string" && images.length < 3) {
-      images.push(item.content);
+  const media: string[] = [];
+  const hasLimit = limit > 0;
+
+  for (const item of content) {
+    if (hasLimit && media.length >= limit) break;
+    if (item.type === "image" && item.content && typeof item.content === "string") {
+      media.push(item.content);
+    } else if (item.type === "video" && item.url && typeof item.url === "string") {
+      media.push(item.url);
     }
-  });
-  return images;
+  }
+
+  return media;
 }
 
 /**
@@ -60,13 +68,40 @@ export function extractAudios(content: ContentItem[]): string[] {
 }
 
 /**
- * 获取缩略图URL
+ * 获取图片缩略图URL
  */
-export function getImageThumbnailUrl(url: string): string {
+function getImageThumbnailUrl(url: string): string {
   const filename = url.split("/").slice(-1)[0];
   if (filename.length <= 24) return `https://fursuit-static.catme0w.org/images/full/${filename}`;
   const stem = filename.lastIndexOf(".") !== -1 ? filename.substring(0, filename.lastIndexOf(".")) : filename;
   return `https://fursuit-static.catme0w.org/images/thumb/${stem}.webp`;
+}
+
+/**
+ * 获取视频缩略图URL
+ */
+function getVideoThumbnailUrl(url: string): string | null {
+  const youkuId = getYoukuId(url);
+  const qqId = getQQVideoId(url);
+  const videoId = youkuId || qqId;
+
+  if (!videoId) return null;
+  return `https://fursuit-static.catme0w.org/videos/cover/${videoId}.jpg`;
+}
+
+/**
+ * 获取缩略图URL（公共接口）
+ * @param url 图片或视频的URL
+ * @returns 缩略图URL，图片返回string，视频可能返回null（如果无法提取ID）
+ */
+export function getThumbnailUrl(url: string): string | null {
+  // 判断是否为视频URL（优酷或QQ视频）
+  if (url.includes("youku.com") || url.includes("qq.com")) {
+    return getVideoThumbnailUrl(url);
+  }
+
+  // 否则作为图片处理
+  return getImageThumbnailUrl(url);
 }
 
 /**
@@ -137,10 +172,10 @@ export function isVandal(userId: number): boolean {
     1092681533, 2770297246, 929918145, 3246637449, 1140272772, 1215914293, 44116606, 702253602, 7910917, 142661247, 14418690, 1054172080, 3167939744,
     3167937692, 3167954409, 3420903823, 3238825000, 3249550356, 3249632563, 1925359108, 3253890577, 3159627023, 3159639198, 3159511862,
   ]);
-  if (userId > 3288 * 1e6 && userId < 3289 * 1e6) return true;
-  if (userId > 3007 * 1e6 && userId < 3008 * 1e6) return true;
-  if (userId > 3153 * 1e6 && userId < 3154 * 1e6) return true;
-  if (userId > 2923 * 1e6 && userId < 2924 * 1e6) return true;
+  if (userId > 3288e6 && userId < 3289e6) return true;
+  if (userId > 3007e6 && userId < 3008e6) return true;
+  if (userId > 3153e6 && userId < 3154e6) return true;
+  if (userId > 2923e6 && userId < 2924e6) return true;
   return vandalUserIds.has(userId);
 }
 
@@ -156,7 +191,7 @@ export function isVandalUsername(username: string): boolean {
 /**
  * 从优酷URL中提取视频ID
  */
-export function getYoukuId(url: string): string | null {
+function getYoukuId(url: string): string | null {
   const match1 = url.match(/id_(X[a-zA-Z0-9]+)/);
   if (match1) return match1[1];
 
@@ -169,7 +204,7 @@ export function getYoukuId(url: string): string | null {
 /**
  * 从QQ视频URL中提取视频ID
  */
-export function getQQVideoId(url: string): string | null {
+function getQQVideoId(url: string): string | null {
   const match = url.match(/\/([a-zA-Z0-9]+)\.html/);
   if (match) return match[1];
   return null;

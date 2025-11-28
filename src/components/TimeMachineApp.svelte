@@ -8,7 +8,7 @@
   import Pagination from "./Pagination.svelte";
   import UserRecordItem from "./UserRecordItem.svelte";
   import VandalWarning from "./VandalWarning.svelte";
-  import type { Thread, ThreadPost as ThreadPostType, SearchResult, UserInfo, ModerationLog, VideoMetadata } from "../lib/types";
+  import type { Thread, ThreadPost as ThreadPostType, SearchResult, UserInfo, ModerationLog } from "../lib/types";
   import { isVandal } from "../lib/content-utils";
 
   // 状态
@@ -29,7 +29,6 @@
   let threadTitle = $state("");
   let totalCount = $state(0);
   let showSkeleton = $state(false);
-  let videoMetadata = $state<Record<string, VideoMetadata>>({});
 
   const ITEMS_PER_PAGE = 30;
 
@@ -163,7 +162,6 @@
       totalCount = result.totalCount;
       threadTitle = result.threadTitle;
       moderationLogs = result.moderation_logs;
-      videoMetadata = result.video_metadata;
     }
 
     updateTitle();
@@ -249,7 +247,7 @@
                 <VandalWarning userId={threadPosts[0].user_id} />
               {/if}
               {#each threadPosts as post (post.id)}
-                <ThreadPost {post} {time} {moderationLogs} {videoMetadata} />
+                <ThreadPost {post} {time} {moderationLogs} />
               {/each}
               <div class="p-5 flex justify-end">
                 <Pagination currentPage={page} totalPages={Math.ceil(totalCount / ITEMS_PER_PAGE)} baseUrl={getBaseUrl()} />

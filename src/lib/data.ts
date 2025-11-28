@@ -209,6 +209,9 @@ export function getAllThreads(): Thread[] {
   const threads: Thread[] = [];
   while (stmt.step()) {
     const row = stmt.getAsObject();
+    const opPostContent = parseContent(row.content as string | null);
+    injectVideoMetadataIntoContent(opPostContent);
+
     threads.push({
       id: Number(row.id),
       title: String(row.title),
@@ -217,7 +220,7 @@ export function getAllThreads(): Thread[] {
       time: String(row.time),
       reply_num: Number(row.reply_num),
       is_good: Boolean(row.is_good),
-      op_post_content: parseContent(row.content as string | null),
+      op_post_content: opPostContent,
     });
   }
   stmt.free();
@@ -283,6 +286,8 @@ export function getPostsByThreadId(threadId: number): Post[] {
   }
   stmt.free();
 
+  injectVideoMetadataIntoPosts(posts);
+
   return posts;
 }
 
@@ -337,6 +342,9 @@ export function getPostsByUserId(userId: number): Post[] {
     });
   }
   stmt.free();
+
+  // 注入视频元数据
+  injectVideoMetadataIntoPosts(posts);
 
   return posts;
 }
@@ -707,31 +715,37 @@ function getQQVideoId(url: string): string | null {
 }
 
 /**
- * 从帖子列表中收集所有视频的元数据
+ * 注入视频元数据到单个content中
  */
-export function collectVideoMetadataFromPosts(posts: Post[]): Record<string, VideoMetadata> {
-  const videoIds = new Set<string>();
+function injectVideoMetadataIntoContent(content: ContentItem[]): void {
+  for (const item of content) {
+    if (item.type === "video" && typeof (item as any).content === "string") {
+      const url = (item as any).content;
+      const youkuId = getYoukuId(url);
+      const qqId = getQQVideoId(url);
+      const videoId = youkuId || qqId;
 
-  posts.forEach((post) => {
-    post.content?.forEach((item: any) => {
-      if (item.type === "video" && typeof item.content === "string") {
-        const youkuId = getYoukuId(item.content);
-        const qqId = getQQVideoId(item.content);
-        const videoId = youkuId || qqId;
-        if (videoId) videoIds.add(videoId);
+      // 将content改为url
+      delete (item as any).content;
+      (item as any).url = url;
+
+      if (videoId) {
+        const metadata = getVideoMetadata(videoId);
+        if (metadata) {
+          (item as any).metadata = { ...metadata, id: videoId };
+        }
       }
-    });
-  });
-
-  const videoMetadataRecord: Record<string, VideoMetadata> = {};
-  videoIds.forEach((id) => {
-    const metadata = getVideoMetadata(id);
-    if (metadata) {
-      videoMetadataRecord[id] = metadata;
     }
-  });
+  }
+}
 
-  return videoMetadataRecord;
+/**
+ * 注入视频元数据到帖子内容中
+ */
+export function injectVideoMetadataIntoPosts(posts: Post[]): void {
+  for (const post of posts) {
+    injectVideoMetadataIntoContent(post.content);
+  }
 }
 
 /**

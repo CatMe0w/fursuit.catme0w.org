@@ -5,10 +5,10 @@ import ThreadPost from "./ThreadPost.svelte";
 import Sidebar from "./Sidebar.astro";
 import SearchBox from "./SearchBox.astro";
 import ExternalLinkButton from "./ExternalLinkButton.astro";
-import { getPostsByThreadId, getModerationLogsByThreadId, getCommentsByPostIds, getUsersByIds, collectVideoMetadataFromPosts } from "../lib/data";
+import { getPostsByThreadId, getModerationLogsByThreadId, getCommentsByPostIds, getUsersByIds } from "../lib/data";
 import { paginate } from "../lib/pagination";
 import type { Thread, Post, Comment } from "../lib/data";
-import type { ThreadPost as SvelteThreadPost, ThreadComment as SvelteThreadComment, VideoMetadata } from "../lib/types";
+import type { ThreadPost as SvelteThreadPost, ThreadComment as SvelteThreadComment } from "../lib/types";
 import TimeMachineButton from "./TimeMachineButton.astro";
 import VandalWarning from "./VandalWarning.svelte";
 
@@ -35,8 +35,6 @@ commentsMap.forEach((comments) => {
   comments.forEach((c) => userIds.add(c.user_id));
 });
 const usersMap = getUsersByIds(Array.from(userIds));
-
-const videoMetadataRecord = collectVideoMetadataFromPosts(paginatedPosts);
 
 function mapCommentToSvelte(comment: Comment): SvelteThreadComment {
   const user = usersMap.get(comment.user_id);
@@ -84,7 +82,7 @@ const sveltePosts: SvelteThreadPost[] = paginatedPosts.map(mapPostToSvelte);
           </div>
         </div>
         {sveltePosts[0].floor === 1 && <VandalWarning userId={thread.user_id} />}
-        {sveltePosts.map((post) => <ThreadPost client:visible post={post} moderationLogs={moderationLogs} videoMetadata={videoMetadataRecord} />)}
+        {sveltePosts.map((post) => <ThreadPost client:visible post={post} moderationLogs={moderationLogs} />)}
         <div class="flex p-5 justify-end">
           <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/thread/${threadId}`} />
         </div>

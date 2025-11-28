@@ -1,7 +1,8 @@
 import { getDb } from '../db';
-import { parseContent, buildMultiWordLike } from '../utils';
+import { parseContent, buildMultiWordLike, injectVideoMetadataIntoContent } from '../utils';
 import type { SearchOptions, SearchResponse, SearchResult } from '../../lib/types';
 import type { Database } from 'sql.js';
+import { getVideoMetadata } from './video';
 
 /**
  * 统一搜索：scope=global/user/moderation
@@ -279,6 +280,13 @@ function searchContent(
   const items: SearchResult[] = [];
   while (stmt.step()) {
     const row = stmt.getAsObject();
+    const contentJson = parseContent(row.content as string | null);
+    const postContentJson = parseContent(row.post_content as string | null);
+
+    // 注入视频元数据
+    injectVideoMetadataIntoContent(contentJson, getVideoMetadata);
+    injectVideoMetadataIntoContent(postContentJson, getVideoMetadata);
+
     items.push({
       thread_id: Number(row.thread_id),
       post_id: row.post_id !== null ? Number(row.post_id) : null,
@@ -288,8 +296,8 @@ function searchContent(
       user_id: Number(row.user_id),
       title: String(row.title),
       floor: Number(row.floor),
-      content_json: parseContent(row.content as string | null),
-      post_content_json: parseContent(row.post_content as string | null),
+      content_json: contentJson,
+      post_content_json: postContentJson,
       username: row.username ? String(row.username) : null,
       nickname: row.nickname ? String(row.nickname) : null,
       page: Number(row.page)

@@ -2,7 +2,7 @@
   import ContentRenderer from "./ContentRenderer.svelte";
   import CommentList from "./CommentList.svelte";
   import InlineModerationLog from "./InlineModerationLog.svelte";
-  import type { ThreadPost, ModerationLog, VideoMetadata } from "../lib/types";
+  import type { ThreadPost, ModerationLog } from "../lib/types";
   import { getUserDisplayName, getAvatarUrl, getImageUrl } from "../lib/content-utils";
   import { isVandal } from "../lib/content-utils";
 
@@ -10,10 +10,9 @@
     post: ThreadPost;
     time?: string;
     moderationLogs?: ModerationLog[];
-    videoMetadata?: Record<string, VideoMetadata>;
   }
 
-  let { post, time = undefined, moderationLogs = [], videoMetadata = {} }: Props = $props();
+  let { post, time = undefined, moderationLogs = [] }: Props = $props();
 
   let highlightClass = $state("");
 
@@ -56,7 +55,7 @@
         {displayName}
       </a>
     </div>
-    <ContentRenderer content={post.content} {time} {videoMetadata} />
+    <ContentRenderer content={post.content} {time} />
   </div>
   <div class="mt-12">
     {#if isVandal(post.user_id)}
