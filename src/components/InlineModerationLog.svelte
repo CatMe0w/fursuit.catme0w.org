@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { isVandal } from "../lib/content-utils";
+  import { isVandal, isVandalUsername } from "../lib/content-utils";
   import type { ModerationLog } from "../lib/types";
 
   interface Props {
@@ -11,6 +11,22 @@
   function getUserUrl(username: string | null) {
     return `/search?scope=moderation&q=${username}`;
   }
+
+  function shouldMarkAsVandal(uid: number | null | undefined, t: string | null, u: string | null): boolean {
+    if (uid && isVandal(uid)) return true;
+    if (u && isVandalUsername(u)) return true;
+    if (!uid && t) {
+      const date = new Date(t);
+      const start = new Date("2017-06-21T00:00:00").getTime();
+      const end = new Date("2019-07-05T23:59:59").getTime();
+      const timeVal = date.getTime();
+      return !isNaN(timeVal) && timeVal >= start && timeVal <= end;
+    }
+    return false;
+  }
+
+  let isVandalOperator = $derived(shouldMarkAsVandal(log.operator_id, log.operation_time, log.operator));
+  let vandalTitle = $derived(log.operator_id ? "该账号在爆吧期间参与了破坏行为。" : "该账号在爆吧期间参与了破坏行为，并且已被百度封禁。");
 
   let config = $derived(
     (() => {
@@ -42,10 +58,8 @@
     <p>
       <a href={getUserUrl(log.operator)} class="text-sky-700 hover:underline">
         {log.operator}
-        {#if !log.operator_id}
-          <span title="该账号在爆吧期间参与了破坏行为，并且已被百度封禁。" class="text-red-600 text-base">[破坏者]</span>
-        {:else if isVandal(log.operator_id)}
-          <span title="该账号在爆吧期间参与了破坏行为。" class="text-red-600 text-base">[破坏者]</span>
+        {#if isVandalOperator}
+          <span title={vandalTitle} class="text-red-600 text-base">[破坏者]</span>
         {/if}
       </a>
       于{log.operation_time}{config.text}。
