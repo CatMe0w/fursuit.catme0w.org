@@ -13,6 +13,20 @@
     if (time) return `/time-machine?time=${time}&user=${uid}`;
     return `/user/${uid}`;
   }
+
+  function processUrl(url: string): string {
+    // 重定向tieba.baidu.com/p/[id]到档案馆或时间机器
+    const tiebaMatch = url.match(/tieba\.baidu\.com\/p\/(\d+)/);
+    if (tiebaMatch) {
+      const threadId = tiebaMatch[1];
+      if (time) {
+        return `https://fursuit.catme0w.org/time-machine?time=${time}&thread=${threadId}`;
+      } else {
+        return `https://fursuit.catme0w.org/thread/${threadId}`;
+      }
+    }
+    return url;
+  }
 </script>
 
 <div class="grow mt-1 whitespace-pre-line lg:text-sm lg:leading-6">
@@ -26,7 +40,7 @@
     {:else if item.type === "text_bold_red"}
       <strong class="text-red-600">{item.content}</strong>
     {:else if item.type === "url"}
-      <a href={item.content.url} target="_blank" rel="noreferrer nofollow noopener" class="text-sky-700 hover:underline break-all">
+      <a href={processUrl(item.content.url)} target="_blank" rel="noreferrer nofollow noopener" class="text-sky-700 hover:underline break-all">
         {item.content.text || item.content.url}
       </a>
     {:else if item.type === "username"}
@@ -48,7 +62,7 @@
       {/if}
     {:else if item.type === "video"}
       {#if item.metadata}
-        <!-- 有效视频 -->
+        <!-- 有效视频：item.metadata存在即为有效 -->
         <!-- svelte-ignore a11y_media_has_caption -->
         <video controls poster={`https://fursuit-static.catme0w.org/videos/cover/${item.metadata.id}.jpg`} class="w-full max-w-2xl bg-black">
           <source src={`https://fursuit-static.catme0w.org/videos/full/${item.metadata.id}.mp4`} type="video/mp4" />
