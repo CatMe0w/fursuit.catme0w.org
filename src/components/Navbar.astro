@@ -67,6 +67,7 @@ const { backButton = 'none' } = Astro.props;
       </svg>
     </button>
   </div>
+  <div id="mobile-nav-backdrop" class="fixed inset-0 z-40 backdrop-blur-sm transition-all duration-250 ease-in-out opacity-0 pointer-events-none"></div>
   <div id="mobile-nav" class="absolute top-0 inset-x-0 p-2 z-50 transition-all duration-250 ease-in-out -translate-y-12 opacity-0 pointer-events-none">
     <div class="rounded-lg shadow-lg bg-white ring-1 ring-black/5 relative">
       <div class="p-5">
@@ -98,6 +99,8 @@ const { backButton = 'none' } = Astro.props;
 <script>
   const toggleMobileMenu = () => {
     const mobileNav = document.getElementById("mobile-nav");
+    const backdrop = document.getElementById("mobile-nav-backdrop");
+
     if (mobileNav) {
       mobileNav.classList.toggle("-translate-y-12");
       mobileNav.classList.toggle("translate-y-0");
@@ -106,8 +109,16 @@ const { backButton = 'none' } = Astro.props;
       mobileNav.classList.toggle("pointer-events-none");
       mobileNav.classList.toggle("pointer-events-auto");
     }
+
+    if (backdrop) {
+      backdrop.classList.toggle("opacity-0");
+      backdrop.classList.toggle("opacity-100");
+      backdrop.classList.toggle("pointer-events-none");
+      backdrop.classList.toggle("pointer-events-auto");
+    }
   };
 
   document.getElementById("mobile-menu-toggle")?.addEventListener("click", toggleMobileMenu);
   document.getElementById("mobile-menu-close")?.addEventListener("click", toggleMobileMenu);
+  document.getElementById("mobile-nav-backdrop")?.addEventListener("click", toggleMobileMenu);
 </script>
