@@ -65,8 +65,7 @@
         </p>
       {/if}
       <p>
-        操作人：
-        <ModerationLogUserLink userId={item.operator_id} username={item.operator} time={item.time} />
+        操作人：<ModerationLogUserLink userId={item.operator_id} username={item.operator} time={item.time} />
       </p>
       <p>
         操作时间：<span class="text-gray-800">{item.time}</span>
