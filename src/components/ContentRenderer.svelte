@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { ContentItem } from "../lib/types";
   import { getEmoticonUrl, getImageUrl, getAudioUrl } from "../lib/content-utils";
+  import ContentImage from "./ContentImage.svelte";
 
   interface Props {
     content?: ContentItem[];
@@ -53,9 +54,7 @@
       {@const imageSrc = item.content}
       {@const imageUrl = getImageUrl(imageSrc)}
       {#if imageSrc.startsWith("https://imgsrc.baidu.com/")}
-        <a href={imageUrl}>
-          <img class="w-auto lg:max-w-xl my-2 inline" src={imageUrl} alt="" />
-        </a>
+        <ContentImage src={imageUrl} />
       {:else}
         <!-- 可能是表情包 -->
         <img class="w-auto lg:max-w-xl my-2 inline" src={imageUrl} alt="" />
