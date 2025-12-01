@@ -21,7 +21,7 @@ export interface Thread {
   title: string;
   user_id: number; // 对于列表查询：最后回复的用户ID；对于单个查询：楼主的user_id
   reply_num: number;
-  is_good: boolean;
+  featured: boolean;
   op_user_id?: number; // 楼主的用户ID（仅在列表查询中返回）
   time?: string; // 最后回复时间（仅在列表查询中返回）
   op_post_content?: ContentItem[]; // 1楼内容（仅在列表查询中返回）
@@ -196,12 +196,22 @@ export function getAllThreads(): Thread[] {
              ROW_NUMBER() OVER (PARTITION BY thread_id ORDER BY time DESC) as rn
       FROM all_activities
     )
-    SELECT t.id, t.title, t.user_id AS op_user_id, t.reply_num, t.is_good,
+    SELECT t.id, t.title, t.user_id AS op_user_id, t.reply_num,
            la.user_id AS last_user_id, la.time, p.content
     FROM pr_thread t
     JOIN latest_activity la ON t.id = la.thread_id AND la.rn = 1
     JOIN pr_post p ON t.id = p.thread_id AND p.floor = 1
     ORDER BY la.time DESC`;
+
+  // 获取所有加精的帖子ID
+  const featuredSql = `SELECT DISTINCT thread_id FROM un_post WHERE operation = '加精'`;
+  const featuredStmt = db.prepare(featuredSql);
+  const featuredSet = new Set<number>();
+  while (featuredStmt.step()) {
+    const row = featuredStmt.getAsObject();
+    featuredSet.add(Number(row.thread_id));
+  }
+  featuredStmt.free();
 
   const stmt = db.prepare(sql);
   stmt.bind(["9999-12-31 23:59:59"]);
@@ -219,7 +229,7 @@ export function getAllThreads(): Thread[] {
       user_id: Number(row.last_user_id),
       time: String(row.time),
       reply_num: Number(row.reply_num),
-      is_good: Boolean(row.is_good),
+      featured: featuredSet.has(Number(row.id)),
       op_post_content: opPostContent,
     });
   }
@@ -251,7 +261,7 @@ export function getThreadById(id: number): Thread | undefined {
       title: String(row.title),
       user_id: Number(row.user_id),
       reply_num: Number(row.reply_num),
-      is_good: Boolean(row.is_good),
+      featured: Boolean(row.is_good),
     };
   }
   stmt.free();

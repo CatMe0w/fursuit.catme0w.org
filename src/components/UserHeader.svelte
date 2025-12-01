@@ -26,10 +26,10 @@
     {:else}
       <p class="text-gray-500">（没有用户名）</p>
     {/if}
+    {#if showPagination}
+      <div class="self-end mt-auto">
+        <Pagination currentPage={currentPage!} totalPages={totalPages!} baseUrl={baseUrl!} />
+      </div>
+    {/if}
   </div>
-  {#if showPagination}
-    <div class="hidden lg:block place-self-end">
-      <Pagination currentPage={currentPage!} totalPages={totalPages!} baseUrl={baseUrl!} />
-    </div>
-  {/if}
 </div>

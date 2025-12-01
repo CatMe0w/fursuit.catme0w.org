@@ -33,8 +33,8 @@ self.onconnect = (e: MessageEvent) => {
 
         case 'getThreadsAtTime':
           await initDatabase((msg) => broadcastMessage(msg));
-          const { datetime, keyword, limit, offset } = payload;
-          const result = getThreadsAtTime(datetime, keyword, limit, offset);
+          const { datetime, keyword, limit, offset, featured } = payload;
+          const result = getThreadsAtTime(datetime, keyword, limit, offset, featured);
           port.postMessage({ type: 'result', data: result, requestId } as WorkerResponse);
           break;
           

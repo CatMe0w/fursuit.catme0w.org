@@ -16,9 +16,11 @@
   let error = $state<string | null>(null);
   let scope = $state<"archive" | "thread" | "user">("archive");
   let time = $state("20160727-000000");
-  let page = $state(1);
+  let currentPage = $state(1);
+  let totalPages = $state(1);
   let resourceId = $state<string | null>(null);
   let standardTime = $state("");
+  let filter = $state<"all" | "featured">("all");
 
   // 数据
   let threads = $state<Thread[]>([]);
@@ -49,6 +51,7 @@
     const userIdParam = params.get("user");
     let timeParam = params.get("time");
     const pageParam = params.get("page");
+    const filterParam = params.get("filter");
 
     // 时间参数处理逻辑
     if (!timeParam || !isValidCompactTime(timeParam)) {
@@ -77,7 +80,13 @@
     // 更新状态
     time = timeParam || "20160727-000000";
     standardTime = parseCompactTime(time);
-    page = parseInt(pageParam || "1");
+    currentPage = parseInt(pageParam || "1");
+
+    if (filterParam === "featured") {
+      filter = "featured";
+    } else {
+      filter = "all";
+    }
 
     if (threadIdParam) {
       scope = "thread";
@@ -143,18 +152,20 @@
   }
 
   async function loadData() {
-    const offset = (page - 1) * ITEMS_PER_PAGE;
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
     if (scope === "archive") {
-      const result = await clientDb.getThreadsAtTime(standardTime, undefined, ITEMS_PER_PAGE, offset);
+      const result = await clientDb.getThreadsAtTime(standardTime, undefined, ITEMS_PER_PAGE, offset, filter === "featured");
       threads = result.threads;
       totalCount = result.totalCount;
+      totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
     } else if (scope === "user") {
       const uid = parseInt(resourceId!);
       const [result, user] = await Promise.all([clientDb.getUserPostsAtTime(uid, standardTime, ITEMS_PER_PAGE, offset), clientDb.getUserById(uid)]);
       userResults = result.items;
       totalCount = result.totalCount;
       userInfo = user;
+      totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
     } else if (scope === "thread") {
       const tid = parseInt(resourceId!);
       const result = await clientDb.getThreadPostsAtTime(tid, standardTime, ITEMS_PER_PAGE, offset);
@@ -162,6 +173,7 @@
       totalCount = result.totalCount;
       threadTitle = result.threadTitle;
       moderationLogs = result.moderation_logs;
+      totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
     }
 
     updateTitle();
@@ -184,7 +196,20 @@
     let url = `/time-machine?time=${time}`;
     if (scope === "thread") url += `&thread=${resourceId}`;
     if (scope === "user") url += `&user=${resourceId}`;
+    if (filter === "featured") url += `&filter=featured`;
     return url;
+  }
+
+  function getFilterUrl(targetFilter: "all" | "featured") {
+    const url = new URL(window.location.href);
+    url.searchParams.set("page", "1");
+
+    if (targetFilter === "featured") {
+      url.searchParams.set("filter", "featured");
+    } else {
+      url.searchParams.delete("filter");
+    }
+    return url.toString();
   }
 </script>
 
@@ -213,22 +238,31 @@
               <p class="text-sm">请尝试前往更晚的时间点。</p>
             </div>
           {:else}
-            {#if page !== 1}
-              <div class="p-5 border-b border-gray-100 flex justify-end">
-                <Pagination currentPage={page} totalPages={Math.ceil(totalCount / ITEMS_PER_PAGE)} baseUrl={getBaseUrl()} />
+            <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
+              <div>
+                <span class={(filter === "all" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "mr-2 px-1 pb-1 cursor-pointer"}
+                  ><a href={getFilterUrl("all")}>全部</a></span
+                >
+                <span class={(filter === "featured" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "px-1 pb-1 cursor-pointer"}
+                  ><a href={getFilterUrl("featured")}>精品</a></span
+                >
               </div>
-            {/if}
+              <div class="block">
+                <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} />
+              </div>
+            </div>
+
             <div class="grid grid-cols-1">
               {#each threads as thread (thread.id)}
                 <ThreadListItem {thread} {time} />
               {/each}
             </div>
             <div class="p-5 flex justify-end">
-              <Pagination currentPage={page} totalPages={Math.ceil(totalCount / ITEMS_PER_PAGE)} baseUrl={getBaseUrl()} />
+              <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} forceFullWidth={true} />
             </div>
           {/if}
 
-        <!-- Thread View -->
+          <!-- Thread View -->
         {:else if scope === "thread"}
           {#if threadPosts.length === 0}
             <div class="p-5 text-center text-gray-600">
@@ -240,7 +274,7 @@
               <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
                 <p class="truncate">{threadTitle}</p>
                 <div class="hidden lg:block">
-                  <Pagination currentPage={page} totalPages={Math.ceil(totalCount / ITEMS_PER_PAGE)} baseUrl={getBaseUrl()} />
+                  <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} />
                 </div>
               </div>
               {#if isVandal(threadPosts[0].user_id)}
@@ -250,15 +284,15 @@
                 <ThreadPost {post} {time} {moderationLogs} />
               {/each}
               <div class="p-5 flex justify-end">
-                <Pagination currentPage={page} totalPages={Math.ceil(totalCount / ITEMS_PER_PAGE)} baseUrl={getBaseUrl()} />
+                <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} forceFullWidth={true} />
               </div>
             </div>
           {/if}
 
-        <!-- User View -->
+          <!-- User View -->
         {:else if scope === "user"}
           {#if userInfo}
-            <UserHeader user={userInfo} currentPage={page} totalPages={Math.ceil(totalCount / ITEMS_PER_PAGE)} baseUrl={getBaseUrl()} />
+            <UserHeader user={userInfo} {currentPage} {totalPages} baseUrl={getBaseUrl()} />
             <VandalWarning userId={userInfo.id} />
           {/if}
 
@@ -274,7 +308,7 @@
               {/each}
             </div>
             <div class="p-5 flex justify-end">
-              <Pagination currentPage={page} totalPages={Math.ceil(totalCount / ITEMS_PER_PAGE)} baseUrl={getBaseUrl()} />
+              <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} forceFullWidth={true} />
             </div>
           {/if}
         {/if}

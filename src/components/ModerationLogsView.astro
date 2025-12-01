@@ -74,13 +74,11 @@ const pageTitle = `吧务后台日志 - fursuit吧·档案馆与时间机器：�
               ><a href={getCategoryUrl("bawu")}>吧务</a></span
             >
           </div>
-          <div class="hidden lg:block">
-            <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={getBaseUrl(category)} />
-          </div>
+          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={getBaseUrl(category)} />
         </div>
         {paginationResult.items.map((log) => <ModerationLogItem item={mapLogToSearchResult(log, category)} />)}
         <div class="flex p-5 justify-end">
-          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={getBaseUrl(category)} />
+          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={getBaseUrl(category)} forceFullWidth={true} />
         </div>
       </div>
     </div>

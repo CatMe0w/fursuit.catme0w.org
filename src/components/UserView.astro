@@ -65,7 +65,7 @@ const userInfo: UserInfo = {
           ))
         }
         <div class="flex p-5 justify-end">
-          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/user/${userId}`} />
+          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/user/${userId}`} forceFullWidth={true} />
         </div>
       </div>
     </div>

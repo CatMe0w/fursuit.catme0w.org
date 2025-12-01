@@ -260,8 +260,8 @@ class ClientDatabase {
   /**
    * 获取指定时间点的帖子列表（带分页）
    */
-  async getThreadsAtTime(datetime: string, keyword?: string, limit?: number, offset?: number): Promise<{ threads: Thread[]; totalCount: number }> {
-    return this.request("getThreadsAtTime", { datetime, keyword, limit, offset });
+  async getThreadsAtTime(datetime: string, keyword?: string, limit?: number, offset?: number, featured?: boolean): Promise<{ threads: Thread[]; totalCount: number }> {
+    return this.request("getThreadsAtTime", { datetime, keyword, limit, offset, featured });
   }
 
   /**
