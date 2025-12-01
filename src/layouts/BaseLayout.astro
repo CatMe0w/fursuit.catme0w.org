@@ -1,8 +1,9 @@
 ---
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
+import Lightbox from "../components/Lightbox.svelte";
 
-export type BackButtonMode = 'none' | 'archive' | 'home' | 'defer';
+export type BackButtonMode = "none" | "archive" | "home" | "defer";
 
 interface Props {
   title: string;
@@ -10,7 +11,7 @@ interface Props {
   backButton?: BackButtonMode;
 }
 
-const { title, description, backButton = 'none' } = Astro.props;
+const { title, description, backButton = "none" } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,6 +26,8 @@ const { title, description, backButton = 'none' } = Astro.props;
   </head>
   <body>
     <Navbar backButton={backButton} />
-    <slot />
+    <Lightbox client:load>
+      <slot />
+    </Lightbox>
   </body>
 </html>
