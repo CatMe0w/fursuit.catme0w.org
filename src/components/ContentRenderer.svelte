@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ContentItem } from "../lib/types";
-  import { getEmoticonUrl, getImageUrl, getAudioUrl } from "../lib/content-utils";
+  import { getEmoticonUrl, getImageUrl, getAudioUrl, parseTiebaShortVideoUrl } from "../lib/content-utils";
   import ContentImage from "./ContentImage.svelte";
 
   interface Props {
@@ -60,7 +60,15 @@
         <img class="w-auto lg:max-w-xl my-2 inline" src={imageUrl} alt="" />
       {/if}
     {:else if item.type === "video"}
-      {#if item.metadata}
+      {@const tiebaVideo = parseTiebaShortVideoUrl(item.url || "")}
+      {#if tiebaVideo}
+        <!-- 贴吧短视频 -->
+        <!-- svelte-ignore a11y_media_has_caption -->
+        <video controls poster={tiebaVideo.thumbnailUrl || undefined} class="w-full max-w-2xl bg-black">
+          <source src={tiebaVideo.videoUrl} type="video/mp4" />
+        </video>
+      {:else if item.metadata}
+        <!-- 外部视频（优酷、腾讯视频） -->
         <!-- 有效视频：item.metadata存在即为有效 -->
         <!-- svelte-ignore a11y_media_has_caption -->
         <video controls poster={`https://fursuit-static.catme0w.org/videos/cover/${item.metadata.id}.jpg`} class="w-full max-w-2xl bg-black">
@@ -70,7 +78,7 @@
           <div class="bg-gray-100 rounded-b p-5 w-full max-w-2xl">
             <p class="text-lg text-gray-700">{item.metadata.title}</p>
             {#if item.metadata.uploader}
-              <p class="text-xs text-gray-600">
+              <p class="text-xs text-gray-600 mt-1.5">
                 上传者：{#if item.metadata.uploader_url}
                   <a href={item.metadata.uploader_url} target="_blank" rel="noreferrer nofollow noopener" class="text-sky-700 hover:underline break-all"
                     >{item.metadata.uploader}</a

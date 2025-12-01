@@ -78,15 +78,71 @@ function getImageThumbnailUrl(url: string): string {
 }
 
 /**
- * 获取视频缩略图URL
+ * 获取外部视频（优酷、腾讯视频）缩略图URL
  */
-function getVideoThumbnailUrl(url: string): string | null {
+function getExternalVideoThumbnailUrl(url: string): string | null {
   const youkuId = getYoukuId(url);
   const qqId = getQQVideoId(url);
   const videoId = youkuId || qqId;
 
-  if (!videoId) return null;
-  return `https://fursuit-static.catme0w.org/videos/cover/${videoId}.jpg`;
+  if (videoId) return `https://fursuit-static.catme0w.org/videos/cover/${videoId}.jpg`;
+
+  return null;
+}
+
+/**
+ * 从优酷URL中提取视频ID
+ */
+function getYoukuId(url: string): string | null {
+  const match1 = url.match(/id_(X[a-zA-Z0-9]+)/);
+  if (match1) return match1[1];
+
+  const match2 = url.match(/sid\/(X[a-zA-Z0-9]+)/);
+  if (match2) return match2[1];
+
+  return null;
+}
+
+/**
+ * 从腾讯视频URL中提取视频ID
+ */
+function getQQVideoId(url: string): string | null {
+  const match = url.match(/\/([a-zA-Z0-9]+)\.html/);
+  if (match) return match[1];
+  return null;
+}
+
+/**
+ * 解析贴吧短视频URL
+ * URL格式: https://tieba.baidu.com/mo/q/movideo/page?thumbnail=...&video=...
+ */
+export function parseTiebaShortVideoUrl(url: string): { videoUrl: string; thumbnailUrl: string | null } | null {
+  if (!url.includes("tieba.baidu.com/mo/q/movideo/page")) return null;
+
+  try {
+    const urlObj = new URL(url);
+    const videoId = urlObj.searchParams.get("video");
+    const thumbnail = urlObj.searchParams.get("thumbnail");
+
+    if (videoId) {
+      return {
+        videoUrl: `https://fursuit-static.catme0w.org/videos/full/${videoId}.mp4`,
+        thumbnailUrl: thumbnail ? `https://fursuit-static.catme0w.org/images/full/${thumbnail}.jpg` : null,
+      };
+    }
+  } catch (e) { }
+  return null;
+}
+
+/**
+ * 获取贴吧短视频缩略图URL
+ */
+function getTiebaShortVideoThumbnailUrl(url: string): string | null {
+  const tiebaVideo = parseTiebaShortVideoUrl(url);
+  if (tiebaVideo && tiebaVideo.thumbnailUrl) {
+    return tiebaVideo.thumbnailUrl;
+  }
+  return null;
 }
 
 /**
@@ -95,9 +151,14 @@ function getVideoThumbnailUrl(url: string): string | null {
  * @returns 缩略图URL，图片返回string，视频可能返回null（如果无法提取ID）
  */
 export function getThumbnailUrl(url: string): string | null {
-  // 判断是否为视频URL（优酷或QQ视频）
+  // 判断是否为外部视频URL（优酷、腾讯视频）
   if (url.includes("youku.com") || url.includes("qq.com")) {
-    return getVideoThumbnailUrl(url);
+    return getExternalVideoThumbnailUrl(url);
+  }
+
+  // 判断是否为贴吧短视频URL
+  if (url.includes("tieba.baidu.com/mo/q/movideo")) {
+    return getTiebaShortVideoThumbnailUrl(url);
   }
 
   // 否则作为图片处理
@@ -186,26 +247,4 @@ export function isVandal(userId: number): boolean {
 export function isVandalUsername(username: string): boolean {
   const vandalUsernames = new Set<string>(["飛翔之龍"]);
   return vandalUsernames.has(username);
-}
-
-/**
- * 从优酷URL中提取视频ID
- */
-function getYoukuId(url: string): string | null {
-  const match1 = url.match(/id_(X[a-zA-Z0-9]+)/);
-  if (match1) return match1[1];
-
-  const match2 = url.match(/sid\/(X[a-zA-Z0-9]+)/);
-  if (match2) return match2[1];
-
-  return null;
-}
-
-/**
- * 从QQ视频URL中提取视频ID
- */
-function getQQVideoId(url: string): string | null {
-  const match = url.match(/\/([a-zA-Z0-9]+)\.html/);
-  if (match) return match[1];
-  return null;
 }
