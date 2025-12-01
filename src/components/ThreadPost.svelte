@@ -27,6 +27,7 @@
 
   let displayName = $derived(getUserDisplayName(post.username, post.nickname));
   let avatarUrl = $derived(getAvatarUrl(post.avatar));
+  let isAlbum = $derived(post.floor === 1 && post.content.some((c) => c.type === "album"));
 
   $effect(() => {
     if (typeof window !== "undefined") {
@@ -42,15 +43,19 @@
 </script>
 
 <div class="p-5 border-b border-gray-100 transition-colors duration-1000 {highlightClass}" id={post.id.toString()}>
-  <div class="lg:flex flex-row">
-    <div class="basis-24 shrink-0 mr-7 mb-3 flex flex-row lg:flex-col gap-3 items-center">
+  <div class={isAlbum ? "flex-row" : "lg:flex flex-row"}>
+    <div class={"basis-24 shrink-0 mr-7 mb-3 flex flex-row gap-3 items-center" + (isAlbum ? "" : " lg:flex-col")}>
       <a href={getUserUrl(post.user_id)} title={`用户名：${post.username || ""}`}>
-        <img class="border-2 lg:border-4 border-gray-100 rounded-md w-10 h-10 lg:w-24 lg:h-24" src={avatarUrl} alt="" />
+        <img
+          class={"border-2 lg:border-4 border-gray-100 rounded-md w-10 h-10" + (isAlbum ? "" : " lg:w-24 lg:h-24")}
+          src={avatarUrl}
+          alt=""
+        />
       </a>
       <a
         href={getUserUrl(post.user_id)}
         title={`用户名：${post.username || ""}`}
-        class="text-sky-700 hover:underline text-sm lg:text-xs text-center break-all inline"
+        class={"text-sky-700 hover:underline text-center break-all inline text-sm " + (isAlbum ? "" : " lg:text-xs")}
       >
         {displayName}
       </a>
