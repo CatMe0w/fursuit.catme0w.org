@@ -14,12 +14,14 @@ import type { Thread as SvelteThread } from "../lib/types";
 interface Props {
   currentPage: number;
   title: string;
+  filter?: "all" | "featured";
 }
 
-const { currentPage, title } = Astro.props as Props;
+const { currentPage, title, filter = "all" } = Astro.props as Props;
 
 const allThreads = getAllThreads();
-const paginationResult = paginate(allThreads, currentPage);
+const filteredThreads = filter === "featured" ? allThreads.filter((t) => t.featured) : allThreads;
+const paginationResult = paginate(filteredThreads, currentPage);
 
 function mapToSvelteThread(thread: DataThread): SvelteThread {
   const opUser = thread.op_user_id ? getUserById(thread.op_user_id) || null : null;
@@ -32,7 +34,7 @@ function mapToSvelteThread(thread: DataThread): SvelteThread {
     user_id: thread.user_id,
     time: thread.time || "",
     reply_num: thread.reply_num,
-    is_good: thread.is_good,
+    featured: thread.featured,
     op_post_content: thread.op_post_content || [],
     op_username: opUser?.username || undefined,
     op_nickname: opUser?.nickname || undefined,
@@ -48,14 +50,34 @@ const svelteThreads: SvelteThread[] = paginationResult.items.map(mapToSvelteThre
   <div id="main-content" class="bg-gray-50 lg:mx-1 my-2">
     <div class="shadow lg:rounded bg-white">
       <div id="thread-list" class="grid grid-cols-1">
-        {paginationResult.currentPage !== 1 && (
-          <div class="p-5 border-b border-gray-100 flex justify-end">
-            <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl="/archive" />
+        <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
+          <div>
+            <span class={(filter === "all" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "mr-2 px-1 pb-1"}
+              ><a href="/archive">全部</a></span
+            >
+            <span class={(filter === "featured" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "px-1 pb-1"}
+              ><a href="/archive/featured">精品</a></span
+            >
           </div>
-        )}
+          <div class="block">
+            <Pagination
+              client:load
+              currentPage={paginationResult.currentPage}
+              totalPages={paginationResult.totalPages}
+              baseUrl={filter === "featured" ? "/archive/featured" : "/archive"}
+            />
+          </div>
+        </div>
+
         {svelteThreads.map((thread) => <ThreadListItem thread={thread} />)}
         <div class="flex p-5 justify-end">
-          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl="/archive" />
+          <Pagination
+            client:load
+            currentPage={paginationResult.currentPage}
+            totalPages={paginationResult.totalPages}
+            baseUrl={filter === "featured" ? "/archive/featured" : "/archive"}
+            forceFullWidth={true}
+          />
         </div>
       </div>
     </div>
@@ -67,7 +89,9 @@ const svelteThreads: SvelteThread[] = paginationResult.items.map(mapToSvelteThre
     <Sidebar>
       <h1 slot="title">到别处看看</h1>
       <TimeMachineButton currentScope="archive" />
-      <a href="/moderation-logs/post" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded block transition-colors">吧务后台日志</a>
+      <a href="/moderation-logs/post" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded block transition-colors"
+        >吧务后台日志</a
+      >
       <div class="border-2 border-b border-gray-100 my-1"></div>
       <ExternalLinkButton href="https://tieba.baidu.com/f?kw=fursuit">百度贴吧</ExternalLinkButton>
       <ExternalLinkButton href="https://web.archive.org/web/*/https://tieba.baidu.com/f?kw=fursuit">Internet Archive</ExternalLinkButton>

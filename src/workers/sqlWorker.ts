@@ -19,8 +19,8 @@ self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
 
       case 'getThreadsAtTime':
         await initDatabase(postMessage);
-        const { datetime, keyword, limit, offset } = payload;
-        const result = getThreadsAtTime(datetime, keyword, limit, offset);
+        const { datetime, keyword, limit, offset, featured } = payload;
+        const result = getThreadsAtTime(datetime, keyword, limit, offset, featured);
         postMessage({ type: 'result', data: result, requestId } as WorkerResponse);
         break;
         

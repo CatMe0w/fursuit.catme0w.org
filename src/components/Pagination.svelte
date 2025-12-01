@@ -3,9 +3,10 @@
     currentPage: number;
     totalPages: number;
     baseUrl: string;
+    forceFullWidth?: boolean;
   }
 
-  let { currentPage, totalPages, baseUrl }: Props = $props();
+  let { currentPage, totalPages, baseUrl, forceFullWidth = false }: Props = $props();
 
   let selectValue = $derived(currentPage);
 
@@ -40,8 +41,8 @@
 
 <div class="flex flex-row flex-nowrap gap-2 items-center text-sm whitespace-nowrap">
   {#if currentPage !== 1}
-    <a href={getPageUrl(1)} class="text-sky-700 hover:underline px-1">首页</a>
-    <a href={getPageUrl(currentPage - 1)} class="text-sky-700 hover:underline px-1">上一页</a>
+    <a href={getPageUrl(1)} class={"text-sky-700 hover:underline px-1" + (forceFullWidth ? "" : " hidden sm:inline")}>首页</a>
+    <a href={getPageUrl(currentPage - 1)} class={"text-sky-700 hover:underline px-1" + (forceFullWidth ? "" : " hidden sm:inline")}>上一页</a>
   {/if}
 
   {#if totalPages === 1}
@@ -59,7 +60,7 @@
   {/if}
 
   {#if currentPage !== totalPages}
-    <a href={getPageUrl(currentPage + 1)} class="text-sky-700 hover:underline px-1">下一页</a>
-    <a href={getPageUrl(totalPages)} class="text-sky-700 hover:underline px-1">末页</a>
+    <a href={getPageUrl(currentPage + 1)} class={"text-sky-700 hover:underline px-1" + (forceFullWidth ? "" : " hidden sm:inline")}>下一页</a>
+    <a href={getPageUrl(totalPages)} class={"text-sky-700 hover:underline px-1" + (forceFullWidth ? "" : " hidden sm:inline")}>末页</a>
   {/if}
 </div>

@@ -67,7 +67,7 @@
           <source src={`https://fursuit-static.catme0w.org/videos/full/${item.metadata.id}.mp4`} type="video/mp4" />
         </video>
         {#if item.metadata.title}
-          <div class="bg-gray-100 rounded-b p-5">
+          <div class="bg-gray-100 rounded-b p-5 w-full max-w-2xl">
             <p class="text-lg text-gray-700">{item.metadata.title}</p>
             {#if item.metadata.uploader}
               <p class="text-xs text-gray-600">

@@ -5,7 +5,7 @@ export interface Thread {
   user_id: number;
   time: string;
   reply_num: number;
-  is_good: boolean;
+  featured: boolean;
   op_post_content: any[];
   op_username?: string;
   op_nickname?: string;

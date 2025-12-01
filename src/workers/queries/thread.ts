@@ -6,11 +6,32 @@ import { getVideoMetadata } from './video';
 /**
  * 获取指定时间点的帖子列表（带分页）
  */
-export function getThreadsAtTime(datetime: string, keyword?: string, limit?: number, offset?: number): { threads: Thread[]; totalCount: number } {
+export function getThreadsAtTime(datetime: string, keyword?: string, limit?: number, offset?: number, featured?: boolean): { threads: Thread[]; totalCount: number } {
   const db = getDb();
 
   const kw = (keyword || '').trim();
   const firstKw = kw ? `%${kw.split(/\s+/)[0]}%` : '%%';
+
+  // 获取所有加精的帖子ID（截止到指定时间）
+  const featuredSql = `SELECT DISTINCT thread_id FROM un_post WHERE operation = '加精' AND operation_time < ?1`;
+  const featuredStmt = db.prepare(featuredSql);
+  featuredStmt.bind([datetime]);
+  const featuredSet = new Set<number>();
+  while (featuredStmt.step()) {
+    const row = featuredStmt.getAsObject();
+    featuredSet.add(Number(row.thread_id));
+  }
+  featuredStmt.free();
+
+  // 构建featured过滤条件
+  let featuredFilter = "";
+  if (featured) {
+    if (featuredSet.size === 0) {
+      return { threads: [], totalCount: 0 };
+    }
+    const ids = Array.from(featuredSet).join(",");
+    featuredFilter = `AND z.thread_id IN (${ids})`;
+  }
 
   const cteSql = `
     WITH last_posts AS (
@@ -64,7 +85,7 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
         AND u.operation_time < ?1
         AND u.operation_time NOT LIKE '2022-02-26 23:%'
         AND u.operation_time NOT LIKE '2022-02-16 01:%'
-    )`;
+    ) ${featuredFilter}`;
 
   const countStmt = db.prepare(countSql);
   countStmt.bind([datetime, firstKw]);
@@ -75,7 +96,7 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
   // 查询分页数据
   const sql = `
     ${cteSql}
-    SELECT z.thread_id, t.user_id AS op_user_id, t.title AS title, z.user_id, z.time, t.reply_num, t.is_good, p.content,
+    SELECT z.thread_id, t.user_id AS op_user_id, t.title AS title, z.user_id, z.time, t.reply_num, p.content,
            op_user.username AS op_username, op_user.nickname AS op_nickname,
            last_user.username AS last_reply_username, last_user.nickname AS last_reply_nickname
     FROM z
@@ -91,7 +112,7 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
         AND u.operation_time < ?1
         AND u.operation_time NOT LIKE '2022-02-26 23:%'
         AND u.operation_time NOT LIKE '2022-02-16 01:%'
-    )
+    ) ${featuredFilter}
     ORDER BY z.time DESC
     LIMIT ?3 OFFSET ?4`;
 
@@ -113,7 +134,7 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
       user_id: Number(row.user_id),
       time: String(row.time),
       reply_num: Number(row.reply_num),
-      is_good: Boolean(row.is_good),
+      featured: featuredSet.has(Number(row.thread_id)),
       op_post_content: opPostContent,
       op_username: row.op_username ? String(row.op_username) : undefined,
       op_nickname: row.op_nickname ? String(row.op_nickname) : undefined,

@@ -39,6 +39,9 @@
     <div class="basis-full lg:basis-3/4 grow mb-5">
       <a href={getThreadUrl(thread.id)} class="text-sky-700 hover:underline">
         {thread.title}
+        {#if thread.featured}
+          <span class="bg-red-400 text-white text-xs px-1 py-0.5 rounded ml-1 select-none" title="精品帖">精</span>
+        {/if}
       </a>
       {#if opPostContentText}
         <p class="text-sm mt-2 text-gray-700 line-clamp-3 leading-6">

@@ -77,14 +77,14 @@ const sveltePosts: SvelteThreadPost[] = paginatedPosts.map(mapPostToSvelte);
       <div class="grid grid-cols-1">
         <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
           <p class="truncate">{thread.title}</p>
-          <div class="hidden lg:block">
+          <div class={currentPage > 1 ? "block" : "hidden lg:block"}>
             <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/thread/${threadId}`} />
           </div>
         </div>
         {sveltePosts[0].floor === 1 && <VandalWarning userId={thread.user_id} />}
         {sveltePosts.map((post) => <ThreadPost client:visible post={post} moderationLogs={moderationLogs} />)}
         <div class="flex p-5 justify-end">
-          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/thread/${threadId}`} />
+          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/thread/${threadId}`} forceFullWidth={true} />
         </div>
       </div>
     </div>
