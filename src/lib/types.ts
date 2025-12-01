@@ -22,6 +22,7 @@ export interface SearchOptions {
   snapshotTime?: string;
   limit?: number;
   offset?: number;
+  onlyThread?: boolean;
 }
 
 export interface SearchResult {

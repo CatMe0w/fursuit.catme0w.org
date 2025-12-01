@@ -14,7 +14,7 @@ const pageSubtitle = "浏览fursuit吧的所有帖子，包括已删除的内容
 
   <!-- 主板块占位符 -->
   <div id="search-placeholder" class="bg-gray-50 lg:mx-1 my-2">
-    <div class="shadow lg:rounded bg-white min-h-[150vh]"></div>
+    <div class="shadow lg:rounded bg-white min-h-[1500vh]"></div>
   </div>
 
   <SearchApp client:only="svelte" />
@@ -28,13 +28,17 @@ const pageSubtitle = "浏览fursuit吧的所有帖子，包括已删除的内容
             <div class="flex-1 min-w-0 px-2.5 py-1.5 border border-gray-300 rounded text-sm">&nbsp;</div>
             <div class="bg-blue-700 text-white px-4 py-1.5 rounded shrink-0 whitespace-nowrap">搜索</div>
           </div>
+          <div class="mt-5">
+            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+              <input type="checkbox" class="rounded text-blue-600 focus:ring-blue-500" />
+              只看主题帖
+            </label>
+          </div>
         </div>
       </div>
       <div class="rounded shadow bg-white mx-2 lg:mx-1">
         <div class="p-6 flex flex-col gap-5">
-          <div class="text-xl">
-            搜索其他内容
-          </div>
+          <div class="text-xl">搜索其他内容</div>
           <div class="text-center flex flex-col gap-3">
             <div class="bg-gray-100 text-gray-600 px-4 py-1.5 rounded block text-center">&nbsp;</div>
             <div class="bg-gray-100 text-gray-600 px-4 py-1.5 rounded block text-center">&nbsp;</div>
