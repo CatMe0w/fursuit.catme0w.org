@@ -103,6 +103,13 @@
       <audio controls class="my-2">
         <source src={audioUrl} type="audio/mpeg" />
       </audio>
+    {:else if item.type === "album"}
+      <div class="columns-2 md:columns-3 gap-2 my-2">
+        {#each item.content as albumItem}
+          {@const imageUrl = getImageUrl(albumItem.url)}
+          <ContentImage src={imageUrl} variant="album" />
+        {/each}
+      </div>
     {/if}
   {/each}
 </div>

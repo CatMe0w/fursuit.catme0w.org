@@ -96,7 +96,8 @@ export type ContentItem =
   | { type: 'audio'; content: string }
   | { type: 'emoticon'; content: { id: string; description: string } }
   | { type: 'url'; content: { url: string; text: string } }
-  | { type: 'username'; content: { text: string; user_id: number } };
+  | { type: 'username'; content: { text: string; user_id: number } }
+  | { type: 'album'; content: { url: string; description: string }[] };
 
 export interface ModerationLog {
   thread_id: number | null;
