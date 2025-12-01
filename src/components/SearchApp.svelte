@@ -21,6 +21,7 @@
   let userId = params.get("user_id");
   let time = params.get("time");
   let page = parseInt(params.get("page") || "1", 10);
+  let onlyThread = params.get("only_thread") === "true";
 
   $effect(() => {
     setTimeout(() => {
@@ -66,6 +67,7 @@
         keyword: query,
         limit: LIMIT,
         offset,
+        onlyThread,
       };
       if (userId) opts.userId = parseInt(userId);
       if (time) opts.snapshotTime = parseCompactTime(time);
@@ -92,6 +94,7 @@
     if (scope) params.set("scope", scope);
     if (userId) params.set("user_id", userId);
     if (time) params.set("time", time);
+    if (onlyThread) params.set("only_thread", "true");
     return `/search?${params.toString()}`;
   }
 

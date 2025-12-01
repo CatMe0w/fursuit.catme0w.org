@@ -9,7 +9,7 @@ import { getVideoMetadata } from './video';
  */
 export function searchEntries(options: SearchOptions): SearchResponse {
   const db = getDb();
-  const { scope, keyword, userId, snapshotTime, limit = 200, offset = 0 } = options;
+  const { scope, keyword, userId, snapshotTime, limit = 200, offset = 0, onlyThread } = options;
 
   const words = keyword.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return { items: [], totalCount: 0 };
@@ -17,7 +17,7 @@ export function searchEntries(options: SearchOptions): SearchResponse {
   if (scope === 'moderation') {
     return searchModeration(db, words, limit, offset);
   } else {
-    return searchContent(db, scope, words, userId, snapshotTime, limit, offset);
+    return searchContent(db, scope, words, userId, snapshotTime, limit, offset, onlyThread);
   }
 }
 
@@ -121,7 +121,8 @@ function searchContent(
   userId: number | undefined,
   snapshotTime: string | undefined,
   limit: number,
-  offset: number
+  offset: number,
+  onlyThread: boolean | undefined
 ): SearchResponse {
   const tm = !!snapshotTime;
   
@@ -262,8 +263,13 @@ function searchContent(
   if (tm && snapshotTime) { paramsComment.push(snapshotTime); paramsComment.push(snapshotTime); }
 
   // 3. 组合SQL
-  const unionSql = `${sqlThread} UNION ALL ${sqlPost} UNION ALL ${sqlComment}`;
-  const allParams = [...paramsThread, ...paramsPost, ...paramsComment];
+  let unionSql = sqlThread;
+  let allParams = [...paramsThread];
+
+  if (!onlyThread) {
+    unionSql += ` UNION ALL ${sqlPost} UNION ALL ${sqlComment}`;
+    allParams.push(...paramsPost, ...paramsComment);
+  }
 
   // 4. 获取总数
   const countStmt = db.prepare(`SELECT COUNT(*) as total FROM (${unionSql})`);
