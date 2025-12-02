@@ -11,6 +11,7 @@ export interface Thread {
   op_nickname?: string;
   last_reply_username?: string;
   last_reply_nickname?: string;
+  post_count: number;
 }
 
 export type SearchScope = 'global' | 'user' | 'moderation';
@@ -48,7 +49,7 @@ export interface SearchResult {
   content_preview?: string | null;
   media?: string | null;
   post_time?: string | null;
-  operator_id?: number | null; 
+  operator_id?: number | null;
   target_user_id?: number | null;
 }
 
