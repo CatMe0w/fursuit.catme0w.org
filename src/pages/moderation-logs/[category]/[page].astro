@@ -4,12 +4,12 @@ import { parsePageParam } from "../../../lib/pagination";
 
 export async function getStaticPaths() {
   // 为每个类别生成分页路径，根据日志总数估算页数
-  const { getModerationLogsByCategory } = await import("../../../lib/data");
+  const { getModerationLogsCountByCategory } = await import("../../../lib/data");
   const categories: Array<"post" | "user" | "bawu"> = ["post", "user", "bawu"];
   const paths: Array<{ params: { category: string; page: string } }> = [];
   for (const cat of categories) {
-    const logs = getModerationLogsByCategory(cat);
-    const totalPages = Math.ceil(logs.length / 30);
+    const totalCount = getModerationLogsCountByCategory(cat);
+    const totalPages = Math.ceil(totalCount / 30);
     for (let p = 2; p <= totalPages; p++) {
       paths.push({ params: { category: cat, page: String(p) } });
     }
