@@ -232,26 +232,28 @@
       {:else}
         <!-- Archive View -->
         {#if scope === "archive"}
+          <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
+            <div>
+              <span class={(filter === "all" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "mr-2 px-1 pb-1 cursor-pointer"}
+                ><a href={getFilterUrl("all")}>全部</a></span
+              >
+              <span class={(filter === "featured" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "px-1 pb-1 cursor-pointer"}
+                ><a href={getFilterUrl("featured")}>精品</a></span
+              >
+            </div>
+            {#if threads.length > 0}
+              <div class="block">
+                <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} />
+              </div>
+            {/if}
+          </div>
+
           {#if threads.length === 0}
             <div class="p-5 text-center text-gray-600">
               <p class="text-lg mb-2">在这个时刻没有任何帖子</p>
               <p class="text-sm">请尝试前往更晚的时间点。</p>
             </div>
           {:else}
-            <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
-              <div>
-                <span class={(filter === "all" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "mr-2 px-1 pb-1 cursor-pointer"}
-                  ><a href={getFilterUrl("all")}>全部</a></span
-                >
-                <span class={(filter === "featured" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "px-1 pb-1 cursor-pointer"}
-                  ><a href={getFilterUrl("featured")}>精品</a></span
-                >
-              </div>
-              <div class="block">
-                <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} />
-              </div>
-            </div>
-
             <div class="grid grid-cols-1">
               {#each threads as thread (thread.id)}
                 <ThreadListItem {thread} {time} />
