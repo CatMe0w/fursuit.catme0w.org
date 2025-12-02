@@ -135,6 +135,16 @@ export function getAllThreads(): Thread[] {
   }
   featuredStmt.free();
 
+  // 获取所有帖子的实际回复数（楼层数）
+  const postCountSql = `SELECT thread_id, COUNT(*) as count FROM pr_post GROUP BY thread_id`;
+  const postCountStmt = db.prepare(postCountSql);
+  const postCountMap = new Map<number, number>();
+  while (postCountStmt.step()) {
+    const row = postCountStmt.getAsObject();
+    postCountMap.set(Number(row.thread_id), Number(row.count));
+  }
+  postCountStmt.free();
+
   const stmt = db.prepare(sql);
   stmt.bind(["9999-12-31 23:59:59"]);
 
@@ -157,6 +167,7 @@ export function getAllThreads(): Thread[] {
       op_nickname: row.op_nickname ? String(row.op_nickname) : undefined,
       last_reply_username: row.last_reply_username ? String(row.last_reply_username) : undefined,
       last_reply_nickname: row.last_reply_nickname ? String(row.last_reply_nickname) : undefined,
+      post_count: postCountMap.get(Number(row.id)) || 0,
     });
   }
   stmt.free();
