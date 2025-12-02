@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar.astro";
 import SearchBox from "./SearchBox.astro";
 import TimeMachineButton from "./TimeMachineButton.astro";
 import ExternalLinkButton from "./ExternalLinkButton.astro";
+import AlbumCard from "./AlbumCard.svelte";
 import ThreadListItem from "./ThreadListItem.svelte";
 import { getAllThreads, getAlbumThreads } from "../lib/data";
 import { paginate } from "../lib/pagination";
@@ -13,7 +14,7 @@ import type { Thread } from "../lib/types";
 interface Props {
   currentPage: number;
   title: string;
-  filter?: "all" | "featured";
+  filter?: "all" | "featured" | "albums";
 }
 
 const { currentPage, title, filter = "all" } = Astro.props as Props;
@@ -24,6 +25,10 @@ const paginationResult = paginate(filteredThreads, currentPage);
 
 const svelteThreads: Thread[] = paginationResult.items;
 
+function getBaseUrl() {
+  if (filter === "featured") return "/archive/featured";
+  if (filter === "albums") return "/archive/albums";
+  return "/archive";
 }
 ---
 
@@ -36,27 +41,36 @@ const svelteThreads: Thread[] = paginationResult.items;
             <span class={(filter === "all" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "mr-2 px-1 pb-1"}
               ><a href="/archive">全部</a></span
             >
-            <span class={(filter === "featured" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "px-1 pb-1"}
+            <span class={(filter === "featured" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "mr-2 px-1 pb-1"}
               ><a href="/archive/featured">精品</a></span
+            >
+            <span class={(filter === "albums" ? "border-b-2 border-blue-700 " : "hover:border-b-2 hover:border-gray-300 ") + "px-1 pb-1"}
+              ><a href="/archive/albums">图册</a></span
             >
           </div>
           <div class="block">
-            <Pagination
-              client:load
-              currentPage={paginationResult.currentPage}
-              totalPages={paginationResult.totalPages}
-              baseUrl={filter === "featured" ? "/archive/featured" : "/archive"}
-            />
+            <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={getBaseUrl()} />
           </div>
         </div>
 
-        {svelteThreads.map((thread) => <ThreadListItem thread={thread} />)}
+        {
+          filter === "albums" ? (
+            <div class="p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+              {svelteThreads.map((thread) => (
+                <AlbumCard thread={thread} />
+              ))}
+            </div>
+          ) : (
+            svelteThreads.map((thread) => <ThreadListItem thread={thread} />)
+          )
+        }
+
         <div class="flex p-5 justify-end">
           <Pagination
             client:load
             currentPage={paginationResult.currentPage}
             totalPages={paginationResult.totalPages}
-            baseUrl={filter === "featured" ? "/archive/featured" : "/archive"}
+            baseUrl={getBaseUrl()}
             forceFullWidth={true}
           />
         </div>
