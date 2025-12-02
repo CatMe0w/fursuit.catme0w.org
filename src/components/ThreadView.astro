@@ -23,9 +23,10 @@ const { thread, threadId, currentPage, title } = Astro.props as Props;
 const { posts: sveltePosts, totalCount, moderation_logs: moderationLogs } = getThreadDetail(threadId, currentPage);
 const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
+const isAlbum = thread.op_post_content?.some((item) => item.type === "album");
 ---
 
-<ArchiveLayout title={title} description={`查看帖子：${thread.title}`}>
+<ArchiveLayout title={title} description={`查看帖子：${thread.title}`} forceFullWidth={isAlbum}>
   <div class="bg-gray-50 lg:mx-1 my-2">
     <div class="shadow lg:rounded bg-white">
       <div class="grid grid-cols-1">

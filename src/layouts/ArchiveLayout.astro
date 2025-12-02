@@ -9,6 +9,7 @@ interface Props {
   pageSubtitle?: string;
   pageTitleLink?: string;
   backButton?: BackButtonMode;
+  forceFullWidth?: boolean;
 }
 
 const {
@@ -18,6 +19,7 @@ const {
   pageSubtitle = "浏览fursuit吧的所有帖子，包括已删除的内容。",
   pageTitleLink = "/archive",
   backButton = "archive", // 默认显示"返回吧首页"
+  forceFullWidth = false,
 } = Astro.props;
 
 let finalBackButton: BackButtonMode = backButton;
@@ -66,22 +68,28 @@ const isTimeMachine = finalBackButton === "defer";
 
     <main>
       <div class="flex flex-col lg:flex-row max-w-5xl mx-auto relative">
-        <div class="w-full lg:basis-3/4 lg:order-2">
+        <div class={`w-full ${forceFullWidth ? "" : "lg:basis-3/4 lg:order-2"}`}>
           <slot />
         </div>
 
         <div
           id="sidebar-container"
-          class="fixed inset-0 z-50 bg-white/90 backdrop-blur-sm transition-all duration-250 ease-in-out translate-y-12 opacity-0 pointer-events-none lg:static lg:z-auto lg:bg-transparent lg:backdrop-blur-none lg:basis-1/4 lg:max-w-[25%] lg:order-3 lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto"
+          class={`fixed inset-0 z-50 bg-white/90 backdrop-blur-sm transition-all duration-250 ease-in-out translate-y-12 opacity-0 pointer-events-none ${
+            forceFullWidth
+              ? "lg:max-w-5xl lg:mx-auto"
+              : "lg:static lg:z-auto lg:bg-transparent lg:backdrop-blur-none lg:basis-1/4 lg:max-w-[25%] lg:order-3 lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto"
+          }`}
         >
-          <div class="h-full overflow-y-auto p-6 lg:h-auto lg:overflow-visible lg:p-0">
+          <div class={`h-full overflow-y-auto p-6 lg:h-auto lg:overflow-visible ${forceFullWidth ? "lg:max-w-5/12 lg:mx-auto" : "lg:p-0"}`}>
             <slot name="sidebar" />
             <div class="h-24 lg:hidden"></div>
           </div>
 
           <button
             id="sidebar-close"
-            class="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg lg:hidden z-50 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+            class={`fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg z-50 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer ${
+              forceFullWidth ? "" : "lg:hidden"
+            }`}
           >
             <span class="sr-only">关闭侧边栏</span>
             <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -96,7 +104,7 @@ const isTimeMachine = finalBackButton === "defer";
       <div class="max-w-5xl mx-auto relative h-0">
         <button
           onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-          class="absolute bottom-0 left-[75%] ml-3 bg-blue-600 text-white p-4 rounded-full shadow-lg pointer-events-auto hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer transition-transform"
+          class={`absolute bottom-0 ml-3 bg-blue-600 text-white p-4 rounded-full shadow-lg pointer-events-auto hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer transition-transform ${forceFullWidth ? " left-full mb-18" : " lg:left-[75%]"}`}
           title="回到顶部"
         >
           <span class="sr-only">回到顶部</span>
@@ -107,23 +115,29 @@ const isTimeMachine = finalBackButton === "defer";
       </div>
     </div>
 
-    <button
-      id="sidebar-toggle"
-      class="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg lg:hidden z-40 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
-    >
-      <span class="sr-only">打开侧边栏</span>
-      {
-        isTimeMachine ? (
-          <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-          </svg>
-        ) : (
-          <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-          </svg>
-        )
-      }
-    </button>
+    <div class="fixed bottom-4 inset-x-0 z-40 pointer-events-none">
+      <div class="max-w-5xl mx-auto relative h-0">
+        <button
+          id="sidebar-toggle"
+          class={`fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg z-40 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer pointer-events-auto transition-opacity duration-300 ${
+            forceFullWidth ? "lg:absolute lg:bottom-0 lg:right-auto lg:left-full lg:ml-3" : "lg:hidden"
+          }`}
+        >
+          <span class="sr-only">打开侧边栏</span>
+          {
+            isTimeMachine ? (
+              <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            ) : (
+              <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+              </svg>
+            )
+          }
+        </button>
+      </div>
+    </div>
 
     <footer>
       <div class="pb-8 lg:pb-12 mt-6 lg:mt-10 flex flex-col items-center gap-2">
@@ -139,6 +153,8 @@ const isTimeMachine = finalBackButton === "defer";
   <script>
     const toggleSidebar = () => {
       const sidebar = document.getElementById("sidebar-container");
+      const sidebarToggle = document.getElementById("sidebar-toggle");
+
       if (sidebar) {
         sidebar.classList.toggle("translate-y-12");
         sidebar.classList.toggle("translate-y-0");
@@ -147,11 +163,17 @@ const isTimeMachine = finalBackButton === "defer";
         sidebar.classList.toggle("pointer-events-none");
         sidebar.classList.toggle("pointer-events-auto");
 
-        if (sidebar.classList.contains("translate-y-0")) {
+        const isOpen = sidebar.classList.contains("translate-y-0");
+
+        if (isOpen) {
           document.body.style.overflow = "hidden";
+          sidebarToggle?.classList.add("opacity-0", "pointer-events-none");
         } else {
           document.body.style.overflow = "";
+          sidebarToggle?.classList.remove("opacity-0", "pointer-events-none");
         }
+
+        updateBackToTopVisibility();
       }
     };
 
@@ -166,8 +188,9 @@ const isTimeMachine = finalBackButton === "defer";
       const scrollY = window.scrollY;
       const viewportHeight = window.innerHeight;
       const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+      const isSidebarOpen = document.getElementById("sidebar-container")?.classList.contains("translate-y-0");
 
-      if (isDesktop && scrollY > viewportHeight) {
+      if (isDesktop && scrollY > viewportHeight && !isSidebarOpen) {
         backToTopContainer.classList.remove("hidden");
         void backToTopContainer.offsetWidth;
         backToTopContainer.classList.remove("opacity-0");

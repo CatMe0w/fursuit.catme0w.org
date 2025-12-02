@@ -20,6 +20,8 @@ export function extractTextContent(content: ContentItem[]): string {
       text += "[视频] ";
     } else if (item.type === "audio") {
       text += "[语音] ";
+    } else if (item.type === "album") {
+      text += `[图册]（${item.content.length}张）`;
     } else if (item.type === "emoticon" && item.content && typeof item.content === "object" && "description" in item.content) {
       if (item.content.description === "") {
         text += "[图片] ";
@@ -231,7 +233,7 @@ export function getAudioUrl(audioId: string): string {
 export function isVandal(userId: number): boolean {
   const vandalUserIds = new Set([
     1092681533, 2770297246, 929918145, 3246637449, 1140272772, 1215914293, 44116606, 702253602, 7910917, 142661247, 14418690, 1054172080, 3167939744,
-    3167937692, 3167954409, 3420903823, 3238825000, 3249550356, 3249632563, 1925359108, 3253890577, 3159627023, 3159639198, 3159511862,
+    3167937692, 3167954409, 3420903823, 3238825000, 3249550356, 3249632563, 1925359108, 3253890577, 3159627023, 3159639198, 3159511862, 1059195262,
   ]);
   if (userId > 3288e6 && userId < 3289e6) return true;
   if (userId > 3007e6 && userId < 3008e6) return true;
