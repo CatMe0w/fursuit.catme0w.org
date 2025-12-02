@@ -6,10 +6,9 @@ import SearchBox from "./SearchBox.astro";
 import TimeMachineButton from "./TimeMachineButton.astro";
 import ExternalLinkButton from "./ExternalLinkButton.astro";
 import ThreadListItem from "./ThreadListItem.svelte";
-import { getAllThreads, getUserById } from "../lib/data";
+import { getAllThreads, getAlbumThreads } from "../lib/data";
 import { paginate } from "../lib/pagination";
-import type { Thread as DataThread, User } from "../lib/data";
-import type { Thread as SvelteThread } from "../lib/types";
+import type { Thread } from "../lib/types";
 
 interface Props {
   currentPage: number;
@@ -19,31 +18,13 @@ interface Props {
 
 const { currentPage, title, filter = "all" } = Astro.props as Props;
 
-const allThreads = getAllThreads();
-const filteredThreads = filter === "featured" ? allThreads.filter((t) => t.featured) : allThreads;
+const threads = filter === "albums" ? getAlbumThreads() : getAllThreads();
+const filteredThreads = filter === "featured" ? threads.filter((t) => t.featured) : threads;
 const paginationResult = paginate(filteredThreads, currentPage);
 
-function mapToSvelteThread(thread: DataThread): SvelteThread {
-  const opUser = thread.op_user_id ? getUserById(thread.op_user_id) || null : null;
-  const lastReplyUser = getUserById(thread.user_id) || null;
+const svelteThreads: Thread[] = paginationResult.items;
 
-  return {
-    id: thread.id,
-    title: thread.title,
-    op_user_id: thread.op_user_id || 0,
-    user_id: thread.user_id,
-    time: thread.time || "",
-    reply_num: thread.reply_num,
-    featured: thread.featured,
-    op_post_content: thread.op_post_content || [],
-    op_username: opUser?.username || undefined,
-    op_nickname: opUser?.nickname || undefined,
-    last_reply_username: lastReplyUser?.username || undefined,
-    last_reply_nickname: lastReplyUser?.nickname || undefined,
-  };
 }
-
-const svelteThreads: SvelteThread[] = paginationResult.items.map(mapToSvelteThread);
 ---
 
 <ArchiveLayout title={title} description="浏览fursuit吧的所有帖子，包括已删除的内容。">

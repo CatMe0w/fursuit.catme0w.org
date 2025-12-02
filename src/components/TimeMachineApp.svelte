@@ -8,7 +8,7 @@
   import Pagination from "./Pagination.svelte";
   import UserRecordItem from "./UserRecordItem.svelte";
   import VandalWarning from "./VandalWarning.svelte";
-  import type { Thread, ThreadPost as ThreadPostType, SearchResult, UserInfo, ModerationLog } from "../lib/types";
+  import type { Thread, Post as ThreadPostType, SearchResult, User, ModerationLog } from "../lib/types";
   import { isVandal } from "../lib/content-utils";
 
   // 状态
@@ -27,7 +27,7 @@
   let threadPosts = $state<ThreadPostType[]>([]);
   let moderationLogs = $state<ModerationLog[]>([]);
   let userResults = $state<SearchResult[]>([]);
-  let userInfo = $state<UserInfo | null>(null);
+  let userInfo = $state<User | null>(null);
   let threadTitle = $state("");
   let totalCount = $state(0);
   let showSkeleton = $state(false);
@@ -258,7 +258,7 @@
               {/each}
             </div>
             <div class="p-5 flex justify-end">
-              <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} forceFullWidth={true} />
+              <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} forceFullWidth />
             </div>
           {/if}
 
@@ -284,7 +284,7 @@
                 <ThreadPost {post} {time} {moderationLogs} />
               {/each}
               <div class="p-5 flex justify-end">
-                <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} forceFullWidth={true} />
+                <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} forceFullWidth />
               </div>
             </div>
           {/if}
@@ -308,7 +308,7 @@
               {/each}
             </div>
             <div class="p-5 flex justify-end">
-              <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} forceFullWidth={true} />
+              <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} forceFullWidth />
             </div>
           {/if}
         {/if}

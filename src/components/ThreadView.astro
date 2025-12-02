@@ -5,10 +5,9 @@ import ThreadPost from "./ThreadPost.svelte";
 import Sidebar from "./Sidebar.astro";
 import SearchBox from "./SearchBox.astro";
 import ExternalLinkButton from "./ExternalLinkButton.astro";
-import { getPostsByThreadId, getModerationLogsByThreadId, getCommentsByPostIds, getUsersByIds } from "../lib/data";
-import { paginate } from "../lib/pagination";
-import type { Thread, Post, Comment } from "../lib/data";
-import type { ThreadPost as SvelteThreadPost, ThreadComment as SvelteThreadComment } from "../lib/types";
+import { getThreadDetail } from "../lib/data";
+import { ITEMS_PER_PAGE } from "../lib/pagination";
+import type { Thread } from "../lib/types";
 import TimeMachineButton from "./TimeMachineButton.astro";
 import VandalWarning from "./VandalWarning.svelte";
 
@@ -21,54 +20,9 @@ interface Props {
 
 const { thread, threadId, currentPage, title } = Astro.props as Props;
 
-const allPosts = getPostsByThreadId(threadId);
-const moderationLogs = getModerationLogsByThreadId(threadId);
-const paginationResult = paginate(allPosts, currentPage);
-const paginatedPosts = paginationResult.items;
+const { posts: sveltePosts, totalCount, moderation_logs: moderationLogs } = getThreadDetail(threadId, currentPage);
+const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-const postIds = paginatedPosts.map((p) => p.id);
-const commentsMap = getCommentsByPostIds(postIds);
-
-const userIds = new Set<number>();
-paginatedPosts.forEach((p) => userIds.add(p.user_id));
-commentsMap.forEach((comments) => {
-  comments.forEach((c) => userIds.add(c.user_id));
-});
-const usersMap = getUsersByIds(Array.from(userIds));
-
-function mapCommentToSvelte(comment: Comment): SvelteThreadComment {
-  const user = usersMap.get(comment.user_id);
-  return {
-    id: comment.id,
-    user_id: comment.user_id,
-    content: comment.content || [],
-    time: comment.time,
-    username: user?.username || null,
-    nickname: user?.nickname || null,
-    avatar: user?.avatar || null,
-  };
-}
-
-function mapPostToSvelte(post: Post): SvelteThreadPost {
-  const user = usersMap.get(post.user_id);
-  const comments = commentsMap.get(post.id) || [];
-  return {
-    id: post.id,
-    floor: post.floor,
-    user_id: post.user_id,
-    content: post.content || [],
-    time: post.time,
-    comment_num: post.comment_num,
-    signature: post.signature,
-    tail: post.tail,
-    username: user?.username || null,
-    nickname: user?.nickname || null,
-    avatar: user?.avatar || null,
-    comments: comments.map(mapCommentToSvelte),
-  };
-}
-
-const sveltePosts: SvelteThreadPost[] = paginatedPosts.map(mapPostToSvelte);
 ---
 
 <ArchiveLayout title={title} description={`查看帖子：${thread.title}`}>
@@ -78,13 +32,13 @@ const sveltePosts: SvelteThreadPost[] = paginatedPosts.map(mapPostToSvelte);
         <div class="p-5 border-b-2 border-gray-100 flex flex-row justify-between items-baseline">
           <p class="truncate">{thread.title}</p>
           <div class={currentPage > 1 ? "block" : "hidden lg:block"}>
-            <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/thread/${threadId}`} />
+            <Pagination client:load currentPage={currentPage} totalPages={totalPages} baseUrl={`/thread/${threadId}`} />
           </div>
         </div>
         {sveltePosts[0].floor === 1 && <VandalWarning userId={thread.user_id} />}
         {sveltePosts.map((post) => <ThreadPost client:visible post={post} moderationLogs={moderationLogs} />)}
         <div class="flex p-5 justify-end">
-          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/thread/${threadId}`} forceFullWidth={true} />
+          <Pagination client:load currentPage={currentPage} totalPages={totalPages} baseUrl={`/thread/${threadId}`} forceFullWidth />
         </div>
       </div>
     </div>

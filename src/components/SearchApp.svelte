@@ -159,7 +159,7 @@
             {/each}
           </div>
           <div class="p-5 flex justify-end">
-            <Pagination currentPage={page} totalPages={Math.ceil(totalCount / LIMIT)} baseUrl={getBaseUrl()} forceFullWidth={true} />
+            <Pagination currentPage={page} totalPages={Math.ceil(totalCount / LIMIT)} baseUrl={getBaseUrl()} forceFullWidth />
           </div>
         {/if}
       </div>

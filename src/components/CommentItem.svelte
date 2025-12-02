@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { ThreadComment } from "../lib/types";
+  import type { Comment } from "../lib/types";
   import { getEmoticonUrl, getUserDisplayName, getAvatarUrl } from "../lib/content-utils";
 
   interface Props {
-    comment: ThreadComment;
+    comment: Comment;
     time?: string;
   }
 

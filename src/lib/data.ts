@@ -2,93 +2,11 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import initSqlJs, { type Database } from "sql.js";
-import type { VideoMetadata } from "./types";
+import type { VideoMetadata, Thread, Post, Comment, ContentItem, ModerationLog, ThreadDetailResponse, User, UserRecord } from "./types";
 import { DB_URL } from "./dbConfig";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-// 数据类型定义
-export interface User {
-  id: number;
-  username: string | null;
-  nickname: string | null;
-  avatar: string | null;
-}
-
-export interface Thread {
-  id: number;
-  title: string;
-  user_id: number; // 对于列表查询：最后回复的用户ID；对于单个查询：楼主的user_id
-  reply_num: number;
-  featured: boolean;
-  op_user_id?: number; // 楼主的用户ID（仅在列表查询中返回）
-  time?: string; // 最后回复时间（仅在列表查询中返回）
-  op_post_content?: ContentItem[]; // 1楼内容（仅在列表查询中返回）
-}
-
-export interface ContentItem {
-  type: string;
-  content?: string;
-  text?: string;
-  link?: string;
-  c?: string;
-  un?: string;
-  uid?: number;
-  bsize?: string;
-  size?: string;
-}
-
-export interface Post {
-  id: number;
-  floor: number;
-  user_id: number;
-  content: ContentItem[];
-  time: string;
-  comment_num: number;
-  signature: string | null;
-  tail: string | null;
-  thread_id: number;
-}
-
-export interface Comment {
-  id: number;
-  user_id: number;
-  content: ContentItem[];
-  time: string;
-  post_id: number;
-}
-
-export interface ModerationLog {
-  thread_id: number | null;
-  post_id: number | null;
-  user_id: number | null;
-  username: string | null;
-  title: string | null;
-  operation: string;
-  operator: string;
-  operation_time: string;
-  reason: string | null;
-  duration: string | null;
-  content_preview?: string | null;
-  media?: string | null;
-  post_time?: string | null;
-  operator_id?: number | null;
-  target_user_id?: number | null;
-}
-
-export interface UserRecord {
-  type: "post" | "comment";
-  thread_id: number;
-  title: string;
-  post_id: number;
-  floor: number;
-  post_content: ContentItem[];
-  comment_id?: number;
-  comment_content?: ContentItem[];
-  time: string;
-  page: number;
-}
 
 let cachedDb: Database | null = null;
 let cachedThreads: Thread[] | null = null;
@@ -197,10 +115,14 @@ export function getAllThreads(): Thread[] {
       FROM all_activities
     )
     SELECT t.id, t.title, t.user_id AS op_user_id, t.reply_num,
-           la.user_id AS last_user_id, la.time, p.content
+           la.user_id AS last_user_id, la.time, p.content,
+           op_u.username AS op_username, op_u.nickname AS op_nickname,
+           last_u.username AS last_reply_username, last_u.nickname AS last_reply_nickname
     FROM pr_thread t
     JOIN latest_activity la ON t.id = la.thread_id AND la.rn = 1
     JOIN pr_post p ON t.id = p.thread_id AND p.floor = 1
+    LEFT JOIN pr_user op_u ON t.user_id = op_u.id
+    LEFT JOIN pr_user last_u ON la.user_id = last_u.id
     ORDER BY la.time DESC`;
 
   // 获取所有加精的帖子ID
@@ -231,6 +153,10 @@ export function getAllThreads(): Thread[] {
       reply_num: Number(row.reply_num),
       featured: featuredSet.has(Number(row.id)),
       op_post_content: opPostContent,
+      op_username: row.op_username ? String(row.op_username) : undefined,
+      op_nickname: row.op_nickname ? String(row.op_nickname) : undefined,
+      last_reply_username: row.last_reply_username ? String(row.last_reply_username) : undefined,
+      last_reply_nickname: row.last_reply_nickname ? String(row.last_reply_nickname) : undefined,
     });
   }
   stmt.free();
@@ -244,24 +170,67 @@ export function getAllThreads(): Thread[] {
 }
 
 /**
+ * 获取所有图册帖子（硬编码了，这样比较简单）
+ */
+export function getAlbumThreads(): Thread[] {
+  const albumThreadIds = [3407450836, 3407935066, 3437549505];
+  const threads: Thread[] = [];
+
+  for (const id of albumThreadIds) {
+    const thread = getThreadById(id);
+    if (thread) {
+      threads.push(thread);
+    }
+  }
+
+  return threads;
+}
+
+/**
  * 根据ID获取帖子
  */
 export function getThreadById(id: number): Thread | undefined {
   const db = cachedDb;
   if (!db) return undefined;
 
-  const stmt = db.prepare("SELECT * FROM pr_thread WHERE id = ?");
+  const stmt = db.prepare(`
+    SELECT t.*, u.username, u.nickname 
+    FROM pr_thread t
+    LEFT JOIN pr_user u ON t.user_id = u.id
+    WHERE t.id = ?
+  `);
   stmt.bind([id]);
 
   let thread: Thread | undefined;
   if (stmt.step()) {
     const row = stmt.getAsObject();
+
+    // 获取一楼内容
+    const postStmt = db.prepare("SELECT content, time FROM pr_post WHERE thread_id = ? AND floor = 1");
+    postStmt.bind([id]);
+    let opPostContent: ContentItem[] = [];
+    let time = "";
+    if (postStmt.step()) {
+      const postRow = postStmt.getAsObject();
+      opPostContent = parseContent(postRow.content as string | null);
+      time = String(postRow.time);
+    }
+    postStmt.free();
+    injectVideoMetadataIntoContent(opPostContent);
+
     thread = {
       id: Number(row.id),
       title: String(row.title),
-      user_id: Number(row.user_id),
+      op_user_id: Number(row.user_id),
+      user_id: Number(row.user_id), // Default to OP, will be updated if we had last reply info, but for single thread view this might not be strictly necessary or we can fetch it. 
+      // Actually, for getThreadById used in ThreadView, we mainly need title and basic info.
+      // But to match the type, we need to fill fields.
+      time: time,
       reply_num: Number(row.reply_num),
       featured: Boolean(row.is_good),
+      op_post_content: opPostContent,
+      op_username: row.username ? String(row.username) : undefined,
+      op_nickname: row.nickname ? String(row.nickname) : undefined,
     };
   }
   stmt.free();
@@ -270,35 +239,104 @@ export function getThreadById(id: number): Thread | undefined {
 }
 
 /**
- * 获取帖子的所有楼层（按楼层号升序）
+ * 获取帖子详情（包含帖子内容、评论、用户信息）
  */
-export function getPostsByThreadId(threadId: number): Post[] {
+export function getThreadDetail(threadId: number, page: number = 1): ThreadDetailResponse {
   const db = cachedDb;
-  if (!db) return [];
+  if (!db) {
+    throw new Error("Database not initialized");
+  }
 
-  const stmt = db.prepare("SELECT * FROM pr_post WHERE thread_id = ? ORDER BY floor");
-  stmt.bind([threadId]);
+  // Get Thread Info
+  const thread = getThreadById(threadId);
+  if (!thread) {
+    throw new Error("Thread not found");
+  }
 
-  const posts: Post[] = [];
-  while (stmt.step()) {
-    const row = stmt.getAsObject();
-    posts.push({
+  // Get Posts for the page
+  const limit = 30;
+  const offset = (page - 1) * limit;
+
+  const postsStmt = db.prepare("SELECT * FROM pr_post WHERE thread_id = ? ORDER BY floor LIMIT ? OFFSET ?");
+  postsStmt.bind([threadId, limit, offset]);
+
+  const posts: any[] = []; // Temporary raw posts
+  const userIds = new Set<number>();
+  const postIds: number[] = [];
+
+  while (postsStmt.step()) {
+    const row = postsStmt.getAsObject();
+    posts.push(row);
+    userIds.add(Number(row.user_id));
+    postIds.push(Number(row.id));
+  }
+  postsStmt.free();
+
+  // Get Comments for these posts
+  const commentsMap = getCommentsByPostIds(postIds);
+  commentsMap.forEach((comments) => {
+    comments.forEach((c) => userIds.add(c.user_id));
+  });
+
+  // Get Users
+  const usersMap = getUsersByIds(Array.from(userIds));
+
+  // Assemble Posts
+  const threadPosts: Post[] = posts.map((row) => {
+    const user = usersMap.get(Number(row.user_id));
+    const comments = commentsMap.get(Number(row.id)) || [];
+
+    // Map comments to Comment
+    const threadComments: Comment[] = comments.map((c) => {
+      const cUser = usersMap.get(c.user_id);
+      return {
+        id: c.id,
+        user_id: c.user_id,
+        content: c.content,
+        time: c.time,
+        username: cUser?.username || null,
+        nickname: cUser?.nickname || null,
+        avatar: cUser?.avatar || null,
+      };
+    });
+
+    const content = parseContent(row.content as string | null);
+    injectVideoMetadataIntoContent(content);
+
+    return {
       id: Number(row.id),
       floor: Number(row.floor),
       user_id: Number(row.user_id),
-      content: parseContent(row.content as string | null),
+      content: content,
       time: String(row.time),
       comment_num: Number(row.comment_num),
       signature: row.signature ? String(row.signature) : null,
       tail: row.tail ? String(row.tail) : null,
-      thread_id: Number(row.thread_id),
-    });
+      username: user?.username || null,
+      nickname: user?.nickname || null,
+      avatar: user?.avatar || null,
+      comments: threadComments,
+    };
+  });
+
+  // Get Moderation Logs
+  const moderationLogs = getModerationLogsByThreadId(threadId);
+
+  // Get Total Count (for pagination)
+  const countStmt = db.prepare("SELECT COUNT(*) as count FROM pr_post WHERE thread_id = ?");
+  countStmt.bind([threadId]);
+  let totalCount = 0;
+  if (countStmt.step()) {
+    totalCount = Number(countStmt.getAsObject().count);
   }
-  stmt.free();
+  countStmt.free();
 
-  injectVideoMetadataIntoPosts(posts);
-
-  return posts;
+  return {
+    posts: threadPosts,
+    totalCount,
+    threadTitle: thread.title,
+    moderation_logs: moderationLogs,
+  };
 }
 
 /**
@@ -326,64 +364,7 @@ export function getUserById(id: number): User | undefined {
   return user;
 }
 
-/**
- * 获取用户的所有发帖（按时间降序）
- */
-export function getPostsByUserId(userId: number): Post[] {
-  const db = cachedDb;
-  if (!db) return [];
 
-  const stmt = db.prepare("SELECT * FROM pr_post WHERE user_id = ? ORDER BY time DESC");
-  stmt.bind([userId]);
-
-  const posts: Post[] = [];
-  while (stmt.step()) {
-    const row = stmt.getAsObject();
-    posts.push({
-      id: Number(row.id),
-      floor: Number(row.floor),
-      user_id: Number(row.user_id),
-      content: parseContent(row.content as string | null),
-      time: String(row.time),
-      comment_num: Number(row.comment_num),
-      signature: row.signature ? String(row.signature) : null,
-      tail: row.tail ? String(row.tail) : null,
-      thread_id: Number(row.thread_id),
-    });
-  }
-  stmt.free();
-
-  // 注入视频元数据
-  injectVideoMetadataIntoPosts(posts);
-
-  return posts;
-}
-
-/**
- * 获取楼层的所有评论（按时间升序）
- */
-export function getCommentsByPostId(postId: number): Comment[] {
-  const db = cachedDb;
-  if (!db) return [];
-
-  const stmt = db.prepare("SELECT * FROM pr_comment WHERE post_id = ? ORDER BY time");
-  stmt.bind([postId]);
-
-  const comments: Comment[] = [];
-  while (stmt.step()) {
-    const row = stmt.getAsObject();
-    comments.push({
-      id: Number(row.id),
-      user_id: Number(row.user_id),
-      content: parseContent(row.content as string | null),
-      time: String(row.time),
-      post_id: Number(row.post_id),
-    });
-  }
-  stmt.free();
-
-  return comments;
-}
 
 /**
  * 获取指定类别的吧务日志（按时间降序）
@@ -425,13 +406,11 @@ export function getModerationLogsByCategory(category: "post" | "user" | "bawu"):
       logs.push({
         thread_id: row.thread_id ? Number(row.thread_id) : null,
         post_id: row.post_id ? Number(row.post_id) : null,
-        user_id: null,
         username: String(row.username),
         title: String(row.title),
         operation: String(row.operation),
         operator: String(row.operator),
         operation_time: String(row.operation_time),
-        reason: null,
         duration: null,
         content_preview: row.content_preview ? String(row.content_preview) : null,
         media: row.media ? String(row.media) : null,
@@ -443,14 +422,15 @@ export function getModerationLogsByCategory(category: "post" | "user" | "bawu"):
       logs.push({
         thread_id: null,
         post_id: null,
-        user_id: null,
         username: String(row.username),
         title: null,
         operation: String(row.operation),
         operator: String(row.operator),
         operation_time: String(row.operation_time),
-        reason: null,
         duration: row.duration ? String(row.duration) : null,
+        content_preview: null,
+        media: null,
+        post_time: null,
         operator_id: row.operator_id ? Number(row.operator_id) : null,
         target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
       });
@@ -458,14 +438,15 @@ export function getModerationLogsByCategory(category: "post" | "user" | "bawu"):
       logs.push({
         thread_id: null,
         post_id: null,
-        user_id: null,
         username: String(row.username),
         title: null,
         operation: String(row.operation),
         operator: row.operator ? String(row.operator) : "",
         operation_time: String(row.operation_time),
-        reason: null,
         duration: null,
+        content_preview: null,
+        media: null,
+        post_time: null,
         operator_id: row.operator_id ? Number(row.operator_id) : null,
         target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
       });
@@ -474,31 +455,6 @@ export function getModerationLogsByCategory(category: "post" | "user" | "bawu"):
   stmt.free();
 
   return logs;
-}
-
-/**
- * 根据用户名获取用户（用于moderation-logs链接转换）
- */
-export function getUserByUsername(username: string): User | undefined {
-  const db = cachedDb;
-  if (!db) return undefined;
-
-  const stmt = db.prepare("SELECT * FROM pr_user WHERE username = ? LIMIT 1");
-  stmt.bind([username]);
-
-  let user: User | undefined;
-  if (stmt.step()) {
-    const row = stmt.getAsObject();
-    user = {
-      id: Number(row.id),
-      username: row.username ? String(row.username) : null,
-      nickname: row.nickname ? String(row.nickname) : null,
-      avatar: String(row.avatar),
-    };
-  }
-  stmt.free();
-
-  return user;
 }
 
 /**
@@ -569,7 +525,7 @@ export function getUserRecords(userId: number): UserRecord[] {
 /**
  * 获取指定帖子的吧务日志
  */
-export function getModerationLogsByThreadId(threadId: number): ModerationLog[] {
+function getModerationLogsByThreadId(threadId: number): ModerationLog[] {
   const db = cachedDb;
   if (!db) return [];
 
@@ -591,13 +547,11 @@ export function getModerationLogsByThreadId(threadId: number): ModerationLog[] {
     logs.push({
       thread_id: row.thread_id ? Number(row.thread_id) : null,
       post_id: row.post_id ? Number(row.post_id) : null,
-      user_id: null,
       username: String(row.username),
       title: String(row.title),
       operation: String(row.operation),
       operator: String(row.operator),
       operation_time: String(row.operation_time),
-      reason: null,
       duration: null,
       content_preview: row.content_preview ? String(row.content_preview) : null,
       media: row.media ? String(row.media) : null,
@@ -614,7 +568,7 @@ export function getModerationLogsByThreadId(threadId: number): ModerationLog[] {
 /**
  * 批量获取楼层的评论
  */
-export function getCommentsByPostIds(postIds: number[]): Map<number, Comment[]> {
+function getCommentsByPostIds(postIds: number[]): Map<number, Comment[]> {
   const db = cachedDb;
   if (!db || postIds.length === 0) return new Map();
 
@@ -634,7 +588,9 @@ export function getCommentsByPostIds(postIds: number[]): Map<number, Comment[]> 
       user_id: Number(row.user_id),
       content: parseContent(row.content as string | null),
       time: String(row.time),
-      post_id: postId,
+      username: null,
+      nickname: null,
+      avatar: null
     });
   }
   stmt.free();
@@ -645,7 +601,7 @@ export function getCommentsByPostIds(postIds: number[]): Map<number, Comment[]> 
 /**
  * 批量获取用户
  */
-export function getUsersByIds(userIds: number[]): Map<number, User> {
+function getUsersByIds(userIds: number[]): Map<number, User> {
   const db = cachedDb;
   if (!db || userIds.length === 0) return new Map();
 
@@ -672,7 +628,7 @@ export function getUsersByIds(userIds: number[]): Map<number, User> {
 /**
  * 获取视频元数据（SSG/SSR）
  */
-export function getVideoMetadata(id: string): VideoMetadata | null {
+function getVideoMetadata(id: string): VideoMetadata | null {
   const db = cachedDb;
   if (!db) return null;
 
@@ -716,7 +672,7 @@ function getYoukuId(url: string): string | null {
 }
 
 /**
- * 从QQ视频URL中提取视频ID
+ * 从腾讯视频URL中提取视频ID
  */
 function getQQVideoId(url: string): string | null {
   const match = url.match(/\/([a-zA-Z0-9]+)\.html/);
@@ -746,15 +702,6 @@ function injectVideoMetadataIntoContent(content: ContentItem[]): void {
         }
       }
     }
-  }
-}
-
-/**
- * 注入视频元数据到帖子内容中
- */
-export function injectVideoMetadataIntoPosts(posts: Post[]): void {
-  for (const post of posts) {
-    injectVideoMetadataIntoContent(post.content);
   }
 }
 
