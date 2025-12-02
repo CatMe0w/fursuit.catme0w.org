@@ -6,8 +6,7 @@ import SearchBox from "./SearchBox.astro";
 import ModerationLogItem from "./ModerationLogItem.svelte";
 import { getModerationLogsByCategory } from "../lib/data";
 import { paginate, ITEMS_PER_PAGE } from "../lib/pagination";
-import type { ModerationLog } from "../lib/data";
-import type { SearchResult } from "../lib/types";
+import type { ModerationLog, SearchResult } from "../lib/types";
 
 interface Props {
   category: "post" | "user" | "bawu";
@@ -78,7 +77,7 @@ const pageTitle = `吧务后台日志 - fursuit吧·档案馆与时间机器：�
         </div>
         {paginationResult.items.map((log) => <ModerationLogItem item={mapLogToSearchResult(log, category)} />)}
         <div class="flex p-5 justify-end">
-          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={getBaseUrl(category)} forceFullWidth={true} />
+          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={getBaseUrl(category)} forceFullWidth />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import type { User } from "./data";
+import type { User } from "./types";
 import type { ContentItem } from "./types";
 
 /**

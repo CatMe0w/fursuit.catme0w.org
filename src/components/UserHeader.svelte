@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { UserInfo } from "../lib/types";
+  import type { User } from "../lib/types";
   import Pagination from "./Pagination.svelte";
   import { getAvatarUrl, getUserDisplayName } from "../lib/content-utils";
 
   interface Props {
-    user: UserInfo;
+    user: User;
     currentPage?: number;
     totalPages?: number;
     baseUrl?: string;

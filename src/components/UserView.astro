@@ -9,8 +9,7 @@ import UserRecordItem from "./UserRecordItem.svelte";
 import VandalWarning from "./VandalWarning.svelte";
 import { getUserRecords } from "../lib/data";
 import { paginate } from "../lib/pagination";
-import type { User, UserRecord } from "../lib/data";
-import type { SearchResult, UserInfo } from "../lib/types";
+import type { SearchResult, User, UserRecord } from "../lib/types";
 import TimeMachineButton from "./TimeMachineButton.astro";
 import { getUserDisplayName } from "../lib/content-utils";
 
@@ -37,19 +36,19 @@ function mapRecordToSearchResult(record: UserRecord): SearchResult {
     user_id: null,
     title: record.title,
     floor: record.floor,
-    content_json: record.type === 'comment' ? record.comment_content || [] : record.post_content || [],
-    post_content_json: record.type === 'comment' ? record.post_content || [] : undefined,
-    page: record.page
+    content_json: record.type === "comment" ? record.comment_content || [] : record.post_content || [],
+    post_content_json: record.type === "comment" ? record.post_content || [] : undefined,
+    page: record.page,
   };
 }
 
 const svelteRecords: SearchResult[] = paginationResult.items.map(mapRecordToSearchResult);
 
-const userInfo: UserInfo = {
+const userInfo: User = {
   id: user.id,
   username: user.username,
   nickname: user.nickname,
-  avatar: user.avatar
+  avatar: user.avatar,
 };
 ---
 
@@ -59,13 +58,15 @@ const userInfo: UserInfo = {
       <UserHeader client:load user={userInfo} currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/user/${userId}`} />
       <VandalWarning userId={userId} />
       <div class="grid grid-cols-1">
-        {
-          svelteRecords.map((record) => (
-            <UserRecordItem item={record} />
-          ))
-        }
+        {svelteRecords.map((record) => <UserRecordItem item={record} />)}
         <div class="flex p-5 justify-end">
-          <Pagination client:load currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/user/${userId}`} forceFullWidth={true} />
+          <Pagination
+            client:load
+            currentPage={paginationResult.currentPage}
+            totalPages={paginationResult.totalPages}
+            baseUrl={`/user/${userId}`}
+            forceFullWidth
+          />
         </div>
       </div>
     </div>

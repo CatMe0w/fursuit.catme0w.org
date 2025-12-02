@@ -1,12 +1,12 @@
 import { getDb } from '../db';
 import { parseContent, injectVideoMetadataIntoContent } from '../utils';
-import type { SearchResponse, SearchResult, UserInfo } from '../../lib/types';
+import type { SearchResponse, SearchResult, User } from '../../lib/types';
 import { getVideoMetadata } from './video';
 
 /**
  * 获取用户信息
  */
-export function getUserById(userId: number): UserInfo | null {
+export function getUserById(userId: number): User | null {
   const db = getDb();
 
   const stmt = db.prepare('SELECT id, username, nickname, avatar FROM pr_user WHERE id = ?');
@@ -44,7 +44,7 @@ export function getUserPostsAtTime(userId: number, datetime: string, limit?: num
       FROM pr_comment
       WHERE user_id = ?1 AND time < ?2
     )`;
-  
+
   const countStmt = db.prepare(countSql);
   countStmt.bind([userId, datetime]);
   countStmt.step();

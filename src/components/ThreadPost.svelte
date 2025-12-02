@@ -2,12 +2,12 @@
   import ContentRenderer from "./ContentRenderer.svelte";
   import CommentList from "./CommentList.svelte";
   import InlineModerationLog from "./InlineModerationLog.svelte";
-  import type { ThreadPost, ModerationLog } from "../lib/types";
+  import type { Post, ModerationLog } from "../lib/types";
   import { getUserDisplayName, getAvatarUrl, getImageUrl } from "../lib/content-utils";
   import { isVandal } from "../lib/content-utils";
 
   interface Props {
-    post: ThreadPost;
+    post: Post;
     time?: string;
     moderationLogs?: ModerationLog[];
   }
@@ -46,11 +46,7 @@
   <div class={isAlbum ? "flex-row" : "lg:flex flex-row"}>
     <div class={"basis-24 shrink-0 mr-7 mb-3 flex flex-row gap-3 items-center" + (isAlbum ? "" : " lg:flex-col")}>
       <a href={getUserUrl(post.user_id)} title={`用户名：${post.username || ""}`}>
-        <img
-          class={"border-2 lg:border-4 border-gray-100 rounded-md w-10 h-10" + (isAlbum ? "" : " lg:w-24 lg:h-24")}
-          src={avatarUrl}
-          alt=""
-        />
+        <img class={"border-2 lg:border-4 border-gray-100 rounded-md w-10 h-10" + (isAlbum ? "" : " lg:w-24 lg:h-24")} src={avatarUrl} alt="" />
       </a>
       <a
         href={getUserUrl(post.user_id)}

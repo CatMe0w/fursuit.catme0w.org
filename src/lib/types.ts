@@ -6,7 +6,7 @@ export interface Thread {
   time: string;
   reply_num: number;
   featured: boolean;
-  op_post_content: any[];
+  op_post_content: ContentItem[];
   op_username?: string;
   op_nickname?: string;
   last_reply_username?: string;
@@ -30,25 +30,25 @@ export interface SearchResult {
   post_id: number | null;
   comment_id: number | null;
   result_type: 'thread' | 'post' | 'comment' | 'moderation_post' | 'moderation_user' | 'moderation_bawu';
-  time: string;
+  time: string | null;
   user_id: number | null;
   title: string | null;
   floor: number | null;
-  content_json: any[] | null;
+  content_json: ContentItem[] | null;
   operation?: string | null;
   operator?: string | null;
   username?: string | null;
   nickname?: string | null;
   page?: number;
   // For comments in user search results
-  post_content_json?: any[];
+  post_content_json?: ContentItem[];
   // For moderation logs
   reason?: string | null;
   duration?: string | null;
   content_preview?: string | null;
   media?: string | null;
   post_time?: string | null;
-  operator_id?: number | null;
+  operator_id?: number | null; 
   target_user_id?: number | null;
 }
 
@@ -57,18 +57,18 @@ export interface SearchResponse {
   totalCount: number;
 }
 
-export interface UserInfo {
+export interface User {
   id: number;
   username: string | null;
   nickname: string | null;
   avatar: string | null;
 }
 
-export interface ThreadPost {
+export interface Post {
   id: number;
   floor: number;
   user_id: number;
-  content: any[];
+  content: ContentItem[];
   time: string;
   comment_num: number;
   signature: string | null;
@@ -76,13 +76,13 @@ export interface ThreadPost {
   username: string | null;
   nickname: string | null;
   avatar: string | null;
-  comments: ThreadComment[];
+  comments: Comment[];
 }
 
-export interface ThreadComment {
+export interface Comment {
   id: number;
   user_id: number;
-  content: any[];
+  content: ContentItem[];
   time: string;
   username: string | null;
   nickname: string | null;
@@ -110,6 +110,7 @@ export interface ModerationLog {
   operation: string | null;
   operator: string | null;
   operation_time: string | null;
+  duration: string | null;
   operator_id?: number | null;
   target_user_id?: number | null;
 }
@@ -122,7 +123,7 @@ export interface VideoMetadata {
 }
 
 export interface ThreadDetailResponse {
-  posts: ThreadPost[];
+  posts: Post[];
   totalCount: number;
   threadTitle: string;
   moderation_logs: ModerationLog[];
@@ -143,4 +144,17 @@ export interface WorkerResponse {
   stage?: string;
   message?: string;
   requestId?: number;
+}
+
+export interface UserRecord {
+  type: "post" | "comment";
+  thread_id: number;
+  title: string;
+  post_id: number;
+  floor: number;
+  post_content: ContentItem[];
+  comment_id?: number;
+  comment_content?: ContentItem[];
+  time: string;
+  page: number;
 }

@@ -1,4 +1,4 @@
-import type { Thread, SearchOptions, SearchResult, SearchResponse, UserInfo, ThreadDetailResponse, WorkerResponse } from "./types";
+import type { Thread, SearchOptions, SearchResult, SearchResponse, User, ThreadDetailResponse, WorkerResponse } from "./types";
 import { DB_VERSION } from "./dbConfig";
 
 type ProgressCallback = (loaded: number, total: number, stage: string) => void;
@@ -288,7 +288,7 @@ class ClientDatabase {
   /**
    * 获取用户信息
    */
-  async getUserById(userId: number): Promise<UserInfo | null> {
+  async getUserById(userId: number): Promise<User | null> {
     return this.request("getUserById", { userId });
   }
 

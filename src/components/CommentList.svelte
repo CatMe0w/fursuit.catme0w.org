@@ -1,9 +1,9 @@
 <script lang="ts">
   import CommentItem from "./CommentItem.svelte";
-  import type { ThreadComment } from "../lib/types";
+  import type { Comment } from "../lib/types";
 
   interface Props {
-    comments?: ThreadComment[];
+    comments?: Comment[];
     pageSize?: number;
     time?: string;
   }
