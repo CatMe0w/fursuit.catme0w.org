@@ -380,10 +380,11 @@ export function getUserById(id: number): User | undefined {
 /**
  * 获取指定类别的吧务日志（按时间降序）
  */
-export function getModerationLogsByCategory(category: "post" | "user" | "bawu"): ModerationLog[] {
+export function getModerationLogsByCategory(category: "post" | "user" | "bawu", page: number = 1, limit: number = 30): ModerationLog[] {
   const db = cachedDb;
   if (!db) return [];
 
+  const offset = (page - 1) * limit;
   let sql: string;
   if (category === "post") {
     // 过滤rewinder和rollwinder的时间戳：为导出贴吧完整数据而临时恢复或再次删除，不计入操作记录
@@ -393,22 +394,26 @@ export function getModerationLogsByCategory(category: "post" | "user" | "bawu"):
            LEFT JOIN pr_user target_user ON u.username = target_user.username
            WHERE operation_time NOT LIKE '2022-02-26 23:%'
            AND operation_time NOT LIKE '2022-02-16 01:%'
-           ORDER BY operation_time DESC`;
+           ORDER BY operation_time DESC
+           LIMIT ? OFFSET ?`;
   } else if (category === "user") {
     sql = `SELECT u.*, op_user.id AS operator_id, target_user.id AS target_user_id
            FROM un_user u
            LEFT JOIN pr_user op_user ON u.operator = op_user.username
            LEFT JOIN pr_user target_user ON u.username = target_user.username
-           ORDER BY operation_time DESC`;
+           ORDER BY operation_time DESC
+           LIMIT ? OFFSET ?`;
   } else {
     sql = `SELECT u.*, op_user.id AS operator_id, target_user.id AS target_user_id
            FROM un_bawu u
            LEFT JOIN pr_user op_user ON u.operator = op_user.username
            LEFT JOIN pr_user target_user ON u.username = target_user.username
-           ORDER BY operation_time DESC`;
+           ORDER BY operation_time DESC
+           LIMIT ? OFFSET ?`;
   }
 
   const stmt = db.prepare(sql);
+  stmt.bind([limit, offset]);
   const logs: ModerationLog[] = [];
 
   while (stmt.step()) {
@@ -466,6 +471,33 @@ export function getModerationLogsByCategory(category: "post" | "user" | "bawu"):
   stmt.free();
 
   return logs;
+}
+
+/**
+ * 获取指定类别的吧务日志总数
+ */
+export function getModerationLogsCountByCategory(category: "post" | "user" | "bawu"): number {
+  const db = cachedDb;
+  if (!db) return 0;
+
+  let sql: string;
+  if (category === "post") {
+    sql = `SELECT COUNT(*) as count FROM un_post
+           WHERE operation_time NOT LIKE '2022-02-26 23:%'
+           AND operation_time NOT LIKE '2022-02-16 01:%'`;
+  } else if (category === "user") {
+    sql = `SELECT COUNT(*) as count FROM un_user`;
+  } else {
+    sql = `SELECT COUNT(*) as count FROM un_bawu`;
+  }
+
+  const stmt = db.prepare(sql);
+  let count = 0;
+  if (stmt.step()) {
+    count = Number(stmt.getAsObject().count);
+  }
+  stmt.free();
+  return count;
 }
 
 /**
