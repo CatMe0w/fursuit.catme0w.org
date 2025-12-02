@@ -37,7 +37,17 @@ const isAlbum = thread.op_post_content?.some((item) => item.type === "album");
           </div>
         </div>
         {sveltePosts[0].floor === 1 && <VandalWarning userId={thread.user_id} />}
-        {sveltePosts.map((post) => <ThreadPost client:visible post={post} moderationLogs={moderationLogs} />)}
+        <!-- 只在需要CommentList的分页时（大于十条评论）才加载客户端组件 -->
+        {
+          sveltePosts.map((post) => {
+            const shouldHydrate = post.comments && post.comments.length > 10;
+            return shouldHydrate ? (
+              <ThreadPost client:visible post={post} moderationLogs={moderationLogs} />
+            ) : (
+              <ThreadPost post={post} moderationLogs={moderationLogs} />
+            );
+          })
+        }
         <div class="flex p-5 justify-end">
           <Pagination client:load currentPage={currentPage} totalPages={totalPages} baseUrl={`/thread/${threadId}`} forceFullWidth />
         </div>
