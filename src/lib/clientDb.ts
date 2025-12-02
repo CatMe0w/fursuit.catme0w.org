@@ -1,5 +1,5 @@
 import type { Thread, SearchOptions, SearchResult, SearchResponse, User, ThreadDetailResponse, WorkerResponse } from "./types";
-import { DB_VERSION } from "./dbConfig";
+import { version as projectVersion } from "../../package.json";
 
 type ProgressCallback = (loaded: number, total: number, stage: string) => void;
 type ErrorCallback = (error: Error) => void;
@@ -20,7 +20,7 @@ class ClientDatabase {
   private errorCallbacks: Set<ErrorCallback> = new Set();
   private ready = false;
   private requestIdCounter = 0;
-  private cacheName = `clientdb-query-cache-${DB_VERSION}`;
+  private cacheName = `clientdb-query-cache-v${projectVersion}`;
   private cacheAvailable = typeof caches !== "undefined";
 
   /**
