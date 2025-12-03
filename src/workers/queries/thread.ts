@@ -130,16 +130,16 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
     threads.push({
       id: Number(row.thread_id),
       title: String(row.title),
-      op_user_id: Number(row.op_user_id),
-      user_id: Number(row.user_id),
+      opUserId: Number(row.op_user_id),
+      userId: Number(row.user_id),
       time: String(row.time),
-      reply_num: Number(row.reply_num),
+      replyNum: Number(row.reply_num),
       featured: featuredSet.has(Number(row.thread_id)),
-      op_post_content: opPostContent,
-      op_username: row.op_username ? String(row.op_username) : undefined,
-      op_nickname: row.op_nickname ? String(row.op_nickname) : undefined,
-      last_reply_username: row.last_reply_username ? String(row.last_reply_username) : undefined,
-      last_reply_nickname: row.last_reply_nickname ? String(row.last_reply_nickname) : undefined
+      opPostContent: opPostContent,
+      opUsername: row.op_username ? String(row.op_username) : undefined,
+      opNickname: row.op_nickname ? String(row.op_nickname) : undefined,
+      lastReplyUsername: row.last_reply_username ? String(row.last_reply_username) : undefined,
+      lastReplyNickname: row.last_reply_nickname ? String(row.last_reply_nickname) : undefined
     });
   }
   stmt.free();
@@ -177,7 +177,7 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
           AND u.operation_time NOT LIKE '2022-02-26 23:%'
           AND u.operation_time NOT LIKE '2022-02-16 01:%'
       )`;
-  
+
   const countStmt = db.prepare(countSql);
   countStmt.bind([threadId, datetime]);
   countStmt.step();
@@ -196,26 +196,26 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
       AND u.operation_time NOT LIKE '2022-02-26 23:%'
       AND u.operation_time NOT LIKE '2022-02-16 01:%'
     ORDER BY u.operation_time ASC, u.rowid DESC`;
-  
+
   const moderationLogsStmt = db.prepare(moderationLogsSql);
   moderationLogsStmt.bind([threadId, datetime]);
-  
+
   const moderationLogs: ModerationLog[] = [];
   while (moderationLogsStmt.step()) {
     const row = moderationLogsStmt.getAsObject();
     moderationLogs.push({
-      thread_id: row.thread_id !== null ? Number(row.thread_id) : null,
-      post_id: row.post_id !== null ? Number(row.post_id) : null,
+      threadId: row.thread_id !== null ? Number(row.thread_id) : null,
+      postId: row.post_id !== null ? Number(row.post_id) : null,
       title: row.title ? String(row.title) : null,
-      content_preview: row.content_preview ? String(row.content_preview) : null,
+      contentPreview: row.content_preview ? String(row.content_preview) : null,
       media: row.media ? String(row.media) : null,
       username: row.username ? String(row.username) : null,
-      post_time: row.post_time ? String(row.post_time) : null,
+      postTime: row.post_time ? String(row.post_time) : null,
       operation: row.operation ? String(row.operation) : null,
       operator: row.operator ? String(row.operator) : null,
-      operation_time: row.operation_time ? String(row.operation_time) : null,
-      operator_id: row.operator_id ? Number(row.operator_id) : null,
-      target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
+      operationTime: row.operation_time ? String(row.operation_time) : null,
+      operatorId: row.operator_id ? Number(row.operator_id) : null,
+      targetUserId: row.target_user_id ? Number(row.target_user_id) : null,
     });
   }
   moderationLogsStmt.free();
@@ -279,7 +279,7 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
       WHERE c.post_id IN (${placeholders})
         AND c.time < ?
       ORDER BY c.time ASC`;
-    
+
     const commentStmt = db.prepare(commentsSql);
     // 绑定参数：所有postIds + datetime
     commentStmt.bind([...postIds, datetime]);
@@ -289,7 +289,7 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
     while (commentStmt.step()) {
       const cRow = commentStmt.getAsObject();
       const postId = Number(cRow.post_id);
-      
+
       if (!commentsByPostId.has(postId)) {
         commentsByPostId.set(postId, []);
       }
@@ -319,5 +319,5 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
     injectVideoMetadataIntoContent(post.content, getVideoMetadata);
   }
 
-  return { posts, totalCount, threadTitle, moderation_logs: moderationLogs };
+  return { posts, totalCount, threadTitle, moderationLogs: moderationLogs };
 }

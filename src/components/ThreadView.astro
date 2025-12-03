@@ -20,10 +20,10 @@ interface Props {
 
 const { thread, threadId, currentPage, title } = Astro.props as Props;
 
-const { posts: sveltePosts, totalCount, moderation_logs: moderationLogs } = getThreadDetail(threadId, currentPage);
+const { posts: sveltePosts, totalCount, moderationLogs: moderationLogs } = getThreadDetail(threadId, currentPage);
 const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-const isAlbum = thread.op_post_content?.some((item) => item.type === "album");
+const isAlbum = thread.opPostContent?.some((item) => item.type === "album");
 ---
 
 <ArchiveLayout title={title} description={`查看帖子：${thread.title}`} forceFullWidth={isAlbum}>
@@ -36,7 +36,7 @@ const isAlbum = thread.op_post_content?.some((item) => item.type === "album");
             <Pagination client:load currentPage={currentPage} totalPages={totalPages} baseUrl={`/thread/${threadId}`} />
           </div>
         </div>
-        {sveltePosts[0].floor === 1 && <VandalWarning userId={thread.user_id} />}
+        {sveltePosts[0].floor === 1 && <VandalWarning userId={thread.userId} />}
         {
           // 只在需要CommentList的分页时（大于十条评论）才加载客户端组件
           sveltePosts.map((post) => {

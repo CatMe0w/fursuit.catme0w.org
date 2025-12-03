@@ -157,17 +157,17 @@ export function getAllThreads(): Thread[] {
     threads.push({
       id: Number(row.id),
       title: String(row.title),
-      op_user_id: Number(row.op_user_id),
-      user_id: Number(row.last_user_id),
+      opUserId: Number(row.op_user_id),
+      userId: Number(row.last_user_id),
       time: String(row.time),
-      reply_num: Number(row.reply_num),
+      replyNum: Number(row.reply_num),
       featured: featuredSet.has(Number(row.id)),
-      op_post_content: opPostContent,
-      op_username: row.op_username ? String(row.op_username) : undefined,
-      op_nickname: row.op_nickname ? String(row.op_nickname) : undefined,
-      last_reply_username: row.last_reply_username ? String(row.last_reply_username) : undefined,
-      last_reply_nickname: row.last_reply_nickname ? String(row.last_reply_nickname) : undefined,
-      post_count: postCountMap.get(Number(row.id)) || 0,
+      opPostContent: opPostContent,
+      opUsername: row.op_username ? String(row.op_username) : undefined,
+      opNickname: row.op_nickname ? String(row.op_nickname) : undefined,
+      lastReplyUsername: row.last_reply_username ? String(row.last_reply_username) : undefined,
+      lastReplyNickname: row.last_reply_nickname ? String(row.last_reply_nickname) : undefined,
+      postCount: postCountMap.get(Number(row.id)) || 0,
     });
   }
   stmt.free();
@@ -229,19 +229,27 @@ export function getThreadById(id: number): Thread | undefined {
     postStmt.free();
     injectVideoMetadataIntoContent(opPostContent);
 
+    // 获取楼层数
+    const countStmt = db.prepare("SELECT COUNT(*) as count FROM pr_post WHERE thread_id = ?");
+    countStmt.bind([id]);
+    let postCount = 0;
+    if (countStmt.step()) {
+      postCount = Number(countStmt.getAsObject().count);
+    }
+    countStmt.free();
+
     thread = {
       id: Number(row.id),
       title: String(row.title),
-      op_user_id: Number(row.user_id),
-      user_id: Number(row.user_id), // Default to OP, will be updated if we had last reply info, but for single thread view this might not be strictly necessary or we can fetch it. 
-      // Actually, for getThreadById used in ThreadView, we mainly need title and basic info.
-      // But to match the type, we need to fill fields.
+      opUserId: Number(row.user_id),
+      userId: Number(row.user_id),
       time: time,
-      reply_num: Number(row.reply_num),
+      replyNum: Number(row.reply_num),
       featured: Boolean(row.is_good),
-      op_post_content: opPostContent,
-      op_username: row.username ? String(row.username) : undefined,
-      op_nickname: row.nickname ? String(row.nickname) : undefined,
+      opPostContent: opPostContent,
+      opUsername: row.username ? String(row.username) : undefined,
+      opNickname: row.nickname ? String(row.nickname) : undefined,
+      postCount: postCount,
     };
   }
   stmt.free();
@@ -286,7 +294,7 @@ export function getThreadDetail(threadId: number, page: number = 1): ThreadDetai
   // Get Comments for these posts
   const commentsMap = getCommentsByPostIds(postIds);
   commentsMap.forEach((comments) => {
-    comments.forEach((c) => userIds.add(c.user_id));
+    comments.forEach((c) => userIds.add(c.userId));
   });
 
   // Get Users
@@ -299,10 +307,10 @@ export function getThreadDetail(threadId: number, page: number = 1): ThreadDetai
 
     // Map comments to Comment
     const threadComments: Comment[] = comments.map((c) => {
-      const cUser = usersMap.get(c.user_id);
+      const cUser = usersMap.get(c.userId);
       return {
         id: c.id,
-        user_id: c.user_id,
+        userId: c.userId,
         content: c.content,
         time: c.time,
         username: cUser?.username || null,
@@ -317,10 +325,10 @@ export function getThreadDetail(threadId: number, page: number = 1): ThreadDetai
     return {
       id: Number(row.id),
       floor: Number(row.floor),
-      user_id: Number(row.user_id),
+      userId: Number(row.user_id),
       content: content,
       time: String(row.time),
-      comment_num: Number(row.comment_num),
+      commentNum: Number(row.comment_num),
       signature: row.signature ? String(row.signature) : null,
       tail: row.tail ? String(row.tail) : null,
       username: user?.username || null,
@@ -346,7 +354,7 @@ export function getThreadDetail(threadId: number, page: number = 1): ThreadDetai
     posts: threadPosts,
     totalCount,
     threadTitle: thread.title,
-    moderation_logs: moderationLogs,
+    moderationLogs: moderationLogs,
   };
 }
 
@@ -420,51 +428,51 @@ export function getModerationLogsByCategory(category: "post" | "user" | "bawu", 
     const row = stmt.getAsObject();
     if (category === "post") {
       logs.push({
-        thread_id: row.thread_id ? Number(row.thread_id) : null,
-        post_id: row.post_id ? Number(row.post_id) : null,
+        threadId: row.thread_id ? Number(row.thread_id) : null,
+        postId: row.post_id ? Number(row.post_id) : null,
         username: String(row.username),
         title: String(row.title),
         operation: String(row.operation),
         operator: String(row.operator),
-        operation_time: String(row.operation_time),
+        operationTime: String(row.operation_time),
         duration: null,
-        content_preview: row.content_preview ? String(row.content_preview) : null,
+        contentPreview: row.content_preview ? String(row.content_preview) : null,
         media: row.media ? String(row.media) : null,
-        post_time: row.post_time ? String(row.post_time) : null,
-        operator_id: row.operator_id ? Number(row.operator_id) : null,
-        target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
+        postTime: row.post_time ? String(row.post_time) : null,
+        operatorId: row.operator_id ? Number(row.operator_id) : null,
+        targetUserId: row.target_user_id ? Number(row.target_user_id) : null,
       });
     } else if (category === "user") {
       logs.push({
-        thread_id: null,
-        post_id: null,
+        threadId: null,
+        postId: null,
         username: String(row.username),
         title: null,
         operation: String(row.operation),
         operator: String(row.operator),
-        operation_time: String(row.operation_time),
+        operationTime: String(row.operation_time),
         duration: row.duration ? String(row.duration) : null,
-        content_preview: null,
+        contentPreview: null,
         media: null,
-        post_time: null,
-        operator_id: row.operator_id ? Number(row.operator_id) : null,
-        target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
+        postTime: null,
+        operatorId: row.operator_id ? Number(row.operator_id) : null,
+        targetUserId: row.target_user_id ? Number(row.target_user_id) : null,
       });
     } else {
       logs.push({
-        thread_id: null,
-        post_id: null,
+        threadId: null,
+        postId: null,
         username: String(row.username),
         title: null,
         operation: String(row.operation),
         operator: row.operator ? String(row.operator) : "",
-        operation_time: String(row.operation_time),
+        operationTime: String(row.operation_time),
         duration: null,
-        content_preview: null,
+        contentPreview: null,
         media: null,
-        post_time: null,
-        operator_id: row.operator_id ? Number(row.operator_id) : null,
-        target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
+        postTime: null,
+        operatorId: row.operator_id ? Number(row.operator_id) : null,
+        targetUserId: row.target_user_id ? Number(row.target_user_id) : null,
       });
     }
   }
@@ -537,24 +545,24 @@ export function getUserRecords(userId: number): UserRecord[] {
     if (isComment) {
       records.push({
         type: "comment",
-        thread_id: Number(row.thread_id),
+        threadId: Number(row.thread_id),
         title: String(row.title),
-        post_id: Number(row.post_id),
+        postId: Number(row.post_id),
         floor: Number(row.floor),
-        post_content: parseContent(row.post_content as string | null),
-        comment_id: Number(row.comment_id),
-        comment_content: parseContent(row.comment_content as string | null),
+        postContent: parseContent(row.post_content as string | null),
+        commentId: Number(row.comment_id),
+        commentContent: parseContent(row.comment_content as string | null),
         time: String(row.time),
         page: Number(row.page),
       });
     } else {
       records.push({
         type: "post",
-        thread_id: Number(row.thread_id),
+        threadId: Number(row.thread_id),
         title: String(row.title),
-        post_id: Number(row.post_id),
+        postId: Number(row.post_id),
         floor: Number(row.floor),
-        post_content: parseContent(row.post_content as string | null),
+        postContent: parseContent(row.post_content as string | null),
         time: String(row.time),
         page: Number(row.page),
       });
@@ -588,19 +596,19 @@ function getModerationLogsByThreadId(threadId: number): ModerationLog[] {
   while (stmt.step()) {
     const row = stmt.getAsObject();
     logs.push({
-      thread_id: row.thread_id ? Number(row.thread_id) : null,
-      post_id: row.post_id ? Number(row.post_id) : null,
+      threadId: row.thread_id ? Number(row.thread_id) : null,
+      postId: row.post_id ? Number(row.post_id) : null,
       username: String(row.username),
       title: String(row.title),
       operation: String(row.operation),
       operator: String(row.operator),
-      operation_time: String(row.operation_time),
+      operationTime: String(row.operation_time),
       duration: null,
-      content_preview: row.content_preview ? String(row.content_preview) : null,
+      contentPreview: row.content_preview ? String(row.content_preview) : null,
       media: row.media ? String(row.media) : null,
-      post_time: row.post_time ? String(row.post_time) : null,
-      operator_id: row.operator_id ? Number(row.operator_id) : null,
-      target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
+      postTime: row.post_time ? String(row.post_time) : null,
+      operatorId: row.operator_id ? Number(row.operator_id) : null,
+      targetUserId: row.target_user_id ? Number(row.target_user_id) : null,
     });
   }
   stmt.free();
@@ -628,7 +636,7 @@ function getCommentsByPostIds(postIds: number[]): Map<number, Comment[]> {
     }
     commentsMap.get(postId)!.push({
       id: Number(row.id),
-      user_id: Number(row.user_id),
+      userId: Number(row.user_id),
       content: parseContent(row.content as string | null),
       time: String(row.time),
       username: null,
@@ -689,7 +697,7 @@ function getVideoMetadata(id: string): VideoMetadata | null {
         id: id,
         title: metadata.title,
         uploader: metadata.uploader,
-        uploader_url: metadata.uploader_url,
+        uploaderUrl: metadata.uploader_url,
       };
     } catch (e) {
       console.error("Failed to parse video metadata", e);

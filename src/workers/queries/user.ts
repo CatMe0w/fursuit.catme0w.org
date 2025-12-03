@@ -114,15 +114,15 @@ export function getUserPostsAtTime(userId: number, datetime: string, limit?: num
     injectVideoMetadataIntoContent(contentJson, getVideoMetadata);
 
     const result: SearchResult = {
-      thread_id: Number(row.thread_id),
-      post_id: Number(row.post_id),
-      comment_id: hasComment ? Number(row.comment_id) : null,
-      result_type: hasComment ? 'comment' : 'post',
+      threadId: Number(row.thread_id),
+      postId: Number(row.post_id),
+      commentId: hasComment ? Number(row.comment_id) : null,
+      resultType: hasComment ? 'comment' : 'post',
       time: String(row.time),
-      user_id: userId,
+      userId: userId,
       title: String(row.title),
       floor: Number(row.floor),
-      content_json: contentJson,
+      content: contentJson,
       page: Number(row.page)
     };
 

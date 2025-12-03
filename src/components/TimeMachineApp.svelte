@@ -172,7 +172,7 @@
       threadPosts = result.posts;
       totalCount = result.totalCount;
       threadTitle = result.threadTitle;
-      moderationLogs = result.moderation_logs;
+      moderationLogs = result.moderationLogs;
       totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
     }
 
@@ -279,8 +279,8 @@
                   <Pagination {currentPage} {totalPages} baseUrl={getBaseUrl()} />
                 </div>
               </div>
-              {#if isVandal(threadPosts[0].user_id)}
-                <VandalWarning userId={threadPosts[0].user_id} />
+              {#if isVandal(threadPosts[0].userId)}
+                <VandalWarning userId={threadPosts[0].userId} />
               {/if}
               {#each threadPosts as post (post.id)}
                 <ThreadPost {post} {time} {moderationLogs} />

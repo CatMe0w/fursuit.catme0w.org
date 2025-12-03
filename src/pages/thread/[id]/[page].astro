@@ -8,7 +8,7 @@ export async function getStaticPaths() {
   const allThreads = getAllThreads();
   const paths: Array<{ params: { id: string; page: string } }> = [];
   for (const thread of allThreads) {
-    const totalPages = Math.ceil(thread.post_count / 30);
+    const totalPages = Math.ceil(thread.postCount / 30);
     if (totalPages > 1) {
       for (let p = 2; p <= totalPages; p++) {
         paths.push({ params: { id: thread.id.toString(), page: p.toString() } });
@@ -25,4 +25,9 @@ const thread = getThreadById(threadId);
 if (!thread) return Astro.redirect("/404");
 ---
 
-<ThreadView thread={thread} threadId={threadId} currentPage={currentPage} title={`${thread.title} - 第${currentPage}页 - fursuit吧·档案馆与时间机器：为了无法忘却的往事`} />
+<ThreadView
+  thread={thread}
+  threadId={threadId}
+  currentPage={currentPage}
+  title={`${thread.title} - 第${currentPage}页 - fursuit吧·档案馆与时间机器：为了无法忘却的往事`}
+/>

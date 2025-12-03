@@ -45,7 +45,7 @@
         {item.content.text || item.content.url}
       </a>
     {:else if item.type === "username"}
-      <a href={getUserUrl(item.content.user_id)} class="text-sky-700 hover:underline">
+      <a href={getUserUrl(item.content.userId)} class="text-sky-700 hover:underline">
         {item.content.text}
       </a>
     {:else if item.type === "emoticon"}
@@ -79,8 +79,8 @@
             <p class="text-lg text-gray-700">{item.metadata.title}</p>
             {#if item.metadata.uploader}
               <p class="text-xs text-gray-600 mt-1.5">
-                上传者：{#if item.metadata.uploader_url}
-                  <a href={item.metadata.uploader_url} target="_blank" rel="noreferrer nofollow noopener" class="text-sky-700 hover:underline break-all"
+                上传者：{#if item.metadata.uploaderUrl}
+                  <a href={item.metadata.uploaderUrl} target="_blank" rel="noreferrer nofollow noopener" class="text-sky-700 hover:underline break-all"
                     >{item.metadata.uploader}</a
                   >
                 {:else}

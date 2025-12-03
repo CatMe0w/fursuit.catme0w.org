@@ -42,25 +42,25 @@ function getCategoryUrl(cat: string) {
 
 function mapLogToSearchResult(log: ModerationLog, category: string): SearchResult {
   return {
-    thread_id: log.thread_id,
-    post_id: log.post_id,
-    comment_id: null,
-    result_type: category === "post" ? "moderation_post" : category === "user" ? "moderation_user" : "moderation_bawu",
-    time: log.operation_time,
-    user_id: null,
+    threadId: log.threadId,
+    postId: log.postId,
+    commentId: null,
+    resultType: category === "post" ? "moderation_post" : category === "user" ? "moderation_user" : "moderation_bawu",
+    time: log.operationTime,
+    userId: null,
     title: log.title,
     floor: null,
-    content_json: null,
+    content: null,
     operation: log.operation,
     operator: log.operator,
     username: log.username,
     nickname: null,
-    content_preview: log.content_preview,
+    contentPreview: log.contentPreview,
     media: log.media,
-    post_time: log.post_time,
+    postTime: log.postTime,
     duration: log.duration,
-    operator_id: log.operator_id,
-    target_user_id: log.target_user_id,
+    operatorId: log.operatorId,
+    targetUserId: log.targetUserId,
   };
 }
 
