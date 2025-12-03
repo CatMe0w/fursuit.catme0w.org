@@ -42,7 +42,7 @@ const isAlbum = thread.opPostContent?.some((item) => item.type === "album");
           sveltePosts.map((post) => {
             const shouldHydrate = post.comments && post.comments.length > 10;
             return shouldHydrate ? (
-              <ThreadPost client:visible post={post} moderationLogs={moderationLogs} />
+              <ThreadPost post={post} moderationLogs={moderationLogs} client:visible />
             ) : (
               <ThreadPost post={post} moderationLogs={moderationLogs} />
             );
@@ -61,7 +61,9 @@ const isAlbum = thread.opPostContent?.some((item) => item.type === "album");
     <Sidebar>
       <h1 slot="title">到别处看看</h1>
       <TimeMachineButton currentScope="thread" resourceId={threadId} />
-      <a href="/moderation-logs/post" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded block transition-colors">吧务后台日志</a>
+      <a href="/moderation-logs/post" class="bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 px-4 py-1.5 rounded block transition-colors"
+        >吧务后台日志</a
+      >
       <div class="border-2 border-b border-gray-100 my-1"></div>
       <ExternalLinkButton href={`https://tieba.baidu.com/p/${threadId}`}>原帖（百度贴吧）</ExternalLinkButton>
       <ExternalLinkButton href={`https://web.archive.org/web/*/https://tieba.baidu.com/p/${threadId}`}>原帖（网页存档）</ExternalLinkButton>
@@ -102,6 +104,12 @@ const isAlbum = thread.opPostContent?.some((item) => item.type === "album");
 
           setTimeout(stop, 3000);
         }
+
+        // 3. 添加高亮效果
+        element.classList.add("bg-yellow-50");
+        setTimeout(() => {
+          element.classList.remove("bg-yellow-50");
+        }, 2000);
       }
     }
   }
