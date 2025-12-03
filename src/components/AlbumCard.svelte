@@ -5,8 +5,8 @@
   let { thread }: { thread: Thread } = $props();
 
   let { coverUrl, imageCount } = $derived.by(() => {
-    if (thread.op_post_content) {
-      for (const item of thread.op_post_content) {
+    if (thread.opPostContent) {
+      for (const item of thread.opPostContent) {
         if (item.type === "album" && Array.isArray(item.content) && item.content.length > 0) {
           return {
             coverUrl: getImageUrl(item.content[0].url),
@@ -42,7 +42,7 @@
     </h3>
 
     <div class="flex items-center justify-between text-xs text-gray-500">
-      <span>{thread.op_nickname || thread.op_username}</span>
+      <span>{thread.opNickname || thread.opUsername || ""}</span>
       <span>{thread.time.split(" ")[0]}</span>
     </div>
   </div>

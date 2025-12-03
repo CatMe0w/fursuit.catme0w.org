@@ -151,7 +151,7 @@
         {:else}
           <div class="grid grid-cols-1">
             {#each results as item}
-              {#if item.result_type.startsWith("moderation_")}
+              {#if item.resultType.startsWith("moderation_")}
                 <ModerationLogItem {item} />
               {:else}
                 <UserRecordItem {item} time={time || undefined} showAuthor={scope !== "user"} />

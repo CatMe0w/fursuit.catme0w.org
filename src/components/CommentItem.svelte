@@ -20,11 +20,11 @@
 
 <div class="text-sm comment-item" id={comment.id.toString()}>
   <div class="flex flex-row gap-2">
-    <a class="basis-9 shrink-0" href={getUserUrl(comment.user_id)} title={`用户名：${comment.username || ""}`}>
+    <a class="basis-9 shrink-0" href={getUserUrl(comment.userId)} title={`用户名：${comment.username || ""}`}>
       <img class="border-2 border-gray-100 rounded-md w-9 h-9 mr-1 inline" src={avatarUrl} alt="" />
     </a>
     <div class="grow">
-      <a class="text-sky-700 hover:underline text-sm" href={getUserUrl(comment.user_id)} title={`用户名：${comment.username || ""}`}>
+      <a class="text-sky-700 hover:underline text-sm" href={getUserUrl(comment.userId)} title={`用户名：${comment.username || ""}`}>
         {displayName + ":"}
       </a>
       <span>
@@ -40,7 +40,7 @@
           {:else if item.type === "emoticon"}
             <img class="inline w-5 h-5" src={getEmoticonUrl(item.content.id)} alt="" />
           {:else if item.type === "username"}
-            <a href={getUserUrl(item.content.user_id)} class="text-sky-700 hover:underline">
+            <a href={getUserUrl(item.content.userId)} class="text-sky-700 hover:underline">
               {item.content.text}
             </a>
           {:else if item.type === "url"}

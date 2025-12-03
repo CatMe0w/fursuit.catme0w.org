@@ -25,8 +25,8 @@
     return false;
   }
 
-  let isVandalOperator = $derived(shouldMarkAsVandal(log.operator_id, log.operation_time, log.operator));
-  let vandalTitle = $derived(log.operator_id ? "该账号在爆吧期间参与了破坏行为。" : "该账号在爆吧期间参与了破坏行为，并且已被百度封禁。");
+  let isVandalOperator = $derived(shouldMarkAsVandal(log.operatorId, log.operationTime, log.operator));
+  let vandalTitle = $derived(log.operatorId ? "该账号在爆吧期间参与了破坏行为。" : "该账号在爆吧期间参与了破坏行为，并且已被百度封禁。");
 
   let config = $derived(
     (() => {
@@ -34,7 +34,7 @@
         case "删贴":
           return {
             color: "bg-red-50",
-            text: log.post_id ? "删除了这条回复" : "删除了这个帖子",
+            text: log.postId ? "删除了这条回复" : "删除了这个帖子",
           };
         case "恢复删贴":
           return { color: "bg-emerald-50", text: "恢复了这个帖子" };
@@ -49,7 +49,7 @@
         default:
           return null;
       }
-    })()
+    })(),
   );
 </script>
 
@@ -62,7 +62,7 @@
           <span title={vandalTitle} class="text-red-600 text-base">[破坏者]</span>
         {/if}
       </a>
-      于{log.operation_time}{config.text}。
+      于{log.operationTime}{config.text}。
     </p>
   </div>
 {/if}

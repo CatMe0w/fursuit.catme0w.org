@@ -86,22 +86,22 @@ function searchModeration(db: Database, words: string[], limit: number, offset: 
   while (stmt.step()) {
     const row = stmt.getAsObject();
     items.push({
-      thread_id: row.thread_id !== null ? Number(row.thread_id) : null,
-      post_id: row.post_id !== null ? Number(row.post_id) : null,
-      comment_id: null,
-      result_type: row.result_type as any,
+      threadId: row.thread_id !== null ? Number(row.thread_id) : null,
+      postId: row.post_id !== null ? Number(row.post_id) : null,
+      commentId: null,
+      resultType: row.result_type as any,
       time: String(row.operation_time),
-      user_id: null,
+      userId: null,
       title: row.title ? String(row.title) : null,
       floor: null,
-      content_json: null,
+      content: null,
       operation: row.operation ? String(row.operation) : null,
       operator: row.operator ? String(row.operator) : null,
-      content_preview: row.content_preview ? String(row.content_preview) : null,
+      contentPreview: row.content_preview ? String(row.content_preview) : null,
       media: row.media ? String(row.media) : null,
-      post_time: row.post_time ? String(row.post_time) : null,
-      operator_id: row.operator_id ? Number(row.operator_id) : null,
-      target_user_id: row.target_user_id ? Number(row.target_user_id) : null,
+      postTime: row.post_time ? String(row.post_time) : null,
+      operatorId: row.operator_id ? Number(row.operator_id) : null,
+      targetUserId: row.target_user_id ? Number(row.target_user_id) : null,
       username: row.username ? String(row.username) : null,
       duration: row.duration ? String(row.duration) : null,
     });
@@ -125,12 +125,12 @@ function searchContent(
   onlyThread: boolean | undefined
 ): SearchResponse {
   const tm = !!snapshotTime;
-  
+
   // 1. 构建WHERE条件
   const timeCondPost = tm ? 'AND p.time < ?' : '';
   const timeCondComment = tm ? 'AND c.time < ?' : '';
   const timeCondThreadOp = tm ? 'AND p.time < ?' : '';
-  
+
   // 时间机器模式下，排除已删除的帖子
   const tmThreadNotDeleted = tm
     ? `AND NOT EXISTS (
@@ -143,8 +143,8 @@ function searchContent(
            AND u.operation_time NOT LIKE '2022-02-16 01:%'
        )`
     : '';
-    
-  const tmPostNotDeleted = tm 
+
+  const tmPostNotDeleted = tm
     ? `AND NOT EXISTS (
           SELECT 1 FROM un_post u
           WHERE u.thread_id = p.thread_id
@@ -153,7 +153,7 @@ function searchContent(
             AND u.operation_time < ?
             AND u.operation_time NOT LIKE '2022-02-26 23:%'
             AND u.operation_time NOT LIKE '2022-02-16 01:%'
-        )` 
+        )`
     : '';
 
   const tmCommentNotDeleted = tm
@@ -294,15 +294,15 @@ function searchContent(
     injectVideoMetadataIntoContent(postContentJson, getVideoMetadata);
 
     items.push({
-      thread_id: Number(row.thread_id),
-      post_id: row.post_id !== null ? Number(row.post_id) : null,
-      comment_id: row.comment_id !== null ? Number(row.comment_id) : null,
-      result_type: row.result_type as any,
+      threadId: Number(row.thread_id),
+      postId: row.post_id !== null ? Number(row.post_id) : null,
+      commentId: row.comment_id !== null ? Number(row.comment_id) : null,
+      resultType: row.result_type as any,
       time: String(row.time),
-      user_id: Number(row.user_id),
+      userId: Number(row.user_id),
       title: String(row.title),
       floor: Number(row.floor),
-      content_json: contentJson,
+      content: contentJson,
       post_content_json: postContentJson,
       username: row.username ? String(row.username) : null,
       nickname: row.nickname ? String(row.nickname) : null,

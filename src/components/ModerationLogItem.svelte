@@ -14,9 +14,9 @@
     return `/thread/${tid}`;
   }
 
-  let isPost = $derived(item.result_type === "moderation_post");
-  let isUser = $derived(item.result_type === "moderation_user");
-  let isBawu = $derived(item.result_type === "moderation_bawu");
+  let isPost = $derived(item.resultType === "moderation_post");
+  let isUser = $derived(item.resultType === "moderation_user");
+  let isBawu = $derived(item.resultType === "moderation_bawu");
 
   let operationColor = $derived(
     {
@@ -26,26 +26,26 @@
       取消加精: "bg-yellow-100",
       置顶: "bg-blue-100",
       取消置顶: "bg-blue-100",
-    }[item.operation || ""] || "bg-gray-100"
+    }[item.operation || ""] || "bg-gray-100",
   );
 </script>
 
 <div class="p-5 border-b border-gray-100 relative">
   {#if isPost}
-    <a href={getThreadUrl(item.thread_id)} class="absolute inset-0 z-0 lg:hidden" aria-hidden="true"></a>
+    <a href={getThreadUrl(item.threadId)} class="absolute inset-0 z-0 lg:hidden" aria-hidden="true"></a>
     <div class="mb-5">
       <span class={`text-sm text-gray-800 rounded px-2 py-1 mr-2 ${operationColor}`}>{item.operation}</span>{#if item.title}
-        <a href={getThreadUrl(item.thread_id)} class="text-sky-700 hover:underline">{item.title}</a>
+        <a href={getThreadUrl(item.threadId)} class="text-sky-700 hover:underline">{item.title}</a>
       {/if}
-      {#if item.content_preview}
-        <p class="text-sm mt-2 leading-6 text-gray-700 line-clamp-3"><a href={getThreadUrl(item.thread_id)}>{item.content_preview}</a></p>
+      {#if item.contentPreview}
+        <p class="text-sm mt-2 leading-6 text-gray-700 line-clamp-3"><a href={getThreadUrl(item.threadId)}>{item.contentPreview}</a></p>
       {/if}
       {#if item.media}
         <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4 overflow-x-auto">
           {#each item.media.split("\n").filter(Boolean) as media}
             {@const thumbnailUrl = getThumbnailUrl(media)}
             {#if thumbnailUrl}
-              <a href={getThreadUrl(item.thread_id)}>
+              <a href={getThreadUrl(item.threadId)}>
                 <img class="max-h-32 w-auto rounded" loading="lazy" src={thumbnailUrl} alt="" />
               </a>
             {/if}
@@ -56,16 +56,16 @@
     <div class="text-sm text-gray-500 leading-8 mt-4">
       {#if item.username}
         <p>
-          帖子作者：<ModerationLogUserLink userId={item.target_user_id} username={item.username} time={item.post_time!} />
+          帖子作者：<ModerationLogUserLink userId={item.targetUserId} username={item.username} time={item.postTime!} />
         </p>
       {/if}
-      {#if item.post_time}
+      {#if item.postTime}
         <p>
-          发帖时间：<span class="text-gray-800">{item.post_time}</span>
+          发帖时间：<span class="text-gray-800">{item.postTime}</span>
         </p>
       {/if}
       <p>
-        操作人：<ModerationLogUserLink userId={item.operator_id} username={item.operator} time={item.time} />
+        操作人：<ModerationLogUserLink userId={item.operatorId} username={item.operator} time={item.time ?? undefined} />
       </p>
       <p>
         操作时间：<span class="text-gray-800">{item.time}</span>
@@ -75,10 +75,10 @@
     <div class="text-sm text-gray-500 leading-8">
       <p>
         <span class={`text-gray-800 rounded px-2 py-1 mr-2 ${operationColor}`}>{item.operation}{item.duration ? item.duration : ""}</span
-        >{#if item.username}<ModerationLogUserLink userId={item.target_user_id} username={item.username} time={item.time} />{/if}
+        >{#if item.username}<ModerationLogUserLink userId={item.targetUserId} username={item.username} time={item.time ?? undefined} />{/if}
       </p>
       <p>
-        操作人：<ModerationLogUserLink userId={item.operator_id} username={item.operator} time={item.time} />
+        操作人：<ModerationLogUserLink userId={item.operatorId} username={item.operator} time={item.time ?? undefined} />
       </p>
       <p>
         操作时间：<span class="text-gray-800">{item.time}</span>

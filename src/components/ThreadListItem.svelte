@@ -19,11 +19,11 @@
     return `/user/${uid}`;
   }
 
-  let opPostContentText = $derived(extractTextContent(thread.op_post_content));
-  let opPostMedia = $derived(extractMedia(thread.op_post_content));
+  let opPostContentText = $derived(extractTextContent(thread.opPostContent));
+  let opPostMedia = $derived(extractMedia(thread.opPostContent));
 
-  let opDisplayName = $derived(getUserDisplayName(thread.op_username, thread.op_nickname));
-  let lastReplyDisplayName = $derived(getUserDisplayName(thread.last_reply_username, thread.last_reply_nickname));
+  let opDisplayName = $derived(getUserDisplayName(thread.opUsername, thread.opNickname));
+  let lastReplyDisplayName = $derived(getUserDisplayName(thread.lastReplyUsername, thread.lastReplyNickname));
 
   let shortTime = $derived(thread.time ? thread.time.slice(0, -9) : "");
 </script>
@@ -33,7 +33,7 @@
   <div class="flex flex-row flex-wrap lg:justify-end">
     <div class="mr-4 basis-14 shrink-0 order-1 lg:order-0">
       <p class="py-1 lg:px-2 lg:py-1.5 bg-gray-100 rounded text-sm text-center">
-        {thread.reply_num}
+        {thread.replyNum}
       </p>
     </div>
     <div class="basis-full lg:basis-3/4 grow mb-5">
@@ -63,9 +63,9 @@
     </div>
     <div class="text-xs lg:-mb-1.5 truncate text-gray-500 flex flex-row justify-end gap-3 grow items-center order-2 lg:order-0 basis-px lg:basis-auto">
       <p class="truncate">
-        <a href={getUserUrl(thread.op_user_id)} class="hover:underline relative z-10" title={`帖子作者：${opDisplayName}`}><span>{opDisplayName}</span></a>
+        <a href={getUserUrl(thread.opUserId)} class="hover:underline relative z-10" title={`帖子作者：${opDisplayName}`}><span>{opDisplayName}</span></a>
         <span class="truncate hidden lg:inline"> / </span>
-        <a class="truncate hidden lg:inline hover:underline relative z-10" href={getUserUrl(thread.user_id)} title={`最后回复：${lastReplyDisplayName}`}
+        <a class="truncate hidden lg:inline hover:underline relative z-10" href={getUserUrl(thread.userId)} title={`最后回复：${lastReplyDisplayName}`}
           ><span>{lastReplyDisplayName}</span></a
         >
       </p>

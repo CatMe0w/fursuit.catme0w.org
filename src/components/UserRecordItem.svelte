@@ -30,9 +30,9 @@
     return url;
   }
 
-  let isComment = $derived(item.result_type === "comment");
-  let anchorId = $derived(item.floor === 1 || item.result_type === "thread" ? null : item.post_id);
-  let threadUrl = $derived(getThreadUrl(item.thread_id, anchorId, item.page));
+  let isComment = $derived(item.resultType === "comment");
+  let anchorId = $derived(item.floor === 1 || item.resultType === "thread" ? null : item.postId);
+  let threadUrl = $derived(getThreadUrl(item.threadId, anchorId, item.page));
 
   // Badge
   let badge = $derived(
@@ -40,12 +40,12 @@
       thread: "主题帖",
       post: "回复",
       comment: "评论",
-    }[item.result_type as "thread" | "post" | "comment"] || item.result_type
+    }[item.resultType as "thread" | "post" | "comment"] || item.resultType,
   );
 
   // 提取内容
-  let contentText = $derived(extractTextContent(item.content_json || []));
-  let contentMedia = $derived(extractMedia(item.content_json || []));
+  let contentText = $derived(extractTextContent(item.content || []));
+  let contentMedia = $derived(extractMedia(item.content || []));
   let postPreviewText = $derived(item.post_content_json ? extractTextContent(item.post_content_json) : "");
 </script>
 
@@ -82,7 +82,7 @@
       {#if contentText}
         <p class="text-sm mt-2 text-gray-700 line-clamp-3 leading-6">
           {#if showAuthor && item.nickname}
-            <a href={`/user/${item.user_id}`} class="text-sky-700 hover:underline font-medium mr-1 relative z-10">
+            <a href={`/user/${item.userId}`} class="text-sky-700 hover:underline font-medium mr-1 relative z-10">
               {item.nickname}:
             </a>
           {/if}

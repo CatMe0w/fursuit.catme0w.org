@@ -28,16 +28,16 @@ const paginationResult = paginate(allRecords, currentPage, 30);
 
 function mapRecordToSearchResult(record: UserRecord): SearchResult {
   return {
-    thread_id: record.thread_id,
-    post_id: record.post_id,
-    comment_id: record.comment_id || null,
-    result_type: record.type,
+    threadId: record.threadId,
+    postId: record.postId,
+    commentId: record.commentId || null,
+    resultType: record.type,
     time: record.time,
-    user_id: null,
+    userId: null,
     title: record.title,
     floor: record.floor,
-    content_json: record.type === "comment" ? record.comment_content || [] : record.post_content || [],
-    post_content_json: record.type === "comment" ? record.post_content || [] : undefined,
+    content: record.type === "comment" ? record.commentContent || [] : record.postContent || [],
+    post_content_json: record.type === "comment" ? record.postContent || [] : undefined,
     page: record.page,
   };
 }
