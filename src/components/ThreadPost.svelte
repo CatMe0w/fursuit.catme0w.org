@@ -14,8 +14,6 @@
 
   let { post, time = undefined, moderationLogs = [] }: Props = $props();
 
-  let highlightClass = $state("");
-
   function renderTail(tail: string | null): string {
     return tail ? tail + "  " : "";
   }
@@ -28,21 +26,9 @@
   let displayName = $derived(getUserDisplayName(post.username, post.nickname));
   let avatarUrl = $derived(getAvatarUrl(post.avatar));
   let isAlbum = $derived(post.floor === 1 && post.content.some((c) => c.type === "album"));
-
-  $effect(() => {
-    if (typeof window !== "undefined") {
-      const hash = window.location.hash.substring(1);
-      if (hash === post.id.toString()) {
-        highlightClass = "bg-yellow-50";
-        setTimeout(() => {
-          highlightClass = "";
-        }, 2000);
-      }
-    }
-  });
 </script>
 
-<div class="p-5 border-b border-gray-100 transition-colors duration-1000 {highlightClass}" id={post.id.toString()}>
+<div class="p-5 border-b border-gray-100 transition-colors duration-1000" id={post.id.toString()}>
   <div class={isAlbum ? "flex-row" : "lg:flex flex-row"}>
     <div class={"basis-24 shrink-0 mr-7 mb-3 flex flex-row gap-3 items-center" + (isAlbum ? "" : " lg:flex-col")}>
       <a href={getUserUrl(post.userId)} title={`用户名：${post.username || ""}`}>
