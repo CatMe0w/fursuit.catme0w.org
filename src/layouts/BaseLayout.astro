@@ -1,7 +1,7 @@
 ---
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
-import Lightbox from "../components/Lightbox.svelte";
+import Lightbox from "../components/Lightbox.astro";
 
 export type BackButtonMode = "none" | "archive" | "home" | "defer";
 
@@ -26,7 +26,7 @@ const { title, description, backButton = "none" } = Astro.props;
   </head>
   <body>
     <Navbar backButton={backButton} />
-    <Lightbox client:load>
+    <Lightbox>
       <slot />
     </Lightbox>
   </body>
