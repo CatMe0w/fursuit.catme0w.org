@@ -1,0 +1,44 @@
+---
+import "photoswipe/style.css";
+---
+
+<slot />
+
+<script>
+    import PhotoSwipeLightbox from "photoswipe/lightbox";
+    import "photoswipe/style.css";
+
+    async function initLightbox() {
+        const galleryItems = document.querySelectorAll("a.gallery-item");
+        if (galleryItems.length === 0) return;
+
+        const promises = Array.from(galleryItems).map((link) => {
+            const a = link as HTMLAnchorElement;
+            if (a.dataset.pswpWidth && a.dataset.pswpWidth !== "0") return Promise.resolve();
+
+            return new Promise<void>((resolve) => {
+                const img = new Image();
+                img.src = a.href;
+                img.onload = () => {
+                    a.dataset.pswpWidth = img.naturalWidth.toString();
+                    a.dataset.pswpHeight = img.naturalHeight.toString();
+                    resolve();
+                };
+                img.onerror = () => resolve();
+            });
+        });
+
+        await Promise.all(promises);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallery: document.body,
+            children: "a.gallery-item",
+            pswpModule: () => import("photoswipe"),
+        });
+
+        lightbox.init();
+    }
+
+    initLightbox();
+    document.addEventListener("astro:page-load", initLightbox);
+</script>
