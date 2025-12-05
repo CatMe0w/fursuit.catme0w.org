@@ -98,7 +98,9 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
     ${cteSql}
     SELECT z.thread_id, t.user_id AS op_user_id, t.title AS title, z.user_id, z.time, t.reply_num, p.content,
            op_user.username AS op_username, op_user.nickname AS op_nickname,
-           last_user.username AS last_reply_username, last_user.nickname AS last_reply_nickname
+           last_user.username AS last_reply_username, last_user.nickname AS last_reply_nickname,
+           (SELECT COUNT(*) FROM pr_post WHERE thread_id = z.thread_id AND time < ?1) as cnt_posts,
+           (SELECT COUNT(*) FROM pr_comment c JOIN pr_post p ON c.post_id = p.id WHERE p.thread_id = z.thread_id AND c.time < ?1) as cnt_comments
     FROM z
     JOIN pr_thread t ON z.thread_id = t.id
     JOIN pr_post p ON z.thread_id = p.thread_id AND p.floor = 1
@@ -127,19 +129,23 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
     // 注入视频元数据到op_post_content
     injectVideoMetadataIntoContent(opPostContent, getVideoMetadata);
 
+    const cntPosts = Number(row.cnt_posts || 0);
+    const cntComments = Number(row.cnt_comments || 0);
+
     threads.push({
       id: Number(row.thread_id),
       title: String(row.title),
       opUserId: Number(row.op_user_id),
       userId: Number(row.user_id),
       time: String(row.time),
-      replyNum: Number(row.reply_num),
+      replyNum: cntPosts + cntComments, // 实时计算的总回复数（楼层+评论），用于渲染到Archive View
       featured: featuredSet.has(Number(row.thread_id)),
       opPostContent: opPostContent,
       opUsername: row.op_username ? String(row.op_username) : undefined,
       opNickname: row.op_nickname ? String(row.op_nickname) : undefined,
       lastReplyUsername: row.last_reply_username ? String(row.last_reply_username) : undefined,
-      lastReplyNickname: row.last_reply_nickname ? String(row.last_reply_nickname) : undefined
+      lastReplyNickname: row.last_reply_nickname ? String(row.last_reply_nickname) : undefined,
+      postCount: cntPosts, // 实时计算的楼层数，未使用
     });
   }
   stmt.free();
@@ -216,6 +222,7 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
       operationTime: row.operation_time ? String(row.operation_time) : null,
       operatorId: row.operator_id ? Number(row.operator_id) : null,
       targetUserId: row.target_user_id ? Number(row.target_user_id) : null,
+      duration: null, // 帖子没有封号时长的概念
     });
   }
   moderationLogsStmt.free();
@@ -254,10 +261,10 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
     posts.push({
       id: postId,
       floor: Number(row.floor),
-      user_id: Number(row.user_id),
+      userId: Number(row.user_id),
       content: parseContent(row.content as string | null),
       time: String(row.time),
-      comment_num: Number(row.comment_num),
+      commentNum: Number(row.comment_num),
       signature: row.signature ? String(row.signature) : null,
       tail: row.tail ? String(row.tail) : null,
       username: row.username ? String(row.username) : null,
@@ -296,7 +303,7 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
 
       commentsByPostId.get(postId)!.push({
         id: Number(cRow.id),
-        user_id: Number(cRow.user_id),
+        userId: Number(cRow.user_id),
         content: parseContent(cRow.content as string | null),
         time: String(cRow.time),
         username: cRow.username ? String(cRow.username) : null,
