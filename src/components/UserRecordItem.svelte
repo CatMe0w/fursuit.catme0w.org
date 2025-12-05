@@ -80,7 +80,7 @@
       {/if}
 
       {#if contentText}
-        <p class="text-sm mt-2 text-gray-700 line-clamp-3 leading-6">
+        <p class="text-sm mt-2 text-gray-700 line-clamp-3 leading-6 break-all">
           {#if showAuthor && item.nickname}
             <a href={`/user/${item.userId}`} class="text-sky-700 hover:underline font-medium mr-1 relative z-10">
               {item.nickname}:

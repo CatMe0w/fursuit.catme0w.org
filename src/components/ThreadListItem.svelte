@@ -44,7 +44,7 @@
         {/if}
       </a>
       {#if opPostContentText}
-        <p class="text-sm mt-2 text-gray-700 line-clamp-3 leading-6">
+        <p class="text-sm mt-2 text-gray-700 line-clamp-3 leading-6 break-all">
           <a href={getThreadUrl(thread.id)}>{opPostContentText}</a>
         </p>
       {/if}
