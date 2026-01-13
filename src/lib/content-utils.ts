@@ -3,8 +3,10 @@ import type { ContentItem } from "./types";
 
 /**
  * 提取内容文本，多用于预览
+ * @param content 内容项数组
+ * @param includePlaceholders 是否包含 [图片] 等占位符，用于吧主页（ArchiveView）预览一楼，默认 true
  */
-export function extractTextContent(content: ContentItem[]): string {
+export function extractTextContent(content: ContentItem[], includePlaceholders = true): string {
   if (!content || !Array.isArray(content)) return "";
   let text = "";
   content.forEach((item) => {
@@ -14,19 +16,21 @@ export function extractTextContent(content: ContentItem[]): string {
       text += item.content.text + " ";
     } else if (item.type === "url" && item.content && typeof item.content === "object" && "text" in item.content) {
       text += (item.content.text || item.content.url) + " ";
-    } else if (item.type === "image") {
-      text += "[图片] ";
-    } else if (item.type === "video") {
-      text += "[视频] ";
-    } else if (item.type === "audio") {
-      text += "[语音] ";
-    } else if (item.type === "album") {
-      text += `[图册]（${item.content.length}张）`;
-    } else if (item.type === "emoticon" && item.content && typeof item.content === "object" && "description" in item.content) {
-      if (item.content.description === "") {
+    } else if (includePlaceholders) {
+      if (item.type === "image") {
         text += "[图片] ";
-      } else {
-        text += `[${item.content.description}] `;
+      } else if (item.type === "video") {
+        text += "[视频] ";
+      } else if (item.type === "audio") {
+        text += "[语音] ";
+      } else if (item.type === "album") {
+        text += `[图册]（${item.content.length}张）`;
+      } else if (item.type === "emoticon" && item.content && typeof item.content === "object" && "description" in item.content) {
+        if (item.content.description === "") {
+          text += "[图片] ";
+        } else {
+          text += `[${item.content.description}] `;
+        }
       }
     }
   });
@@ -249,4 +253,12 @@ export function isVandal(userId: number): boolean {
 export function isVandalUsername(username: string): boolean {
   const vandalUsernames = new Set<string>(["飛翔之龍"]);
   return vandalUsernames.has(username);
+}
+
+/**
+ * 将数据库内的时间格式 "YYYY-MM-DD HH:mm:ss" 转换为 ISO 8601 "YYYY-MM-DDTHH:mm:ss+08:00"
+ */
+export function formatIsoDate(timeStr: string): string {
+  if (!timeStr) return "";
+  return timeStr.replace(" ", "T") + "+08:00";
 }
