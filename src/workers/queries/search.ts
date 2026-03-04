@@ -25,12 +25,12 @@ export function searchEntries(options: SearchOptions): SearchResponse {
  * 管理日志搜索 (moderation scope)
  */
 function searchModeration(db: Database, words: string[], limit: number, offset: number): SearchResponse {
-  // 1. 构建各个子查询的WHERE条件
+  // 构建各个子查询的WHERE条件
   const postLike = buildMultiWordLike(words, ['u.username', 'u.title', 'u.operation', 'u.operator', 'u.content_preview', 'u.media']);
   const userLike = buildMultiWordLike(words, ['u.username', 'u.operation', 'u.operator']);
   const bawuLike = buildMultiWordLike(words, ['u.username', 'u.operation', 'u.operator']);
 
-  // 2. 定义子查询SQL
+  // 定义子查询SQL
   // 统一列: thread_id, post_id, username, title, operation, operator, operation_time, content_preview, media, post_time, operator_id, target_user_id, result_type, duration
 
   const sqlPost = `
@@ -66,18 +66,18 @@ function searchModeration(db: Database, words: string[], limit: number, offset: 
       AND u.operation_time NOT LIKE '2022-02-16 01:%'
   `;
 
-  // 3. 组合SQL
+  // 组合SQL
   const unionSql = `${sqlPost} UNION ALL ${sqlUser} UNION ALL ${sqlBawu}`;
   const allParams = [...postLike.params, ...userLike.params, ...bawuLike.params];
 
-  // 4. 获取总数
+  // 获取总数
   const countStmt = db.prepare(`SELECT COUNT(*) as total FROM (${unionSql})`);
   countStmt.bind(allParams);
   countStmt.step();
   const totalCount = Number(countStmt.getAsObject().total || 0);
   countStmt.free();
 
-  // 5. 获取分页数据
+  // 获取分页数据
   const querySql = `SELECT * FROM (${unionSql}) ORDER BY operation_time DESC, rowid ASC LIMIT ? OFFSET ?`;
   const stmt = db.prepare(querySql);
   stmt.bind([...allParams, limit, offset]);
@@ -126,7 +126,7 @@ function searchContent(
 ): SearchResponse {
   const tm = !!snapshotTime;
 
-  // 1. 构建WHERE条件
+  // 构建WHERE条件
   const timeCondPost = tm ? 'AND p.time < ?' : '';
   const timeCondComment = tm ? 'AND c.time < ?' : '';
   const timeCondThreadOp = tm ? 'AND p.time < ?' : '';
@@ -176,7 +176,7 @@ function searchContent(
   const userCondPost = scope === 'user' && userId != null ? 'AND p.user_id = ?' : '';
   const userCondComment = scope === 'user' && userId != null ? 'AND c.user_id = ?' : '';
 
-  // 2. 定义子查询SQL
+  // 定义子查询SQL
   // 统一列: thread_id, post_id, comment_id, user_id, time, result_type, title, floor, content, post_content, username, nickname, page
 
   // Thread Matches
@@ -262,7 +262,7 @@ function searchContent(
   if (scope === 'user' && userId != null) paramsComment.push(userId);
   if (tm && snapshotTime) { paramsComment.push(snapshotTime); paramsComment.push(snapshotTime); }
 
-  // 3. 组合SQL
+  // 组合SQL
   let unionSql = sqlThread;
   let allParams = [...paramsThread];
 
@@ -271,14 +271,14 @@ function searchContent(
     allParams.push(...paramsPost, ...paramsComment);
   }
 
-  // 4. 获取总数
+  // 获取总数
   const countStmt = db.prepare(`SELECT COUNT(*) as total FROM (${unionSql})`);
   countStmt.bind(allParams);
   countStmt.step();
   const totalCount = Number(countStmt.getAsObject().total || 0);
   countStmt.free();
 
-  // 5. 获取分页数据
+  // 获取分页数据
   const querySql = `SELECT * FROM (${unionSql}) ORDER BY time DESC LIMIT ? OFFSET ?`;
   const stmt = db.prepare(querySql);
   stmt.bind([...allParams, limit, offset]);

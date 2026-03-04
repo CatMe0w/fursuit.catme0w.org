@@ -159,7 +159,7 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
 export function getThreadPostsAtTime(threadId: number, datetime: string, limit: number, offset: number): ThreadDetailResponse {
   const db = getDb();
 
-  // 1. 获取帖子标题
+  // 获取帖子标题
   const threadStmt = db.prepare('SELECT title FROM pr_thread WHERE id = ?');
   threadStmt.bind([threadId]);
   let threadTitle = '';
@@ -168,7 +168,7 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
   }
   threadStmt.free();
 
-  // 2. 获取楼层总数
+  // 获取楼层总数
   const countSql = `
     SELECT COUNT(*) as total
     FROM pr_post p
@@ -190,7 +190,7 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
   const totalCount = Number(countStmt.getAsObject().total || 0);
   countStmt.free();
 
-  // 3. 获取相关的管理日志
+  // 获取相关的管理日志
   const moderationLogsSql = `
     SELECT u.thread_id, u.post_id, u.title, u.content_preview, u.media, u.username, u.post_time, u.operation, u.operator, u.operation_time,
            op_user.id AS operator_id, target_user.id AS target_user_id

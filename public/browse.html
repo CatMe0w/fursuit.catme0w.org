@@ -506,21 +506,21 @@
             }
           }
 
-          // 1. Moderation logs
+          // Moderation logs
           if (a) {
             const validTypes = ["post", "user", "bawu"];
             if (validTypes.includes(a)) {
               newUrl = p && p !== "1" ? `/moderation-logs/${a}/${p}` : `/moderation-logs/${a}`;
             }
           }
-          // 2. Search
+          // Search
           else if (s) {
             newUrl = `/search?q=${encodeURIComponent(s)}`;
             if (timeParam) {
               newUrl += `&time=${timeParam}`;
             }
           }
-          // 3. Thread view
+          // Thread view
           else if (t) {
             if (timeParam) {
               newUrl = `/time-machine?time=${timeParam}&thread=${t}`;
@@ -531,7 +531,7 @@
               newUrl = p && p !== "1" ? `/thread/${t}/${p}` : `/thread/${t}`;
             }
           }
-          // 4. User view
+          // User view
           else if (u && c) {
             let userId = null;
 
@@ -554,7 +554,7 @@
               }
             }
           }
-          // 5. Archive / Time machine
+          // Archive / Time machine
           else if (timeParam) {
             newUrl = `/time-machine?time=${timeParam}`;
             if (p && p !== "1") {

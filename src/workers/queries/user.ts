@@ -33,7 +33,7 @@ export function getUserById(userId: number): User | null {
 export function getUserPostsAtTime(userId: number, datetime: string, limit?: number, offset?: number): SearchResponse {
   const db = getDb();
 
-  // 1. 获取总数
+  // 获取总数
   const countSql = `
     SELECT COUNT(*) as total FROM (
       SELECT 1
@@ -51,7 +51,7 @@ export function getUserPostsAtTime(userId: number, datetime: string, limit?: num
   const totalCount = Number(countStmt.getAsObject().total || 0);
   countStmt.free();
 
-  // 2. 获取分页数据
+  // 获取分页数据
   const sql = `
     SELECT thread_id, title, post_id, floor, post_content, NULL AS comment_id, NULL AS comment_content, time, page
     FROM (
