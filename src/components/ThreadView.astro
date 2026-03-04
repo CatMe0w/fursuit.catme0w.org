@@ -141,10 +141,10 @@ const jsonLd = {
       const id = hash.substring(1);
       const element = document.getElementById(id);
       if (element) {
-        // 1. 立即滚动
+        // 先立即滚动
         element.scrollIntoView();
 
-        // 2. 使用ResizeObserver监视元素位置，防止图片加载导致布局变化时锚点位置偏移
+        // 使用ResizeObserver监视元素位置，防止图片加载导致布局变化时锚点位置偏移
         const container = document.querySelector(".shadow");
         if (container) {
           const observer = new ResizeObserver(() => {
@@ -152,7 +152,7 @@ const jsonLd = {
           });
           observer.observe(container);
 
-          // 用户交互或超时时停止观察
+          // 用户交互或超时时停止observer
           const stop = () => {
             observer.disconnect();
             window.removeEventListener("wheel", stop);
@@ -167,7 +167,7 @@ const jsonLd = {
           setTimeout(stop, 3000);
         }
 
-        // 3. 添加高亮效果
+        // 添加高亮效果
         element.classList.add("bg-yellow-50");
         setTimeout(() => {
           element.classList.remove("bg-yellow-50");

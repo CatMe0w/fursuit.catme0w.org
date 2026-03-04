@@ -41,7 +41,7 @@
         const placeholder = document.getElementById("tm-placeholder");
         if (placeholder) placeholder.style.display = "none";
       }
-    }, 300);
+    }, 600);
     init();
   });
 
