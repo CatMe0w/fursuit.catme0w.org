@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="fursuit bar · Archive & Time Machine: For the Unforgotten"
+  description="A complete archive of Fursuit Bar (百度贴吧) from 2011 to 2022, including deleted posts — 110,503 records in total, and the only one of its kind."
+  lang="en"
+>
+  <main class="container lg:max-w-5xl mx-auto px-6 min-h-[calc(100dvh-4.625rem)] flex flex-col">
+    <div class="flex-1 flex items-center">
+      <header class="w-full max-w-4xl mx-auto flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-12">
+        <div class="w-full lg:basis-7/12 shrink-0">
+          <h3 class="text-lg text-gray-600 mb-1">fursuit bar: Archive & Time Machine</h3>
+          <h1 class="text-4xl mb-6">For the Unforgotten</h1>
+          <p class="mb-4">This contains all 110,503 records from its establishment to 2022.<br>It's the most complete version available,<br>and the only one.</p>
+          <div class="border-t border-gray-200 mt-4"></div>
+          <p class="my-4">Established in 2011, fursuit bar was the earliest hub for Chinese furries.</p>
+          <p class="mb-4">In 2017, it was destroyed by a year-long malicious attack.<br>Early records were almost entirely wiped out.<br>The data seemed lost forever.</p>
+          <p>In 2022, we recovered them.</p>
+          <div class="border-t border-gray-200 mt-4"></div>
+          <p class="mt-4">The Archive preserves every existed post.<br>The Time Machine lets you revisit any moment.</p>
+          <div class="mt-4 flex flex-wrap items-center gap-6">
+            <a class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-700 px-4 py-2 rounded transition-colors" href="/archive">Archive</a>
+            <a class="bg-blue-700 hover:bg-blue-600 active:bg-blue-800 text-white px-4 py-2 rounded transition-colors" href="/time-machine">Time Machine</a>
+          </div>
+          <p class="text-gray-500 text-sm mt-4">※ The rest of the site are in Chinese only.</p>
+          <p class="text-gray-500 text-sm my-2">How was it recovered? Read the <a class="text-sky-700 hover:underline" href="https://catme0w.org/en/behind-the-scenes/creatio-ex-nihilo/">behind the scenes</a> (in English)</p>
+          <p><a class="text-sm text-sky-700 hover:underline" href="/">中文版本</a></p>
+        </div>
+        <div class="w-full lg:basis-5/12">
+          <div class="rounded-lg shadow-2xl inline-block mt-6">
+            <img class="rounded-lg" src="https://fursuit-static.catme0w.org/images/full/995da51c8701a18b89e2fe58982f07082838fe21.jpg" alt="2015神州萌兽祭" />
+          </div>
+          <p class="text-sm lg:text-xs text-gray-500 mt-2">2015神州萌兽祭</p>
+        </div>
+      </header>
+    </div>
+
+    <div>
+      <div class="mb-2">
+        <a href="https://github.com/CatMe0w/fursuit.catme0w.org" target="_blank" title="GitHub Stars">
+          <img
+            class="mx-auto"
+            src="https://img.shields.io/github/stars/CatMe0w/fursuit.catme0w.org.svg?style=social&label=Star&maxAge=2592000"
+            alt="GitHub Stars"
+          />
+        </a>
+      </div>
+
+      <p class="text-gray-500 text-sm mb-4 text-center">with 💖 from <a href="https://catme0w.org" target="_blank" class="underline">catme0w</a></p>
+    </div>
+  </main>
+</BaseLayout>
