@@ -313,8 +313,3 @@ function searchContent(
 
   return { items, totalCount };
 }
-
-// 无scope视为全吧搜索
-export function searchThreads(keyword: string): SearchResponse {
-  return searchEntries({ scope: 'global', keyword });
-}

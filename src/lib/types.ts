@@ -147,15 +147,10 @@ export interface SearchResponse {
 export interface WorkerMessage {
   type: string;
   payload?: any;
-  requestId?: number;
+  requestId: number;
 }
 
-export interface WorkerResponse {
-  type: 'progress' | 'ready' | 'result' | 'error';
-  data?: any;
-  loaded?: number;
-  total?: number;
-  stage?: string;
-  message?: string;
-  requestId?: number;
-}
+// 成功时带data，失败时带error
+export type WorkerResponse =
+  | { requestId: number; data: unknown }
+  | { requestId: number; error: string };

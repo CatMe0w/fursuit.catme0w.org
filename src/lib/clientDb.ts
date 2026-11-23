@@ -1,9 +1,6 @@
 import type { Thread, SearchOptions, SearchResult, SearchResponse, User, ThreadDetailResponse, WorkerResponse } from "./types";
 import { version as projectVersion } from "../../package.json";
 
-type ProgressCallback = (loaded: number, total: number, stage: string) => void;
-type ErrorCallback = (error: Error) => void;
-
 // Worker类型的统一接口
 interface WorkerLike {
   postMessage(message: any): void;
@@ -16,8 +13,6 @@ class ClientDatabase {
   private worker: WorkerLike | null = null;
   private isSharedWorker = false;
   private initPromise: Promise<void> | null = null;
-  private progressCallbacks: Set<ProgressCallback> = new Set();
-  private errorCallbacks: Set<ErrorCallback> = new Set();
   private ready = false;
   private requestIdCounter = 0;
   private cacheName = `clientdb-query-cache-v${projectVersion}`;
@@ -118,59 +113,9 @@ class ClientDatabase {
         console.error("Web Workers not supported");
         return;
       }
-
-      this.worker.addEventListener("message", (e: Event) => {
-        const event = e as MessageEvent<WorkerResponse>;
-        const { type, loaded, total, stage, message } = event.data;
-
-        switch (type) {
-          case "progress":
-            if (loaded !== undefined && total !== undefined && stage !== undefined) {
-              this.progressCallbacks.forEach((cb) => cb(loaded, total, stage));
-            }
-            break;
-
-          case "ready":
-            this.ready = true;
-            break;
-
-          case "error":
-            const error = new Error(message || "Unknown worker error");
-            this.errorCallbacks.forEach((cb) => cb(error));
-            break;
-        }
-      });
     } catch (error) {
       console.error("Failed to initialize worker:", error);
     }
-  }
-
-  /**
-   * 注册进度回调
-   */
-  onProgress(callback: ProgressCallback) {
-    this.progressCallbacks.add(callback);
-  }
-
-  /**
-   * 注销进度回调
-   */
-  offProgress(callback: ProgressCallback) {
-    this.progressCallbacks.delete(callback);
-  }
-
-  /**
-   * 注册错误回调
-   */
-  onError(callback: ErrorCallback) {
-    this.errorCallbacks.add(callback);
-  }
-
-  /**
-   * 注销错误回调
-   */
-  offError(callback: ErrorCallback) {
-    this.errorCallbacks.delete(callback);
   }
 
   /**
@@ -180,7 +125,9 @@ class ClientDatabase {
     if (this.ready) return;
     if (this.initPromise) return this.initPromise;
 
-    this.initPromise = this.request<void>("init");
+    this.initPromise = this.request<void>("init").then(() => {
+      this.ready = true;
+    });
     return this.initPromise;
   }
 
@@ -227,32 +174,22 @@ class ClientDatabase {
 
     return new Promise((resolve, reject) => {
       const handleMessage = (e: Event) => {
-        const event = e as MessageEvent<WorkerResponse>;
-        if (event.data.requestId === requestId) {
-          cleanup();
-          if (event.data.type === "result" || event.data.type === "ready") {
-            resolve(event.data.data as T);
-          } else if (event.data.type === "error") {
-            reject(new Error(event.data.message));
-          }
-        }
-      };
+        const response = (e as MessageEvent<WorkerResponse>).data;
+        if (response.requestId !== requestId) return;
 
-      const handleError = (e: Event) => {
-        const event = e as MessageEvent<WorkerResponse>;
-        if (event.data.requestId === requestId && event.data.type === "error") {
-          cleanup();
-          reject(new Error(event.data.message));
+        cleanup();
+        if ("error" in response) {
+          reject(new Error(response.error));
+        } else {
+          resolve(response.data as T);
         }
       };
 
       const cleanup = () => {
         this.worker?.removeEventListener("message", handleMessage);
-        this.worker?.removeEventListener("message", handleError);
       };
 
       this.worker!.addEventListener("message", handleMessage);
-      this.worker!.addEventListener("message", handleError);
       this.worker!.postMessage({ type, payload, requestId });
     });
   }
@@ -262,13 +199,6 @@ class ClientDatabase {
    */
   async getThreadsAtTime(datetime: string, keyword?: string, limit?: number, offset?: number, featured?: boolean): Promise<{ threads: Thread[]; totalCount: number }> {
     return this.request("getThreadsAtTime", { datetime, keyword, limit, offset, featured });
-  }
-
-  /**
-   * 搜索帖子
-   */
-  async searchThreads(keyword: string): Promise<SearchResponse> {
-    return this.request("searchThreads", { keyword });
   }
 
   /**
@@ -316,8 +246,6 @@ class ClientDatabase {
     this.worker = null;
     this.ready = false;
     this.initPromise = null;
-    this.progressCallbacks.clear();
-    this.errorCallbacks.clear();
   }
 }
 
