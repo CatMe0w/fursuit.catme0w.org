@@ -25,70 +25,36 @@ const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
 const isAlbum = thread.opPostContent?.some((item) => item.type === "album");
 
-import { extractTextContent, formatIsoDate, extractMedia, getImageUrl } from "../lib/content-utils";
+import { extractTextContent, formatIsoDate } from "../lib/content-utils";
+import { buildPerson, getStructuredImages, getStructuredText, serializeJsonLd } from "../lib/structured-data";
 
 // JSON-LD
 // https://developers.google.com/search/docs/appearance/structured-data/discussion-forum
-const threadDescription = extractTextContent(thread.opPostContent, false);
-const threadImages = extractMedia(thread.opPostContent, 0).map(getImageUrl);
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const threadUrl = new URL(`/thread/${threadId}`, Astro.site).href;
+const pageUrl = new URL(currentPage > 1 ? `/thread/${threadId}/${currentPage}` : `/thread/${threadId}`, Astro.site).href;
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "DiscussionForumPosting",
-  url: canonicalUrl,
+  "@id": threadUrl,
+  url: threadUrl,
+  mainEntityOfPage: pageUrl,
   headline: thread.title,
-  description: threadDescription.substring(0, 150),
-  author: {
-    "@type": "Person",
-    name: thread.opNickname || thread.opUsername || "",
-    url: `/user/${thread.userId}`,
-  },
+  description: extractTextContent(thread.opPostContent, false).substring(0, 150) || undefined,
+  author: buildPerson(Astro.site, thread.userId, thread.opUsername, thread.opNickname),
   datePublished: formatIsoDate(thread.time),
-  image: threadImages.length > 0 ? threadImages : undefined,
-  text: threadDescription,
+  image: getStructuredImages(thread.opPostContent),
+  text: getStructuredText(thread.opPostContent),
   interactionStatistic: {
     "@type": "InteractionCounter",
     interactionType: "https://schema.org/CommentAction",
     userInteractionCount: thread.replyNum,
   },
-  comment: sveltePosts
-    .filter((post) => post.floor !== 1)
-    .map((post) => {
-      const postImages = extractMedia(post.content, 0).map(getImageUrl);
-      const postComment: any = {
-        "@type": "Comment",
-        text: extractTextContent(post.content, false),
-        author: {
-          "@type": "Person",
-          name: post.nickname || post.username || "",
-          url: `/user/${post.userId}`,
-        },
-        datePublished: formatIsoDate(post.time),
-        image: postImages.length > 0 ? postImages : undefined,
-      };
-
-      if (post.comments && post.comments.length > 0) {
-        postComment.comment = post.comments.map((comment: any) => {
-          return {
-            "@type": "Comment",
-            text: extractTextContent(comment.content, false),
-            author: {
-              "@type": "Person",
-              name: comment.nickname || comment.username || "",
-              url: `/user/${comment.userId}`,
-            },
-            datePublished: formatIsoDate(comment.time),
-          };
-        });
-      }
-      return postComment;
-    }),
 };
 ---
 
 <ArchiveLayout title={title} description={`查看帖子：${thread.title}`} forceFullWidth={isAlbum}>
-  <script is:inline type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+  <script is:inline type="application/ld+json" slot="head" set:html={serializeJsonLd(jsonLd)} />
   <div class="bg-gray-50 lg:mx-1 my-2">
     <div class="shadow lg:rounded bg-white">
       <div class="grid grid-cols-1">

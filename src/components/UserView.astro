@@ -11,7 +11,8 @@ import { getUserRecords } from "../lib/data";
 import { paginate } from "../lib/pagination";
 import type { SearchResult, User, UserRecord } from "../lib/types";
 import TimeMachineButton from "./TimeMachineButton.astro";
-import { getUserDisplayName } from "../lib/content-utils";
+import { formatIsoDate, getAvatarUrl, getUserDisplayName } from "../lib/content-utils";
+import { buildPerson, serializeJsonLd } from "../lib/structured-data";
 
 interface Props {
   user: User;
@@ -50,9 +51,38 @@ const userInfo: User = {
   nickname: user.nickname,
   avatar: user.avatar,
 };
+
+// JSON-LD
+// https://developers.google.com/search/docs/appearance/structured-data/profile-page
+const profileUrl = new URL(`/user/${userId}`, Astro.site).href;
+const pageUrl = new URL(paginationResult.currentPage > 1 ? `/user/${userId}/${paginationResult.currentPage}` : `/user/${userId}`, Astro.site).href;
+const person = buildPerson(Astro.site, userId, user.username, user.nickname);
+const postCount = allRecords.filter((record) => record.type === "post").length;
+const commentCount = allRecords.length - postCount;
+const firstRecordTime = allRecords.reduce<string | null>((min, record) => (record.time && (!min || record.time < min) ? record.time : min), null);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  url: pageUrl,
+  dateCreated: firstRecordTime ? formatIsoDate(firstRecordTime) : undefined,
+  mainEntity: {
+    ...person,
+    "@id": profileUrl,
+    alternateName: user.nickname && user.username && user.nickname !== user.username ? user.username : undefined,
+    identifier: String(userId),
+    image: user.avatar ? getAvatarUrl(user.avatar) : undefined,
+    sameAs: [`https://tieba.baidu.com/home/main?id=${userId}`],
+    agentInteractionStatistic: [
+      { "@type": "InteractionCounter", interactionType: "https://schema.org/WriteAction", userInteractionCount: postCount },
+      { "@type": "InteractionCounter", interactionType: "https://schema.org/CommentAction", userInteractionCount: commentCount },
+    ],
+  },
+};
 ---
 
 <ArchiveLayout title={title} description={`查看用户：${getUserDisplayName(user)}`}>
+  <script is:inline type="application/ld+json" slot="head" set:html={serializeJsonLd(jsonLd)} />
   <div class="bg-gray-50 lg:mx-1 my-2">
     <div class="shadow lg:rounded bg-white">
       <UserHeader client:load user={userInfo} currentPage={paginationResult.currentPage} totalPages={paginationResult.totalPages} baseUrl={`/user/${userId}`} />
