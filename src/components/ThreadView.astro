@@ -134,47 +134,11 @@ const jsonLd = {
 </ArchiveLayout>
 
 <script>
-  // 滚动到锚点（如果有）
-  function scrollToHash() {
-    const hash = window.location.hash;
-    if (hash) {
-      const id = hash.substring(1);
-      const element = document.getElementById(id);
-      if (element) {
-        // 先立即滚动
-        element.scrollIntoView();
+  import { scrollToHash } from "../lib/anchor";
 
-        // 使用ResizeObserver监视元素位置，防止图片加载导致布局变化时锚点位置偏移
-        const container = document.querySelector(".shadow");
-        if (container) {
-          const observer = new ResizeObserver(() => {
-            element.scrollIntoView();
-          });
-          observer.observe(container);
-
-          // 用户交互或超时时停止observer
-          const stop = () => {
-            observer.disconnect();
-            window.removeEventListener("wheel", stop);
-            window.removeEventListener("touchmove", stop);
-            window.removeEventListener("keydown", stop);
-          };
-
-          window.addEventListener("wheel", stop);
-          window.addEventListener("touchmove", stop);
-          window.addEventListener("keydown", stop);
-
-          setTimeout(stop, 3000);
-        }
-
-        // 添加高亮效果
-        element.classList.add("bg-yellow-50");
-        setTimeout(() => {
-          element.classList.remove("bg-yellow-50");
-        }, 2000);
-      }
-    }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", scrollToHash);
+  } else {
+    scrollToHash();
   }
-
-  document.addEventListener("DOMContentLoaded", scrollToHash);
 </script>

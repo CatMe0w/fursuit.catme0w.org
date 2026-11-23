@@ -10,6 +10,7 @@
   import VandalWarning from "./VandalWarning.svelte";
   import type { Thread, Post as ThreadPostType, SearchResult, User, ModerationLog } from "../lib/types";
   import { isVandal } from "../lib/content-utils";
+  import { scrollToHash } from "../lib/anchor";
 
   // 状态
   let loading = $state(true);
@@ -118,36 +119,7 @@
       clientDb.destroy();
 
       // 滚动到锚点（如果有）
-      // 同ThreadView
-      const hash = window.location.hash;
-      if (hash) {
-        const id = hash.substring(1);
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView();
-
-          const container = document.querySelector(".shadow");
-          if (container) {
-            const observer = new ResizeObserver(() => {
-              element.scrollIntoView();
-            });
-            observer.observe(container);
-
-            const stop = () => {
-              observer.disconnect();
-              window.removeEventListener("wheel", stop);
-              window.removeEventListener("touchmove", stop);
-              window.removeEventListener("keydown", stop);
-            };
-
-            window.addEventListener("wheel", stop);
-            window.addEventListener("touchmove", stop);
-            window.addEventListener("keydown", stop);
-
-            setTimeout(stop, 3000);
-          }
-        }
-      }
+      scrollToHash();
     }
   }
 
