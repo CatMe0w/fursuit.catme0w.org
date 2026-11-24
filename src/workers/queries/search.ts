@@ -246,7 +246,7 @@ function searchContent(
 
   // Comment Matches
   const sqlComment = `
-    SELECT p.thread_id AS thread_id, NULL AS post_id, c.id AS comment_id,
+    SELECT p.thread_id AS thread_id, p.id AS post_id, c.id AS comment_id,
            c.user_id AS user_id, c.time AS time,
            'comment' AS result_type, t.title AS title, p.floor AS floor, c.content AS content,
            p.content AS post_content, u.username, u.nickname,
