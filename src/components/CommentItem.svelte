@@ -21,7 +21,7 @@
 <div class="text-sm comment-item" id={comment.id.toString()}>
   <div class="flex flex-row gap-2">
     <a class="basis-9 shrink-0" href={getUserUrl(comment.userId)} title={`用户名：${comment.username || ""}`}>
-      <img class="border-2 border-gray-100 rounded-md w-9 h-9 mr-1 inline" src={avatarUrl} alt="" />
+      <img class="border-2 border-gray-100 img-placeholder rounded-md w-9 h-9 mr-1 inline" src={avatarUrl} alt="" />
     </a>
     <div class="grow">
       <a class="text-sky-700 hover:underline text-sm" href={getUserUrl(comment.userId)} title={`用户名：${comment.username || ""}`}>

@@ -14,3 +14,8 @@
 body {
   text-autospace: normal;
 }
+
+/* 图片加载时的灰色占位，加载完成后由BaseLayout中的脚本标记data-loaded，避免透明gif/png持续透出灰底 */
+.img-placeholder:not([data-loaded]) {
+  background-color: var(--color-gray-100);
+}

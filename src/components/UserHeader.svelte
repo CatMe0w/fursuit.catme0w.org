@@ -16,7 +16,7 @@
 </script>
 
 <div class="flex flex-row border-b border-gray-100 p-5">
-  <img class="h-[110px] w-[110px] rounded border-4 border-gray-100 bg-gray-200 object-cover" alt="" src={getAvatarUrl(user.avatar)} />
+  <img class="h-[110px] w-[110px] rounded border-4 border-gray-100 img-placeholder object-cover" alt="" src={getAvatarUrl(user.avatar)} />
   <div class="ml-5 flex flex-col grow">
     <p class="text-2xl mb-2 mt-1">{getUserDisplayName(user)}</p>
     {#if user.username}

@@ -13,7 +13,7 @@
 
 <a href={src} data-pswp-width={size?.width} data-pswp-height={size?.height} target="_blank" class="gallery-item">
   <img
-    class={variant === "album" ? "w-full mb-2 block rounded" : "lg:max-w-xl my-2 inline"}
+    class={variant === "album" ? "w-full mb-2 block rounded img-placeholder" : "lg:max-w-xl my-2 inline img-placeholder"}
     {src}
     {alt}
     width={size?.width}

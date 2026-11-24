@@ -53,7 +53,7 @@
     {:else if item.type === "image"}
       {@const imageSrc = item.content}
       {@const imageUrl = getImageUrl(imageSrc)}
-      {#if imageSrc.startsWith("https://imgsrc.baidu.com/")}
+      {#if imageSrc.startsWith("https://imgsrc.baidu.com/") || imageSrc.startsWith("https://tiebapic.baidu.com/")}
         <ContentImage src={imageUrl} size={item.size} />
       {:else}
         <!-- 可能是表情包 -->
