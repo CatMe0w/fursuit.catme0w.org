@@ -69,10 +69,12 @@ const jsonLd = {
           // 只在需要CommentList的分页时（大于十条评论）才加载客户端组件
           sveltePosts.map((post) => {
             const shouldHydrate = post.comments && post.comments.length > 10;
+            // 只传本楼的吧务日志，避免整帖日志被序列化进每个island
+            const postLogs = moderationLogs.filter((log) => (log.postId === null && post.floor === 1) || log.postId === post.id);
             return shouldHydrate ? (
-              <ThreadPost post={post} moderationLogs={moderationLogs} client:visible />
+              <ThreadPost post={post} moderationLogs={postLogs} client:visible />
             ) : (
-              <ThreadPost post={post} moderationLogs={moderationLogs} />
+              <ThreadPost post={post} moderationLogs={postLogs} />
             );
           })
         }
