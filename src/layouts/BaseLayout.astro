@@ -22,16 +22,8 @@ const { title, description, backButton = "none", lang = "zh-CN" } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <slot name="head" />
-    <!-- 图片加载完成后标记data-loaded以取消灰色占位，见global.css，放在head中以赶在任何图片加载之前注册 -->
-    <script is:inline>
-      document.addEventListener(
-        "load",
-        (e) => {
-          if (e.target instanceof HTMLImageElement) e.target.dataset.loaded = "";
-        },
-        true,
-      );
-    </script>
+    {/* 图片加载完成后标记data-loaded以取消灰色占位，见global.css，放在head中以赶在任何图片加载之前注册 */}
+    <script is:inline>document.addEventListener("load",e=>(e=e.target).matches(".img-placeholder")&&(e.dataset.loaded=1),1)</script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <title>{title}</title>
   </head>
