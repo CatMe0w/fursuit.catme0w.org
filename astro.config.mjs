@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
-import svelte from "@astrojs/svelte";
+import svelte from "./src/integrations/svelte-static/index.js";
 import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
