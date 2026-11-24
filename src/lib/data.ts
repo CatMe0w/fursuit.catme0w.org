@@ -2,8 +2,11 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import initSqlJs, { type Database } from "sql.js";
-import type { VideoMetadata, Thread, Post, Comment, ContentItem, ModerationLog, ThreadDetailResponse, User, UserRecord } from "./types";
+import type { Thread, Post, Comment, ContentItem, ModerationLog, ThreadDetailResponse, User, UserRecord } from "./types";
 import { DB_URL } from "./dbConfig";
+import { parseContent } from "./content-utils";
+import { injectImageSizesIntoPosts } from "./image-metadata";
+import { injectVideoMetadataIntoContent, parseMediaUrls } from "./video-metadata";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -66,18 +69,6 @@ async function initDatabase(): Promise<Database> {
   console.log(`[Data] Database initialized in ${endTime - startTime}ms`);
 
   return cachedDb;
-}
-
-/**
- * 解析JSON content
- */
-function parseContent(contentStr: string | null): ContentItem[] {
-  if (!contentStr) return [];
-  try {
-    return JSON.parse(contentStr);
-  } catch {
-    return [];
-  }
 }
 
 /**
@@ -152,7 +143,7 @@ export function getAllThreads(): Thread[] {
   while (stmt.step()) {
     const row = stmt.getAsObject();
     const opPostContent = parseContent(row.content as string | null);
-    injectVideoMetadataIntoContent(opPostContent);
+    injectVideoMetadataIntoContent(db, opPostContent);
 
     threads.push({
       id: Number(row.id),
@@ -227,7 +218,7 @@ export function getThreadById(id: number): Thread | undefined {
       time = String(postRow.time);
     }
     postStmt.free();
-    injectVideoMetadataIntoContent(opPostContent);
+    injectVideoMetadataIntoContent(db, opPostContent);
 
     // 获取楼层数
     const countStmt = db.prepare("SELECT COUNT(*) as count FROM pr_post WHERE thread_id = ?");
@@ -320,7 +311,7 @@ export function getThreadDetail(threadId: number, page: number = 1): ThreadDetai
     });
 
     const content = parseContent(row.content as string | null);
-    injectVideoMetadataIntoContent(content);
+    injectVideoMetadataIntoContent(db, content);
 
     return {
       id: Number(row.id),
@@ -337,6 +328,8 @@ export function getThreadDetail(threadId: number, page: number = 1): ThreadDetai
       comments: threadComments,
     };
   });
+
+  injectImageSizesIntoPosts(db, threadPosts);
 
   // Get Moderation Logs
   const moderationLogs = getModerationLogsByThreadId(threadId);
@@ -437,7 +430,7 @@ export function getModerationLogsByCategory(category: "post" | "user" | "bawu", 
         operationTime: String(row.operation_time),
         duration: null,
         contentPreview: row.content_preview ? String(row.content_preview) : null,
-        media: row.media ? String(row.media) : null,
+        media: parseMediaUrls(db, row.media ? String(row.media) : null),
         postTime: row.post_time ? String(row.post_time) : null,
         operatorId: row.operator_id ? Number(row.operator_id) : null,
         targetUserId: row.target_user_id ? Number(row.target_user_id) : null,
@@ -570,6 +563,11 @@ export function getUserRecords(userId: number): UserRecord[] {
   }
   stmt.free();
 
+  for (const record of records) {
+    injectVideoMetadataIntoContent(db, record.postContent);
+    if (record.commentContent) injectVideoMetadataIntoContent(db, record.commentContent);
+  }
+
   return records;
 }
 
@@ -605,7 +603,7 @@ function getModerationLogsByThreadId(threadId: number): ModerationLog[] {
       operationTime: String(row.operation_time),
       duration: null,
       contentPreview: row.content_preview ? String(row.content_preview) : null,
-      media: row.media ? String(row.media) : null,
+      media: parseMediaUrls(db, row.media ? String(row.media) : null),
       postTime: row.post_time ? String(row.post_time) : null,
       operatorId: row.operator_id ? Number(row.operator_id) : null,
       targetUserId: row.target_user_id ? Number(row.target_user_id) : null,
@@ -674,86 +672,6 @@ function getUsersByIds(userIds: number[]): Map<number, User> {
   stmt.free();
 
   return usersMap;
-}
-
-/**
- * 获取视频元数据（SSG/SSR）
- */
-function getVideoMetadata(id: string): VideoMetadata | null {
-  const db = cachedDb;
-  if (!db) return null;
-
-  const stmt = db.prepare("SELECT metadata FROM video_metadata WHERE id = ?");
-  stmt.bind([id]);
-
-  if (stmt.step()) {
-    const row = stmt.getAsObject();
-    const metadataStr = row.metadata as string;
-    stmt.free();
-
-    try {
-      const metadata = JSON.parse(metadataStr);
-      return {
-        id: id,
-        title: metadata.title,
-        uploader: metadata.uploader,
-        uploaderUrl: metadata.uploader_url,
-      };
-    } catch (e) {
-      console.error("Failed to parse video metadata", e);
-      return null;
-    }
-  }
-
-  stmt.free();
-  return null;
-}
-
-/**
- * 从优酷URL中提取视频ID
- */
-function getYoukuId(url: string): string | null {
-  const match1 = url.match(/id_(X[a-zA-Z0-9]+)/);
-  if (match1) return match1[1];
-
-  const match2 = url.match(/sid\/(X[a-zA-Z0-9]+)/);
-  if (match2) return match2[1];
-
-  return null;
-}
-
-/**
- * 从腾讯视频URL中提取视频ID
- */
-function getQQVideoId(url: string): string | null {
-  const match = url.match(/\/([a-zA-Z0-9]+)\.html/);
-  if (match) return match[1];
-  return null;
-}
-
-/**
- * 注入视频元数据到单个content中
- */
-function injectVideoMetadataIntoContent(content: ContentItem[]): void {
-  for (const item of content) {
-    if (item.type === "video" && typeof (item as any).content === "string") {
-      const url = (item as any).content;
-      const youkuId = getYoukuId(url);
-      const qqId = getQQVideoId(url);
-      const videoId = youkuId || qqId;
-
-      // 将content改为url
-      delete (item as any).content;
-      (item as any).url = url;
-
-      if (videoId) {
-        const metadata = getVideoMetadata(videoId);
-        if (metadata) {
-          (item as any).metadata = { ...metadata, id: videoId };
-        }
-      }
-    }
-  }
 }
 
 /**

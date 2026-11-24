@@ -2,6 +2,18 @@ import type { User } from "./types";
 import type { ContentItem } from "./types";
 
 /**
+ * 解析数据库中的JSON content，格式错误时返回空数组
+ */
+export function parseContent(contentStr: string | null): ContentItem[] {
+  if (!contentStr) return [];
+  try {
+    return JSON.parse(contentStr);
+  } catch {
+    return [];
+  }
+}
+
+/**
  * 提取内容文本，多用于预览
  * @param content 内容项数组
  * @param includePlaceholders 是否包含 [图片] 等占位符，用于吧主页（ArchiveView）预览一楼，默认 true
@@ -37,22 +49,23 @@ export function extractTextContent(content: ContentItem[], includePlaceholders =
   return text.trim();
 }
 
+/** 列表缩略图用的媒体项：图片，或已经过injectVideoMetadataIntoContent处理的视频 */
+export type MediaItem = Extract<ContentItem, { type: "image" | "video" }>;
+
 /**
  * 提取媒体（图片+视频）
- * @param content 内容项数组
+ * @param content 内容项数组，其中的视频项需已注入元数据（content字段已转换为url）
  * @param limit 限制数量，默认为3，传入0或负数表示不限制
  */
-export function extractMedia(content: ContentItem[], limit = 3): string[] {
+export function extractMedia(content: ContentItem[], limit = 3): MediaItem[] {
   if (!content || !Array.isArray(content)) return [];
-  const media: string[] = [];
+  const media: MediaItem[] = [];
   const hasLimit = limit > 0;
 
   for (const item of content) {
     if (hasLimit && media.length >= limit) break;
-    if (item.type === "image" && item.content && typeof item.content === "string") {
-      media.push(item.content);
-    } else if (item.type === "video" && item.url && typeof item.url === "string") {
-      media.push(item.url);
+    if ((item.type === "image" && typeof item.content === "string") || (item.type === "video" && typeof item.url === "string")) {
+      media.push(item);
     }
   }
 
@@ -74,56 +87,29 @@ export function extractAudios(content: ContentItem[]): string[] {
 }
 
 /**
+ * 获取图片文件名
+ */
+export function getImageFilename(url: string): string {
+  return url.split("/").slice(-1)[0].split("?")[0];
+}
+
+/**
  * 获取图片缩略图URL
  */
 function getImageThumbnailUrl(url: string): string {
-  const filename = url.split("/").slice(-1)[0];
+  const filename = getImageFilename(url);
   if (filename.length <= 24) return `https://fursuit-static.catme0w.org/images/full/${filename}`;
   const stem = filename.lastIndexOf(".") !== -1 ? filename.substring(0, filename.lastIndexOf(".")) : filename;
   return `https://fursuit-static.catme0w.org/images/thumb/${stem}.webp`;
 }
 
 /**
- * 获取外部视频（优酷、腾讯视频）缩略图URL
- */
-function getExternalVideoThumbnailUrl(url: string): string | null {
-  const youkuId = getYoukuId(url);
-  const qqId = getQQVideoId(url);
-  const videoId = youkuId || qqId;
-
-  if (videoId) return `https://fursuit-static.catme0w.org/videos/cover/${videoId}.jpg`;
-
-  return null;
-}
-
-/**
- * 从优酷URL中提取视频ID
- */
-function getYoukuId(url: string): string | null {
-  const match1 = url.match(/id_(X[a-zA-Z0-9]+)/);
-  if (match1) return match1[1];
-
-  const match2 = url.match(/sid\/(X[a-zA-Z0-9]+)/);
-  if (match2) return match2[1];
-
-  return null;
-}
-
-/**
- * 从腾讯视频URL中提取视频ID
- */
-function getQQVideoId(url: string): string | null {
-  const match = url.match(/\/([a-zA-Z0-9]+)\.html/);
-  if (match) return match[1];
-  return null;
-}
-
-/**
  * 解析贴吧短视频URL
  * URL格式: https://tieba.baidu.com/mo/q/movideo/page?thumbnail=...&video=...
+ * 旧版播放器（见于管理日志）: https://tb1.bdstatic.com/tb/zt/movideo/video.swf?thumbnail=...&video=...
  */
 export function parseTiebaShortVideoUrl(url: string): { videoUrl: string; thumbnailUrl: string | null } | null {
-  if (!url.includes("tieba.baidu.com/mo/q/movideo/page")) return null;
+  if (!url.includes("/movideo/")) return null;
 
   try {
     const urlObj = new URL(url);
@@ -141,34 +127,18 @@ export function parseTiebaShortVideoUrl(url: string): { videoUrl: string; thumbn
 }
 
 /**
- * 获取贴吧短视频缩略图URL
+ * 获取列表缩略图URL
+ * 图片返回缩略图，视频仅在CDN存有封面时返回封面
+ * 贴吧短视频需带thumbnail参数，外部视频需有元数据
  */
-function getTiebaShortVideoThumbnailUrl(url: string): string | null {
-  const tiebaVideo = parseTiebaShortVideoUrl(url);
-  if (tiebaVideo && tiebaVideo.thumbnailUrl) {
-    return tiebaVideo.thumbnailUrl;
-  }
+export function getThumbnailUrl(item: MediaItem): string | null {
+  if (item.type === "image") return getImageThumbnailUrl(item.content);
+
+  const tiebaVideo = parseTiebaShortVideoUrl(item.url);
+  if (tiebaVideo) return tiebaVideo.thumbnailUrl;
+
+  if (item.metadata?.id) return `https://fursuit-static.catme0w.org/videos/cover/${item.metadata.id}.jpg`;
   return null;
-}
-
-/**
- * 获取缩略图URL（公共接口）
- * @param url 图片或视频的URL
- * @returns 缩略图URL，图片返回string，视频可能返回null（如果无法提取ID）
- */
-export function getThumbnailUrl(url: string): string | null {
-  // 判断是否为外部视频URL（优酷、腾讯视频）
-  if (url.includes("youku.com") || url.includes("qq.com")) {
-    return getExternalVideoThumbnailUrl(url);
-  }
-
-  // 判断是否为贴吧短视频URL
-  if (url.includes("tieba.baidu.com/mo/q/movideo")) {
-    return getTiebaShortVideoThumbnailUrl(url);
-  }
-
-  // 否则作为图片处理
-  return getImageThumbnailUrl(url);
 }
 
 /**
@@ -218,7 +188,7 @@ export function getEmoticonUrl(emoticonId: string): string {
  * 获取图片URL
  */
 export function getImageUrl(originalUrl: string): string {
-  const filename = originalUrl.split("/").slice(-1)[0];
+  const filename = getImageFilename(originalUrl);
   return `https://fursuit-static.catme0w.org/images/full/${filename}`;
 }
 

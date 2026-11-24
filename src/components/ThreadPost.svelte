@@ -25,6 +25,16 @@
 
   let displayName = $derived(getUserDisplayName(post.username, post.nickname));
   let avatarUrl = $derived(getAvatarUrl(post.avatar));
+
+  // 签名档限高200px，预先按限高计算显示尺寸，避免width属性与max-height冲突导致变形
+  const SIGNATURE_MAX_HEIGHT = 200;
+  let signatureDisplaySize = $derived.by(() => {
+    const size = post.signatureSize;
+    if (!size) return undefined;
+    const scale = Math.min(1, SIGNATURE_MAX_HEIGHT / size.height);
+    return { width: Math.round(size.width * scale), height: Math.round(size.height * scale) };
+  });
+
   let isAlbum = $derived(post.floor === 1 && post.content.some((c) => c.type === "album"));
 </script>
 
@@ -75,7 +85,14 @@
 
   {#if post.signature}
     <div class="hidden lg:block mt-4 pt-4 border-t border-gray-200 ml-31">
-      <img src={getImageUrl(post.signature)} alt="签名档" class="max-h-[200px] max-w-full" loading="lazy" />
+      <img
+        src={getImageUrl(post.signature)}
+        alt="签名档"
+        class="max-h-[200px] max-w-full"
+        width={signatureDisplaySize?.width}
+        height={signatureDisplaySize?.height}
+        loading="lazy"
+      />
     </div>
   {/if}
 </div>

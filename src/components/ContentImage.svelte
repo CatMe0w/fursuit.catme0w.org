@@ -1,22 +1,23 @@
 <script lang="ts">
+  import type { ImageSize } from "../lib/types";
+
   interface Props {
     src: string;
     alt?: string;
     variant?: "default" | "album";
+    size?: ImageSize;
   }
 
-  let { src, alt = "", variant = "default" }: Props = $props();
-
-  let width = $state(0);
-  let height = $state(0);
-
-  function onLoad(e: Event) {
-    const img = e.target as HTMLImageElement;
-    width = img.naturalWidth;
-    height = img.naturalHeight;
-  }
+  let { src, alt = "", variant = "default", size }: Props = $props();
 </script>
 
-<a href={src} data-pswp-width={width} data-pswp-height={height} target="_blank" class="gallery-item">
-  <img class={variant === "album" ? "w-full mb-2 block rounded" : "w-auto lg:max-w-xl my-2 inline"} {src} {alt} onload={onLoad} />
+<a href={src} data-pswp-width={size?.width} data-pswp-height={size?.height} target="_blank" class="gallery-item">
+  <img
+    class={variant === "album" ? "w-full mb-2 block rounded" : "lg:max-w-xl my-2 inline"}
+    {src}
+    {alt}
+    width={size?.width}
+    height={size?.height}
+    loading="lazy"
+  />
 </a>

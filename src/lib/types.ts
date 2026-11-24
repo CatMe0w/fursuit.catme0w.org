@@ -42,6 +42,7 @@ export interface Post {
   time: string;
   commentNum: number;
   signature: string | null;
+  signatureSize?: ImageSize;
   tail: string | null;
   username: string | null;
   nickname: string | null;
@@ -61,13 +62,18 @@ export interface Comment {
 
 export type ContentItem =
   | { type: 'text' | 'text_bold' | 'text_red' | 'text_bold_red'; content: string }
-  | { type: 'image'; content: string }
+  | { type: 'image'; content: string; size?: ImageSize }
   | { type: 'video'; url: string; metadata?: VideoMetadata }
   | { type: 'audio'; content: string }
   | { type: 'emoticon'; content: { id: string; description: string } }
   | { type: 'url'; content: { url: string; text: string } }
   | { type: 'username'; content: { text: string; userId: number } }
-  | { type: 'album'; content: { url: string; description: string }[] };
+  | { type: 'album'; content: { url: string; description: string; size?: ImageSize }[] };
+
+export interface ImageSize {
+  width: number;
+  height: number;
+}
 
 export interface VideoMetadata {
   id?: string;
@@ -88,7 +94,7 @@ export interface ModerationLog {
   postId: number | null;
   title: string | null;
   contentPreview: string | null;
-  media: string | null;
+  media: ContentItem[] | null;
   username: string | null;
   postTime: string | null;
   operation: string | null;
@@ -132,7 +138,7 @@ export interface SearchResult {
   // For moderation logs
   duration?: string | null;
   contentPreview?: string | null;
-  media?: string | null;
+  media?: ContentItem[] | null;
   postTime?: string | null;
   operatorId?: number | null;
   targetUserId?: number | null;

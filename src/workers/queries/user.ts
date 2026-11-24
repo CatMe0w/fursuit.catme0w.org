@@ -1,7 +1,7 @@
 import { getDb } from '../db';
-import { parseContent, injectVideoMetadataIntoContent } from '../utils';
+import { parseContent } from '../../lib/content-utils';
 import type { SearchResponse, SearchResult, User } from '../../lib/types';
-import { getVideoMetadata } from './video';
+import { injectVideoMetadataIntoContent } from '../../lib/video-metadata';
 
 /**
  * 获取用户信息
@@ -111,7 +111,7 @@ export function getUserPostsAtTime(userId: number, datetime: string, limit?: num
     const contentJson = parseContent(hasComment ? (row.comment_content as string | null) : (row.post_content as string | null));
 
     // 注入视频元数据
-    injectVideoMetadataIntoContent(contentJson, getVideoMetadata);
+    injectVideoMetadataIntoContent(db, contentJson);
 
     const result: SearchResult = {
       threadId: Number(row.thread_id),
@@ -131,7 +131,7 @@ export function getUserPostsAtTime(userId: number, datetime: string, limit?: num
       const postContentJson = parseContent(row.post_content as string | null);
 
       // 注入视频元数据
-      injectVideoMetadataIntoContent(postContentJson, getVideoMetadata);
+      injectVideoMetadataIntoContent(db, postContentJson);
 
       (result as any).post_content_json = postContentJson;
     }

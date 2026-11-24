@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SearchResult } from "../lib/types";
-  import { getThumbnailUrl } from "../lib/content-utils";
+  import { extractMedia, getThumbnailUrl } from "../lib/content-utils";
   import ModerationLogUserLink from "./ModerationLogUserLink.svelte";
 
   interface Props {
@@ -42,7 +42,7 @@
       {/if}
       {#if item.media}
         <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4 overflow-x-auto">
-          {#each item.media.split("\n").filter(Boolean) as media}
+          {#each extractMedia(item.media, 0) as media}
             {@const thumbnailUrl = getThumbnailUrl(media)}
             {#if thumbnailUrl}
               <a href={getThreadUrl(item.threadId)}>

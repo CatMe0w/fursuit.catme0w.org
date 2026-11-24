@@ -54,10 +54,10 @@
       {@const imageSrc = item.content}
       {@const imageUrl = getImageUrl(imageSrc)}
       {#if imageSrc.startsWith("https://imgsrc.baidu.com/")}
-        <ContentImage src={imageUrl} />
+        <ContentImage src={imageUrl} size={item.size} />
       {:else}
         <!-- 可能是表情包 -->
-        <img class="w-auto lg:max-w-xl my-2 inline" src={imageUrl} alt="" />
+        <img class="lg:max-w-xl my-2 inline" src={imageUrl} alt="" width={item.size?.width} height={item.size?.height} loading="lazy" />
       {/if}
     {:else if item.type === "video"}
       {@const tiebaVideo = parseTiebaShortVideoUrl(item.url || "")}
@@ -115,7 +115,7 @@
       <div class="columns-2 md:columns-3 gap-2 my-2">
         {#each item.content as albumItem}
           {@const imageUrl = getImageUrl(albumItem.url)}
-          <ContentImage src={imageUrl} variant="album" />
+          <ContentImage src={imageUrl} variant="album" size={albumItem.size} />
         {/each}
       </div>
     {/if}

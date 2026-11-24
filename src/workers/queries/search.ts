@@ -1,8 +1,22 @@
 import { getDb } from '../db';
-import { parseContent, buildMultiWordLike, injectVideoMetadataIntoContent } from '../utils';
+import { parseContent } from '../../lib/content-utils';
 import type { SearchOptions, SearchResponse, SearchResult } from '../../lib/types';
 import type { Database } from 'sql.js';
-import { getVideoMetadata } from './video';
+import { injectVideoMetadataIntoContent, parseMediaUrls } from '../../lib/video-metadata';
+
+/**
+ * 构造多关键词LIKE条件：每个关键词需命中任一列，各关键词之间为AND
+ */
+function buildMultiWordLike(words: string[], qualifiedColumns: string[]): { clause: string; params: string[] } {
+  if (words.length === 0) return { clause: '1=1', params: [] };
+  const parts: string[] = [];
+  const params: string[] = [];
+  for (const w of words) {
+    parts.push(`(${qualifiedColumns.map(c => `${c} LIKE ?`).join(' OR ')})`);
+    for (let i = 0; i < qualifiedColumns.length; i++) params.push(`%${w}%`);
+  }
+  return { clause: parts.join(' AND '), params };
+}
 
 /**
  * 统一搜索：scope=global/user/moderation
@@ -98,7 +112,7 @@ function searchModeration(db: Database, words: string[], limit: number, offset: 
       operation: row.operation ? String(row.operation) : null,
       operator: row.operator ? String(row.operator) : null,
       contentPreview: row.content_preview ? String(row.content_preview) : null,
-      media: row.media ? String(row.media) : null,
+      media: parseMediaUrls(db, row.media ? String(row.media) : null),
       postTime: row.post_time ? String(row.post_time) : null,
       operatorId: row.operator_id ? Number(row.operator_id) : null,
       targetUserId: row.target_user_id ? Number(row.target_user_id) : null,
@@ -290,8 +304,8 @@ function searchContent(
     const postContentJson = parseContent(row.post_content as string | null);
 
     // 注入视频元数据
-    injectVideoMetadataIntoContent(contentJson, getVideoMetadata);
-    injectVideoMetadataIntoContent(postContentJson, getVideoMetadata);
+    injectVideoMetadataIntoContent(db, contentJson);
+    injectVideoMetadataIntoContent(db, postContentJson);
 
     items.push({
       threadId: Number(row.thread_id),

@@ -1,7 +1,8 @@
 import { getDb } from '../db';
-import { parseContent, injectVideoMetadataIntoContent } from '../utils';
+import { parseContent } from '../../lib/content-utils';
 import type { Thread, ThreadDetailResponse, ModerationLog } from '../../lib/types';
-import { getVideoMetadata } from './video';
+import { injectVideoMetadataIntoContent, parseMediaUrls } from '../../lib/video-metadata';
+import { injectImageSizesIntoPosts } from '../../lib/image-metadata';
 
 /**
  * 获取指定时间点的帖子列表（带分页）
@@ -127,7 +128,7 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
     const opPostContent = parseContent(row.content as string | null);
 
     // 注入视频元数据到op_post_content
-    injectVideoMetadataIntoContent(opPostContent, getVideoMetadata);
+    injectVideoMetadataIntoContent(db, opPostContent);
 
     const cntPosts = Number(row.cnt_posts || 0);
     const cntComments = Number(row.cnt_comments || 0);
@@ -214,7 +215,7 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
       postId: row.post_id !== null ? Number(row.post_id) : null,
       title: row.title ? String(row.title) : null,
       contentPreview: row.content_preview ? String(row.content_preview) : null,
-      media: row.media ? String(row.media) : null,
+      media: parseMediaUrls(db, row.media ? String(row.media) : null),
       username: row.username ? String(row.username) : null,
       postTime: row.post_time ? String(row.post_time) : null,
       operation: row.operation ? String(row.operation) : null,
@@ -323,8 +324,9 @@ export function getThreadPostsAtTime(threadId: number, datetime: string, limit: 
 
   // 注入视频元数据到content
   for (const post of posts) {
-    injectVideoMetadataIntoContent(post.content, getVideoMetadata);
+    injectVideoMetadataIntoContent(db, post.content);
   }
+  injectImageSizesIntoPosts(db, posts);
 
   return { posts, totalCount, threadTitle, moderationLogs: moderationLogs };
 }
