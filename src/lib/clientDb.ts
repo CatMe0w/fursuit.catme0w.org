@@ -1,5 +1,6 @@
 import type { Thread, SearchOptions, SearchResult, SearchResponse, User, ThreadDetailResponse, WorkerResponse } from "./types";
 import { version as projectVersion } from "../../package.json";
+import { DB_VERSION } from "./dbConfig";
 
 // Worker类型的统一接口
 interface WorkerLike {
@@ -15,7 +16,7 @@ class ClientDatabase {
   private initPromise: Promise<void> | null = null;
   private ready = false;
   private requestIdCounter = 0;
-  private cacheName = `clientdb-query-cache-v${projectVersion}`;
+  private cacheName = `clientdb-query-cache-v${projectVersion}-${DB_VERSION}`;
   private cacheAvailable = typeof caches !== "undefined";
 
   /**
