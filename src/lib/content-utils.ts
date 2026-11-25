@@ -94,11 +94,20 @@ export function getImageFilename(url: string): string {
 }
 
 /**
+ * 只有符合此格式的图片才生成了缩略图
+ * 不符合的主要是以image类型存储的表情（gsp0、tb2.bdstatic）
+ */
+const THUMBNAIL_FILENAME = /^[0-9a-z]+\.jpg$/;
+function hasNoThumbnail(filename: string): boolean {
+  return !THUMBNAIL_FILENAME.test(filename);
+}
+
+/**
  * 获取图片缩略图URL
  */
 function getImageThumbnailUrl(url: string): string {
   const filename = getImageFilename(url);
-  if (filename.length <= 24) return `https://fursuit-static.catme0w.org/images/full/${filename}`;
+  if (hasNoThumbnail(filename)) return `https://fursuit-static.catme0w.org/images/full/${filename}`;
   const stem = filename.lastIndexOf(".") !== -1 ? filename.substring(0, filename.lastIndexOf(".")) : filename;
   return `https://fursuit-static.catme0w.org/images/thumb/${stem}.webp`;
 }
