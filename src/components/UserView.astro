@@ -11,7 +11,7 @@ import { getUserRecords } from "../lib/data";
 import { paginate } from "../lib/pagination";
 import type { SearchResult, User, UserRecord } from "../lib/types";
 import TimeMachineButton from "./TimeMachineButton.astro";
-import { formatIsoDate, getAvatarUrl, getUserDisplayName } from "../lib/content-utils";
+import { formatIsoDate, getAvatarUrl, getUserDisplayName, toMetaDescription } from "../lib/content-utils";
 import { buildPerson, serializeJsonLd } from "../lib/structured-data";
 
 interface Props {
@@ -61,6 +61,24 @@ const postCount = allRecords.filter((record) => record.type === "post").length;
 const commentCount = allRecords.length - postCount;
 const firstRecordTime = allRecords.reduce<string | null>((min, record) => (record.time && (!min || record.time < min) ? record.time : min), null);
 
+// meta description
+const threadCount = allRecords.filter((record) => record.type === "post" && record.floor === 1).length;
+const lastRecordTime = allRecords.reduce<string | null>((max, record) => (record.time && (!max || record.time > max) ? record.time : max), null);
+const displayName = getUserDisplayName(user) || `用户${userId}`;
+const nameWithUsername = user.nickname && user.username && user.nickname !== user.username ? `${user.nickname}（${user.username}）` : displayName;
+const statParts = [
+  threadCount && `${threadCount}个主题帖`,
+  postCount - threadCount && `${postCount - threadCount}条回复`,
+  commentCount && `${commentCount}条楼中楼`,
+].filter(Boolean);
+const firstYear = firstRecordTime?.slice(0, 4);
+const lastYear = lastRecordTime?.slice(0, 4);
+const activeYears = firstYear && lastYear ? (firstYear === lastYear ? `，活跃于${firstYear}年` : `，活跃于${firstYear}年至${lastYear}年`) : "";
+const description = toMetaDescription(
+  (statParts.length > 0 ? `${nameWithUsername}在fursuit吧共发表${statParts.join("、")}${activeYears}。` : `${nameWithUsername}的fursuit吧用户页。`) +
+    (paginationResult.currentPage > 1 ? `第${paginationResult.currentPage}页。` : ""),
+);
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "ProfilePage",
@@ -81,7 +99,7 @@ const jsonLd = {
 };
 ---
 
-<ArchiveLayout title={title} description={`查看用户：${getUserDisplayName(user)}`}>
+<ArchiveLayout title={title} description={description} ogType="profile" ogImage={user.avatar ? { url: getAvatarUrl(user.avatar) } : undefined}>
   <script is:inline type="application/ld+json" slot="head" set:html={serializeJsonLd(jsonLd)} />
   <div class="bg-gray-50 lg:mx-1 my-2">
     <div class="shadow lg:rounded bg-white">

@@ -7,6 +7,7 @@ import ModerationLogItem from "./ModerationLogItem.svelte";
 import { getModerationLogsByCategory, getModerationLogsCountByCategory } from "../lib/data";
 import { ITEMS_PER_PAGE } from "../lib/pagination";
 import type { ModerationLog, SearchResult } from "../lib/types";
+import { formatCnMonthRange, toMetaDescription } from "../lib/content-utils";
 
 interface Props {
   category: "post" | "user" | "bawu";
@@ -65,9 +66,19 @@ function mapLogToSearchResult(log: ModerationLog, category: string): SearchResul
 }
 
 const pageTitle = `吧务后台日志 - fursuit吧·档案馆与时间机器：为了无法忘却的往事`;
+
+// meta description
+const summary = {
+  post: `fursuit吧吧务后台的帖子操作记录，包括删贴、恢复、加精与置顶，共${totalItems}条。`,
+  user: `fursuit吧吧务后台的用户操作记录，包括封禁与拉黑，共${totalItems}条。`,
+  bawu: `fursuit吧吧务后台的吧务任免记录，包括小吧主与图片小编，共${totalItems}条。`,
+}[category];
+const logTimes = logs.map((log) => log.operationTime).filter((time): time is string => !!time);
+const pageRange = totalPages > 1 && logTimes.length > 0 ? `第${currentPage}页为${formatCnMonthRange(logTimes[0], logTimes[logTimes.length - 1])}的记录。` : "";
+const description = toMetaDescription(summary + pageRange);
 ---
 
-<ArchiveLayout title={pageTitle} description="查看吧务操作记录，包括删贴、封禁等。">
+<ArchiveLayout title={pageTitle} description={description}>
   <div class="bg-gray-50 lg:mx-1 my-2">
     <div class="shadow lg:rounded bg-white">
       <div class="grid grid-cols-1">

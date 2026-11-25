@@ -10,6 +10,7 @@ import ThreadListItem from "./ThreadListItem.svelte";
 import { getAllThreads, getAlbumThreads } from "../lib/data";
 import { paginate } from "../lib/pagination";
 import type { Thread } from "../lib/types";
+import { formatCnMonthRange, toMetaDescription } from "../lib/content-utils";
 
 interface Props {
   currentPage: number;
@@ -25,6 +26,21 @@ const paginationResult = paginate(filteredThreads, currentPage);
 
 const svelteThreads: Thread[] = paginationResult.items;
 
+// meta description
+// 总述加本页的时间范围，各分页互不重复
+// 列表按最后回复时间降序排列，thread.time即最后回复时间
+const summary = {
+  all: `fursuit吧自2011年建吧至2022年的全部${filteredThreads.length}个主题帖。`,
+  featured: `fursuit吧的全部${filteredThreads.length}个精品帖。`,
+  albums: `fursuit吧的全部${filteredThreads.length}个图册帖。`,
+}[filter];
+const pageItems = paginationResult.items;
+const pageRange =
+  paginationResult.totalPages > 1 && pageItems.length > 0
+    ? `第${currentPage}页为最后回复于${formatCnMonthRange(pageItems[0].time, pageItems[pageItems.length - 1].time)}的帖子。`
+    : "";
+const description = toMetaDescription(summary + pageRange);
+
 function getBaseUrl() {
   if (filter === "featured") return "/archive/featured";
   if (filter === "albums") return "/archive/albums";
@@ -32,7 +48,7 @@ function getBaseUrl() {
 }
 ---
 
-<ArchiveLayout title={title} description="浏览fursuit吧的所有帖子，包括已删除的内容。">
+<ArchiveLayout title={title} description={description}>
   <div id="main-content" class="bg-gray-50 lg:mx-1 my-2">
     <div class="shadow lg:rounded bg-white">
       <div id="thread-list" class="grid grid-cols-1">

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ContentItem } from "../lib/types";
-  import { getEmoticonUrl, getImageUrl, getAudioUrl, parseTiebaShortVideoUrl } from "../lib/content-utils";
+  import { getEmoticonUrl, getImageUrl, getAudioUrl, parseTiebaShortVideoUrl, isContentPhotoUrl } from "../lib/content-utils";
   import ContentImage from "./ContentImage.svelte";
 
   interface Props {
@@ -53,7 +53,7 @@
     {:else if item.type === "image"}
       {@const imageSrc = item.content}
       {@const imageUrl = getImageUrl(imageSrc)}
-      {#if imageSrc.startsWith("https://imgsrc.baidu.com/") || imageSrc.startsWith("https://tiebapic.baidu.com/")}
+      {#if isContentPhotoUrl(imageSrc)}
         <ContentImage src={imageUrl} size={item.size} />
       {:else}
         <!-- 可能是表情包 -->

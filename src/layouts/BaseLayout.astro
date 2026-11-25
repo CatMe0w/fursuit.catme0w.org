@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import Lightbox from "../components/Lightbox.astro";
+import type { OgImage } from "../lib/structured-data";
 
 export type BackButtonMode = "none" | "archive" | "home" | "defer";
 
@@ -10,9 +11,17 @@ interface Props {
   description?: string;
   backButton?: BackButtonMode;
   lang?: string;
+  ogType?: "website" | "article" | "profile";
+  ogImage?: OgImage;
 }
 
-const { title, description, backButton = "none", lang = "zh-CN" } = Astro.props;
+const { title, description, backButton = "none", lang = "zh-CN", ogType = "website", ogImage } = Astro.props;
+
+// Open Graph
+// 站点名由og:site_name单独显示，og:title只保留页面自身的标题
+const SITE_NAME = "fursuit吧·档案馆与时间机器";
+const ogTitle = title.replace(/ - fursuit吧·档案馆与时间机器：为了无法忘却的往事$/, "");
+const ogUrl = new URL(Astro.url.pathname.replace(/\.html$/, "").replace(/\/index$/, "/"), Astro.site).href;
 ---
 
 <!doctype html>
@@ -20,7 +29,18 @@ const { title, description, backButton = "none", lang = "zh-CN" } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
+    {description && <meta name="description" content={description} />}
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={ogTitle} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={ogUrl} />
+    <meta property="og:locale" content={lang === "en" ? "en_US" : "zh_CN"} />
+    {ogImage && <meta property="og:image" content={ogImage.url} />}
+    {ogImage?.width && <meta property="og:image:width" content={String(ogImage.width)} />}
+    {ogImage?.height && <meta property="og:image:height" content={String(ogImage.height)} />}
+    {/* 大图卡片只用于已知足够宽的图片，头像等小图用普通卡片 */}
+    <meta name="twitter:card" content={ogImage?.width && ogImage.width >= 300 ? "summary_large_image" : "summary"} />
     <slot name="head" />
     {/* 图片加载完成后标记data-loaded以取消灰色占位，见global.css，放在head中以赶在任何图片加载之前注册 */}
     <script is:inline>document.addEventListener("load",e=>(e=e.target).matches(".img-placeholder")&&(e.dataset.loaded=1),1)</script>

@@ -25,8 +25,22 @@ const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
 const isAlbum = thread.opPostContent?.some((item) => item.type === "album");
 
-import { extractTextContent, formatIsoDate } from "../lib/content-utils";
-import { buildPerson, getStructuredImages, getStructuredText, serializeJsonLd } from "../lib/structured-data";
+import { extractTextContent, formatCnDate, formatIsoDate, getUserDisplayName, toMetaDescription } from "../lib/content-utils";
+import { buildPerson, getOgImage, getStructuredImages, getStructuredText, serializeJsonLd } from "../lib/structured-data";
+
+// meta description
+// 第一页取一楼正文，其余页取本页首层正文并注明页码，各页互不重复
+// 无文字时（纯图片、视频等）退化为“作者于某日发表”
+const firstPost = sveltePosts[0];
+const firstPostText = extractTextContent(firstPost.content, false);
+const firstPostAuthor = getUserDisplayName(firstPost.username, firstPost.nickname) || `用户${firstPost.userId}`;
+const firstPostFallback =
+  firstPost.floor === 1
+    ? `${firstPostAuthor}于${formatCnDate(firstPost.time)}发表本帖，共${thread.replyNum}条回复。`
+    : `${firstPostAuthor}于${formatCnDate(firstPost.time)}发表的回复。`;
+const description = toMetaDescription((currentPage > 1 ? `第${currentPage}页（共${totalPages}页）：` : "") + (firstPostText || firstPostFallback));
+// 分享预览图：本页第一张正文照片，本页没有时退回一楼
+const ogImage = getOgImage([...sveltePosts.map((post) => post.content), thread.opPostContent]);
 
 // JSON-LD
 // https://developers.google.com/search/docs/appearance/structured-data/discussion-forum
@@ -53,7 +67,7 @@ const jsonLd = {
 };
 ---
 
-<ArchiveLayout title={title} description={`查看帖子：${thread.title}`} forceFullWidth={isAlbum}>
+<ArchiveLayout title={title} description={description} forceFullWidth={isAlbum} ogType="article" ogImage={ogImage}>
   <script is:inline type="application/ld+json" slot="head" set:html={serializeJsonLd(jsonLd)} />
   <div class="bg-gray-50 lg:mx-1 my-2">
     <div class="shadow lg:rounded bg-white">

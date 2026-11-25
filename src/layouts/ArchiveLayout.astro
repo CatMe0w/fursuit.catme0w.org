@@ -1,5 +1,6 @@
 ---
 import BaseLayout, { type BackButtonMode } from "./BaseLayout.astro";
+import type { OgImage } from "../lib/structured-data";
 import TimeMachineBackButton from "../components/TimeMachineBackButton.svelte";
 
 interface Props {
@@ -10,16 +11,20 @@ interface Props {
   pageTitleLink?: string;
   backButton?: BackButtonMode;
   forceFullWidth?: boolean;
+  ogType?: "website" | "article" | "profile";
+  ogImage?: OgImage;
 }
 
 const {
   title,
   description,
   pageTitle = "档案馆",
-  pageSubtitle = "浏览fursuit吧的所有帖子，包括已删除的内容。",
+  pageSubtitle = "浏览fursuit吧的全部帖子。",
   pageTitleLink = "/archive",
   backButton = "archive", // 默认显示"返回吧首页"
   forceFullWidth = false,
+  ogType,
+  ogImage,
 } = Astro.props;
 
 let finalBackButton: BackButtonMode = backButton;
@@ -37,7 +42,7 @@ if (pathname === "/archive" && searchParams.toString() === "") {
 const isTimeMachine = finalBackButton === "defer";
 ---
 
-<BaseLayout title={title} description={description} backButton={finalBackButton}>
+<BaseLayout title={title} description={description} backButton={finalBackButton} ogType={ogType} ogImage={ogImage}>
   <slot name="head" slot="head" />
 
   <div id="everything" class="bg-gray-50 min-h-screen">

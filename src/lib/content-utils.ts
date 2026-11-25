@@ -193,6 +193,13 @@ export function getImageUrl(originalUrl: string): string {
 }
 
 /**
+ * 是否为帖子正文图片
+ */
+export function isContentPhotoUrl(originalUrl: string): boolean {
+  return originalUrl.startsWith("https://imgsrc.baidu.com/") || originalUrl.startsWith("https://tiebapic.baidu.com/");
+}
+
+/**
  * 获取音频URL
  * 浏览器不支持直接播放amr格式音频，此处使用转码后的mp3
  * 获取原始amr：https://fursuit-static.catme0w.org/audios/amr/{audioId}.amr
@@ -231,4 +238,32 @@ export function isVandalUsername(username: string): boolean {
 export function formatIsoDate(timeStr: string): string {
   if (!timeStr) return "";
   return timeStr.replace(" ", "T") + "+08:00";
+}
+
+/**
+ * "YYYY-MM-DD HH:mm:ss" -> "2016年7月22日"
+ */
+export function formatCnDate(timeStr: string): string {
+  const [y, m, d] = timeStr.split(/[- ]/);
+  return `${y}年${Number(m)}月${Number(d)}日`;
+}
+
+/**
+ * 两个时间之间的月份范围，如“2019年5月至2019年8月”，同月时只返回一个月份，顺序无关
+ */
+export function formatCnMonthRange(a: string, b: string): string {
+  const [from, to] = a <= b ? [a, b] : [b, a];
+  const month = (t: string) => {
+    const [y, m] = t.split("-");
+    return `${y}年${Number(m)}月`;
+  };
+  return month(from) === month(to) ? month(from) : `${month(from)}至${month(to)}`;
+}
+
+/**
+ * 生成meta description：折叠空白，截断长文本
+ */
+export function toMetaDescription(text: string, max = 100): string {
+  const chars = Array.from(text.replace(/\s+/g, " ").trim());
+  return chars.length > max ? chars.slice(0, max - 1).join("").trimEnd() + "…" : chars.join("");
 }

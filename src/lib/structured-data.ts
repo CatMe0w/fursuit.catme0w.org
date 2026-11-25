@@ -1,5 +1,5 @@
-import type { ContentItem } from "./types";
-import { extractTextContent, getImageUrl } from "./content-utils";
+import type { ContentItem, ImageSize } from "./types";
+import { extractTextContent, getImageUrl, isContentPhotoUrl } from "./content-utils";
 
 // JSON-LD
 // https://developers.google.com/search/docs/appearance/structured-data/discussion-forum
@@ -35,4 +35,24 @@ export function buildPerson(site: URL | undefined, userId: number, username: str
     name: nickname || username || `用户${userId}`,
     url: new URL(`/user/${userId}`, site).href,
   };
+}
+
+export interface OgImage {
+  url: string;
+  width?: number;
+  height?: number;
+}
+
+/**
+ * Open Graph预览图，按顺序取第一张正文图片
+ */
+export function getOgImage(contents: ContentItem[][]): OgImage | undefined {
+  const toOg = (url: string, size?: ImageSize): OgImage => ({ url: getImageUrl(url), width: size?.width, height: size?.height });
+  for (const content of contents) {
+    for (const item of content ?? []) {
+      if (item.type === "image" && typeof item.content === "string" && isContentPhotoUrl(item.content)) return toOg(item.content, item.size);
+      if (item.type === "album" && item.content?.[0]?.url) return toOg(item.content[0].url, item.content[0].size);
+    }
+  }
+  return undefined;
 }
