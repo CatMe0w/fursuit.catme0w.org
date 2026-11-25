@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Thread } from "../lib/types";
-  import { extractTextContent, extractMedia, getThumbnailUrl, getUserDisplayName } from "../lib/content-utils";
+  import { extractTextContent, extractMedia, getThumbnailUrl, getThumbnailSize, getUserDisplayName } from "../lib/content-utils";
 
   interface Props {
     thread: Thread;
@@ -52,9 +52,10 @@
         <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4 overflow-x-auto">
           {#each opPostMedia as media}
             {@const thumbnailUrl = getThumbnailUrl(media)}
+            {@const thumbnailSize = getThumbnailSize(media)}
             {#if thumbnailUrl}
               <a href={getThreadUrl(thread.id)}>
-                <img class="max-h-32 w-auto rounded" loading="lazy" src={thumbnailUrl} alt="" />
+                <img class="max-h-32 rounded img-placeholder" loading="lazy" src={thumbnailUrl} alt="" width={thumbnailSize?.width} height={thumbnailSize?.height} />
               </a>
             {/if}
           {/each}

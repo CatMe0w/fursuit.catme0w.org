@@ -2,7 +2,7 @@ import { getDb } from '../db';
 import { parseContent } from '../../lib/content-utils';
 import type { Thread, ThreadDetailResponse, ModerationLog } from '../../lib/types';
 import { injectVideoMetadataIntoContent, parseMediaUrls } from '../../lib/video-metadata';
-import { injectImageSizesIntoPosts } from '../../lib/image-metadata';
+import { injectImageSizesIntoContents, injectImageSizesIntoPosts } from '../../lib/image-metadata';
 
 /**
  * 获取指定时间点的帖子列表（带分页）
@@ -150,6 +150,7 @@ export function getThreadsAtTime(datetime: string, keyword?: string, limit?: num
     });
   }
   stmt.free();
+  injectImageSizesIntoContents(db, threads.map((t) => t.opPostContent));
 
   return { threads, totalCount };
 }

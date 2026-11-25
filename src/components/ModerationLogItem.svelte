@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SearchResult } from "../lib/types";
-  import { extractMedia, getThumbnailUrl } from "../lib/content-utils";
+  import { extractMedia, getThumbnailUrl, getThumbnailSize } from "../lib/content-utils";
   import ModerationLogUserLink from "./ModerationLogUserLink.svelte";
 
   interface Props {
@@ -44,9 +44,10 @@
         <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4 overflow-x-auto">
           {#each extractMedia(item.media, 0) as media}
             {@const thumbnailUrl = getThumbnailUrl(media)}
+            {@const thumbnailSize = getThumbnailSize(media)}
             {#if thumbnailUrl}
               <a href={getThreadUrl(item.threadId)}>
-                <img class="max-h-32 w-auto rounded" loading="lazy" src={thumbnailUrl} alt="" />
+                <img class="max-h-32 rounded img-placeholder" loading="lazy" src={thumbnailUrl} alt="" width={thumbnailSize?.width} height={thumbnailSize?.height} />
               </a>
             {/if}
           {/each}

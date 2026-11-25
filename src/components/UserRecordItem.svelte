@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SearchResult } from "../lib/types";
-  import { extractTextContent, extractMedia, getThumbnailUrl } from "../lib/content-utils";
+  import { extractTextContent, extractMedia, getThumbnailUrl, getThumbnailSize } from "../lib/content-utils";
 
   interface Props {
     item: SearchResult;
@@ -96,9 +96,10 @@
         <div class="mt-4 flex flex-row flex-nowrap justify-start gap-4 overflow-x-auto">
           {#each contentMedia as media}
             {@const thumbnailUrl = getThumbnailUrl(media)}
+            {@const thumbnailSize = getThumbnailSize(media)}
             {#if thumbnailUrl}
               <a href={threadUrl}>
-                <img class="max-h-32 w-auto rounded" src={thumbnailUrl} alt="" />
+                <img class="max-h-32 rounded img-placeholder" loading="lazy" src={thumbnailUrl} alt="" width={thumbnailSize?.width} height={thumbnailSize?.height} />
               </a>
             {/if}
           {/each}

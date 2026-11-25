@@ -1,5 +1,5 @@
 import type { User } from "./types";
-import type { ContentItem } from "./types";
+import type { ContentItem, ImageSize } from "./types";
 
 /**
  * 解析数据库中的JSON content，格式错误时返回空数组
@@ -139,6 +139,15 @@ export function getThumbnailUrl(item: MediaItem): string | null {
 
   if (item.metadata?.id) return `https://fursuit-static.catme0w.org/videos/cover/${item.metadata.id}.jpg`;
   return null;
+}
+
+/**
+ * 获取缩略图的显示尺寸，与max-h-32（128px）一致，缩略图本身也按此高度生成
+ */
+export function getThumbnailSize(item: MediaItem): ImageSize | undefined {
+  if (item.type !== "image" || !item.size) return undefined;
+  const height = Math.min(128, item.size.height);
+  return { width: Math.round((item.size.width * height) / item.size.height), height };
 }
 
 /**

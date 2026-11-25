@@ -54,6 +54,18 @@ function queryImageSizes(db: Database, filenames: Set<string>): Map<string, Imag
 }
 
 /**
+ * 为多段内容中的图片和图册注入宽高，用于列表缩略图（帖子列表、用户页、搜索结果、管理日志media）
+ */
+export function injectImageSizesIntoContents(db: Database, contents: (ContentItem[] | null | undefined)[]): void {
+  const filenames = new Set<string>();
+  for (const content of contents) if (content) collectFromContent(content, filenames);
+  if (filenames.size === 0) return;
+
+  const sizes = queryImageSizes(db, filenames);
+  for (const content of contents) if (content) applyToContent(content, sizes);
+}
+
+/**
  * 为楼层内容中的图片、图册和签名档注入宽高
  */
 export function injectImageSizesIntoPosts(db: Database, posts: Pick<Post, "content" | "signature" | "signatureSize">[]): void {

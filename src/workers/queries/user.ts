@@ -2,6 +2,7 @@ import { getDb } from '../db';
 import { parseContent } from '../../lib/content-utils';
 import type { SearchResponse, SearchResult, User } from '../../lib/types';
 import { injectVideoMetadataIntoContent } from '../../lib/video-metadata';
+import { injectImageSizesIntoContents } from '../../lib/image-metadata';
 
 /**
  * 获取用户信息
@@ -139,6 +140,7 @@ export function getUserPostsAtTime(userId: number, datetime: string, limit?: num
     items.push(result);
   }
   stmt.free();
+  injectImageSizesIntoContents(db, items.map((item) => item.content));
 
   return { items, totalCount };
 }

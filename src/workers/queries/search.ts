@@ -3,6 +3,7 @@ import { parseContent } from '../../lib/content-utils';
 import type { SearchOptions, SearchResponse, SearchResult } from '../../lib/types';
 import type { Database } from 'sql.js';
 import { injectVideoMetadataIntoContent, parseMediaUrls } from '../../lib/video-metadata';
+import { injectImageSizesIntoContents } from '../../lib/image-metadata';
 
 /**
  * 构造多关键词LIKE条件：每个关键词需命中任一列，各关键词之间为AND
@@ -121,6 +122,7 @@ function searchModeration(db: Database, words: string[], limit: number, offset: 
     });
   }
   stmt.free();
+  injectImageSizesIntoContents(db, items.flatMap((item) => [item.content, item.media]));
 
   return { items, totalCount };
 }
@@ -324,6 +326,7 @@ function searchContent(
     });
   }
   stmt.free();
+  injectImageSizesIntoContents(db, items.flatMap((item) => [item.content, item.media]));
 
   return { items, totalCount };
 }

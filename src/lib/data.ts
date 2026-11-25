@@ -5,7 +5,7 @@ import initSqlJs, { type Database } from "sql.js";
 import type { Thread, Post, Comment, ContentItem, ModerationLog, ThreadDetailResponse, User, UserRecord } from "./types";
 import { DB_URL } from "./dbConfig";
 import { parseContent } from "./content-utils";
-import { injectImageSizesIntoPosts } from "./image-metadata";
+import { injectImageSizesIntoContents, injectImageSizesIntoPosts } from "./image-metadata";
 import { injectVideoMetadataIntoContent, parseMediaUrls } from "./video-metadata";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -162,6 +162,7 @@ export function getAllThreads(): Thread[] {
     });
   }
   stmt.free();
+  injectImageSizesIntoContents(db, threads.map((t) => t.opPostContent));
 
   const endTime = Date.now();
   console.log(`[Data] Loaded ${threads.length} threads in ${endTime - startTime}ms`);
@@ -470,6 +471,7 @@ export function getModerationLogsByCategory(category: "post" | "user" | "bawu", 
     }
   }
   stmt.free();
+  injectImageSizesIntoContents(db, logs.map((log) => log.media));
 
   return logs;
 }
@@ -567,6 +569,7 @@ export function getUserRecords(userId: number): UserRecord[] {
     injectVideoMetadataIntoContent(db, record.postContent);
     if (record.commentContent) injectVideoMetadataIntoContent(db, record.commentContent);
   }
+  injectImageSizesIntoContents(db, records.map((record) => (record.type === "comment" ? record.commentContent : record.postContent)));
 
   return records;
 }
