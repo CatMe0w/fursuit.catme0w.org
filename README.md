@@ -26,12 +26,6 @@ The URL structure has been changed, but remains compatible with old links.
 - Completed red text and bold rendering
 - Completed signature display
 
-### V2 Database Update Notes
-
-Starting from the remake version (1.0.0), the project uses the V2 database. See the SQL scripts in the `migrations` directory for changes.
-
-To upgrade from V1 to V2 database, obtain the V1 database from [ex_nihilo_vault](https://github.com/CatMe0w/ex_nihilo_vault), then run the scripts to upgrade to V2.
-
 ## Install dependencies
 
 Node.js is required. pnpm is recommended.
@@ -49,6 +43,12 @@ Then, you can visit the server at http://localhost:4321/
 ### Build
 
 `pnpm build`
+
+## Database
+
+No setup is needed by default. If `data/vault.db` does not exist, `pnpm dev` and `pnpm build` download it from our S3 storage. The database version is set in `src/lib/dbConfig.ts`. After a version change, delete `data/vault.db` to download the new version.
+
+To build the database yourself, get the V1 database from [ex_nihilo_vault](https://github.com/CatMe0w/ex_nihilo_vault). Then run the scripts in `migrations` in order (`v1_to_v2.sql`, `v2_to_v3.sql`, ...), and save the result as `data/vault.db`.
 
 ## License
 

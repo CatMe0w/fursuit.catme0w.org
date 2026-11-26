@@ -24,12 +24,6 @@ URL 结构有更改，仍向前兼容旧有链接。
 - 补齐红字和加粗渲染
 - 补齐签名档显示
 
-### V2 版本数据库更新说明
-
-自重制版（1.0.0）起，项目使用 V2 版本数据库。变更内容见 `migrations` 目录下的 SQL 脚本。
-
-如需从 V1 数据库升级至 V2，可在 [ex_nihilo_vault](https://github.com/CatMe0w/ex_nihilo_vault) 取得 V1 版本数据库后，运行脚本以升级至 V2。
-
 ## 安装依赖
 
 需要 Node.js。推荐使用 pnpm。
@@ -47,6 +41,12 @@ URL 结构有更改，仍向前兼容旧有链接。
 ### 构建
 
 `pnpm build`
+
+## 数据库
+
+默认无需任何操作。本地不存在 `data/vault.db` 时，`pnpm dev` 与 `pnpm build` 会自动从我们的 S3 存储下载。数据库版本由 `src/lib/dbConfig.ts` 指定，版本更新后，删除本地的 `data/vault.db` 即可重新下载。
+
+如需自行创建数据库，可在 [ex_nihilo_vault](https://github.com/CatMe0w/ex_nihilo_vault) 取得 V1 版本数据库，依次运行 `migrations` 目录下的脚本（`v1_to_v2.sql`、`v2_to_v3.sql`……），并将结果保存为 `data/vault.db`。
 
 ## 开源许可
 
