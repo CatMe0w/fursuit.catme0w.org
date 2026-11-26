@@ -6,8 +6,8 @@ import Sidebar from "./Sidebar.astro";
 import SearchBox from "./SearchBox.astro";
 import ExternalLinkButton from "./ExternalLinkButton.astro";
 import { getThreadDetail } from "../lib/data";
-import { ITEMS_PER_PAGE } from "../lib/pagination";
-import type { Thread } from "../lib/types";
+import { COMMENTS_PER_PAGE, ITEMS_PER_PAGE } from "../lib/pagination";
+import type { Comment, Post, Thread } from "../lib/types";
 import TimeMachineButton from "./TimeMachineButton.astro";
 import VandalWarning from "./VandalWarning.svelte";
 
@@ -44,6 +44,18 @@ const ogImage = getOgImage([...sveltePosts.map((post) => post.content), thread.o
 
 // JSON-LD
 // https://developers.google.com/search/docs/appearance/structured-data/discussion-forum
+//
+// 贴吧数据模型与JSON-LD的映射：
+//   贴吧的结构：thread只持有标题，正文都在其下的post里，comment（楼中楼）挂在post下
+//   一楼也只是thread的第一个post，但它不能有楼中楼，且承担了“帖子正文”的角色
+//   JSON-LD则是一个DiscussionForumPosting加上嵌套的Comment，因此：
+//     thread + 一楼post -> DiscussionForumPosting（标题来自thread，正文、作者、时间来自一楼）
+//     二楼及以后的post  -> 第一层Comment，挂在DiscussionForumPosting.comment下
+//     楼中楼comment     -> 第二层Comment，挂在所属post对应的Comment.comment下
+//
+// 此外，只标记本页实际渲染出的内容，Google要求结构化数据与页面可见内容一致，也顺带控制体积
+//   post只取本页的楼层，楼中楼只取预渲染的部分，即第一页
+//   帖子分多页时，每页都输出同一个DiscussionForumPosting（@id和url指向帖子首页），comment只含本页楼层
 const threadUrl = new URL(`/thread/${threadId}`, Astro.site).href;
 const pageUrl = new URL(currentPage > 1 ? `/thread/${threadId}/${currentPage}` : `/thread/${threadId}`, Astro.site).href;
 
@@ -64,7 +76,38 @@ const jsonLd = {
     interactionType: "https://schema.org/CommentAction",
     userInteractionCount: thread.replyNum,
   },
+  comment: buildComments(),
 };
+
+// post和楼中楼共用的Comment字段，从简，只保留Google要求和建议的部分
+// url指向页面上该post或楼中楼的锚点
+function buildComment(id: number, userId: number, username: string | null, nickname: string | null, content: Post["content"], time: string) {
+  return {
+    "@type": "Comment",
+    url: `${pageUrl}#${id}`,
+    author: buildPerson(Astro.site, userId, username, nickname),
+    datePublished: formatIsoDate(time),
+    text: getStructuredText(content),
+    image: getStructuredImages(content),
+  };
+}
+
+// 第二层：某个post下的楼中楼
+function buildReplies(comments: Comment[] | undefined) {
+  const replies = (comments ?? []).slice(0, COMMENTS_PER_PAGE).map((c) => buildComment(c.id, c.userId, c.username, c.nickname, c.content, c.time));
+  return replies.length > 0 ? replies : undefined;
+}
+
+// 第一层：本页除一楼以外的post（一楼已经是DiscussionForumPosting本身）
+function buildComments() {
+  const comments = sveltePosts
+    .filter((post) => post.floor !== 1)
+    .map((post) => ({
+      ...buildComment(post.id, post.userId, post.username, post.nickname, post.content, post.time),
+      comment: buildReplies(post.comments),
+    }));
+  return comments.length > 0 ? comments : undefined;
+}
 ---
 
 <ArchiveLayout title={title} description={description} forceFullWidth={isAlbum} ogType="article" ogImage={ogImage}>

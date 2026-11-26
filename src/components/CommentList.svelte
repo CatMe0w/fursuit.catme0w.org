@@ -1,6 +1,7 @@
 <script lang="ts">
   import CommentItem from "./CommentItem.svelte";
   import type { Comment } from "../lib/types";
+  import { COMMENTS_PER_PAGE } from "../lib/pagination";
 
   interface Props {
     comments?: Comment[];
@@ -8,7 +9,7 @@
     time?: string;
   }
 
-  let { comments = [], pageSize = 10, time = undefined }: Props = $props();
+  let { comments = [], pageSize = COMMENTS_PER_PAGE, time = undefined }: Props = $props();
 
   let currentPage = $state(1);
 

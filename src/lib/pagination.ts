@@ -4,6 +4,11 @@
 export const ITEMS_PER_PAGE = 30;
 
 /**
+ * 楼中楼每页条数，服务端只渲染第一页
+ */
+export const COMMENTS_PER_PAGE = 10;
+
+/**
  * 分页结果接口
  */
 export interface PaginationResult<T> {
