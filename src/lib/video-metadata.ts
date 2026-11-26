@@ -2,9 +2,25 @@ import type { Database } from "sql.js";
 import type { ContentItem, VideoMetadata } from "./types";
 
 /**
- * 视频元数据注入（v2 video_metadata表）
+ * 视频元数据注入（v4 video表）
  * 档案馆（data.ts）与时间机器worker共用
  */
+
+const CDN = "https://fursuit-static.catme0w.org";
+
+/**
+ * 从贴吧短视频URL中提取视频ID（video参数）
+ * URL格式: https://tieba.baidu.com/mo/q/movideo/page?thumbnail=...&video=...
+ * 旧版播放器（见于管理日志）: https://tb1.bdstatic.com/tb/zt/movideo/video.swf?thumbnail=...&video=...
+ */
+function getTiebaVideoId(url: string): string | null {
+  if (!url.includes("/movideo/")) return null;
+  try {
+    return new URL(url).searchParams.get("video");
+  } catch {
+    return null;
+  }
+}
 
 /**
  * 从优酷URL中提取视频ID
@@ -25,30 +41,26 @@ function getQQVideoId(url: string): string | null {
 }
 
 function getVideoMetadata(db: Database, id: string): VideoMetadata | null {
-  const stmt = db.prepare("SELECT metadata FROM video_metadata WHERE id = ?");
+  const stmt = db.prepare("SELECT width, height, cover, cover_width, cover_height, title, uploader, uploader_url FROM video WHERE id = ?");
   stmt.bind([id]);
-
-  let metadataStr: string | null = null;
-  if (stmt.step()) metadataStr = stmt.getAsObject().metadata as string;
+  const row = stmt.step() ? stmt.getAsObject() : null;
   stmt.free();
-  if (metadataStr === null) return null;
+  if (!row) return null;
 
-  try {
-    const metadata = JSON.parse(metadataStr);
-    return {
-      id: id,
-      title: metadata.title,
-      uploader: metadata.uploader,
-      uploaderUrl: metadata.uploader_url,
-    };
-  } catch (e) {
-    console.error("Failed to parse video metadata", e);
-    return null;
+  const metadata: VideoMetadata = { id, size: { width: Number(row.width), height: Number(row.height) } };
+  if (row.cover) {
+    metadata.coverUrl = `${CDN}/${row.cover}`;
+    if (row.cover_width && row.cover_height) metadata.coverSize = { width: Number(row.cover_width), height: Number(row.cover_height) };
   }
+  if (row.title) metadata.title = String(row.title);
+  if (row.uploader) metadata.uploader = String(row.uploader);
+  if (row.uploader_url) metadata.uploaderUrl = String(row.uploader_url);
+  return metadata;
 }
 
 /**
- * 将数据库中视频项的content字段转换为url字段，并为优酷、腾讯视频注入元数据
+ * 将数据库中视频项的content字段转换为url字段，并为可播放的视频注入元数据
+ * 无元数据即为失效视频（CDN上没有对应的mp4）
  */
 export function injectVideoMetadataIntoContent(db: Database, content: ContentItem[]): void {
   for (const item of content as any[]) {
@@ -58,11 +70,11 @@ export function injectVideoMetadataIntoContent(db: Database, content: ContentIte
     delete item.content;
     item.url = url;
 
-    const videoId = getYoukuId(url) || getQQVideoId(url);
+    const videoId = getTiebaVideoId(url) || getYoukuId(url) || getQQVideoId(url);
     if (!videoId) continue;
 
     const metadata = getVideoMetadata(db, videoId);
-    if (metadata) item.metadata = { ...metadata, id: videoId };
+    if (metadata) item.metadata = metadata;
   }
 }
 

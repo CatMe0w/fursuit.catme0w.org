@@ -75,8 +75,13 @@ export interface ImageSize {
   height: number;
 }
 
+/** 来自v4 video表，存在即表示CDN上有可播放的视频 */
 export interface VideoMetadata {
-  id?: string;
+  id: string;
+  size: ImageSize;
+  coverUrl?: string;
+  coverSize?: ImageSize;
+  /** 以下仅外部视频（优酷、腾讯视频） */
   title?: string;
   uploader?: string;
   uploaderUrl?: string;

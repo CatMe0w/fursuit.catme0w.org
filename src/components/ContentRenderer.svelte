@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ContentItem } from "../lib/types";
-  import { getEmoticonUrl, getImageUrl, getAudioUrl, parseTiebaShortVideoUrl, isContentPhotoUrl } from "../lib/content-utils";
+  import { getEmoticonUrl, getImageUrl, getAudioUrl, getVideoUrl, isContentPhotoUrl } from "../lib/content-utils";
   import ContentImage from "./ContentImage.svelte";
 
   interface Props {
@@ -60,19 +60,18 @@
         <img class="lg:max-w-xl my-2 inline" src={imageUrl} alt="" width={item.size?.width} height={item.size?.height} loading="lazy" />
       {/if}
     {:else if item.type === "video"}
-      {@const tiebaVideo = parseTiebaShortVideoUrl(item.url || "")}
-      {#if tiebaVideo}
-        <!-- 贴吧短视频 -->
+      {#if item.metadata}
+        <!-- 贴吧短视频与外部视频（优酷、腾讯视频） -->
+        <!-- 固定为视频本身的比例，封面在其中按比例留黑边 -->
+        <!-- 不能使用width/height属性，其比例为auto，播放前浏览器会使用封面的比例，开始播放时再切换到视频比例 -->
         <!-- svelte-ignore a11y_media_has_caption -->
-        <video controls poster={tiebaVideo.thumbnailUrl || undefined} class="w-full max-w-2xl bg-black">
-          <source src={tiebaVideo.videoUrl} type="video/mp4" />
-        </video>
-      {:else if item.metadata}
-        <!-- 外部视频（优酷、腾讯视频） -->
-        <!-- 有效视频：item.metadata存在即为有效 -->
-        <!-- svelte-ignore a11y_media_has_caption -->
-        <video controls poster={`https://fursuit-static.catme0w.org/videos/cover/${item.metadata.id}.jpg`} class="w-full max-w-2xl bg-black">
-          <source src={`https://fursuit-static.catme0w.org/videos/full/${item.metadata.id}.mp4`} type="video/mp4" />
+        <video
+          controls
+          poster={item.metadata.coverUrl}
+          style="aspect-ratio: {item.metadata.size.width} / {item.metadata.size.height}"
+          class="w-full max-w-2xl bg-black"
+        >
+          <source src={getVideoUrl(item.metadata)} type="video/mp4" />
         </video>
         {#if item.metadata.title}
           <div class="bg-gray-100 rounded-b p-5 w-full max-w-2xl">

@@ -1,5 +1,5 @@
 import type { User } from "./types";
-import type { ContentItem, ImageSize } from "./types";
+import type { ContentItem, ImageSize, VideoMetadata } from "./types";
 
 /**
  * 解析数据库中的JSON content，格式错误时返回空数组
@@ -113,50 +113,30 @@ function getImageThumbnailUrl(url: string): string {
 }
 
 /**
- * 解析贴吧短视频URL
- * URL格式: https://tieba.baidu.com/mo/q/movideo/page?thumbnail=...&video=...
- * 旧版播放器（见于管理日志）: https://tb1.bdstatic.com/tb/zt/movideo/video.swf?thumbnail=...&video=...
+ * 获取视频文件URL
  */
-export function parseTiebaShortVideoUrl(url: string): { videoUrl: string; thumbnailUrl: string | null } | null {
-  if (!url.includes("/movideo/")) return null;
-
-  try {
-    const urlObj = new URL(url);
-    const videoId = urlObj.searchParams.get("video");
-    const thumbnail = urlObj.searchParams.get("thumbnail");
-
-    if (videoId) {
-      return {
-        videoUrl: `https://fursuit-static.catme0w.org/videos/full/${videoId}.mp4`,
-        thumbnailUrl: thumbnail ? `https://fursuit-static.catme0w.org/images/full/${thumbnail}.jpg` : null,
-      };
-    }
-  } catch (e) { }
-  return null;
+export function getVideoUrl(metadata: VideoMetadata): string {
+  return `https://fursuit-static.catme0w.org/videos/full/${metadata.id}.mp4`;
 }
 
 /**
  * 获取列表缩略图URL
- * 图片返回缩略图，视频仅在CDN存有封面时返回封面
- * 贴吧短视频需带thumbnail参数，外部视频需有元数据
+ * 图片返回缩略图，视频返回封面，失效视频（无元数据）返回null
  */
 export function getThumbnailUrl(item: MediaItem): string | null {
   if (item.type === "image") return getImageThumbnailUrl(item.content);
-
-  const tiebaVideo = parseTiebaShortVideoUrl(item.url);
-  if (tiebaVideo) return tiebaVideo.thumbnailUrl;
-
-  if (item.metadata?.id) return `https://fursuit-static.catme0w.org/videos/cover/${item.metadata.id}.jpg`;
-  return null;
+  return item.metadata?.coverUrl ?? null;
 }
 
 /**
  * 获取缩略图的显示尺寸，与max-h-32（128px）一致，缩略图本身也按此高度生成
+ * 视频按封面尺寸计算
  */
 export function getThumbnailSize(item: MediaItem): ImageSize | undefined {
-  if (item.type !== "image" || !item.size) return undefined;
-  const height = Math.min(128, item.size.height);
-  return { width: Math.round((item.size.width * height) / item.size.height), height };
+  const size = item.type === "image" ? item.size : item.metadata?.coverSize;
+  if (!size) return undefined;
+  const height = Math.min(128, size.height);
+  return { width: Math.round((size.width * height) / size.height), height };
 }
 
 /**
